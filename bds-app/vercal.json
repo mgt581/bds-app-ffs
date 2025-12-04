@@ -1,7 +1,14 @@
-/public (if you have one)
-index.html
-signin.html
-signup.html
-gallery.html
-...
-vercel.json   ← HERE
+{
+  "rewrites": [
+    { "source": "/signin", "destination": "/signin.html" },
+    { "source": "/signup", "destination": "/signup.html" },
+    { "source": "/gallery", "destination": "/gallery.html" },
+    { "source": "/profile", "destination": "/profile.html" },
+    { "source": "/dashboard", "destination": "/dashboard.html" },
+    { "source": "/editor", "destination": "/editor.html" },
+    { "source": "/pricing", "destination": "/pricing.html" },
+    { "source": "/premium-check", "destination": "/premium-check.html" },
+    { "source": "/reset", "destination": "/reset.html" },
+    { "source": "/offline", "destination": "/offline.html" }
+  ]
+}
