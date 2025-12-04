@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Change Background · AI Photo Studio</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet"/>
+
+<style>
+  body {
+    margin:0;
+    font-family:Inter, system-ui, sans-serif;
+    background:#0b0f1c;
+    color:white;
+    display:flex;
+    height:100vh;
+    overflow:hidden;
+  }
+
+  /* Sidebar */
+  .sidebar {
+    width:260px;
+    background:#111827;
+    border-right:1px solid #1f2937;
+    padding:20px;
+    display:flex;
+    flex-direction:column;
+  }
+
+  .logo {
+    font-size:22px;
+    font-weight:700;
+    margin-bottom:25px;
+    color:#3fb7ff;
+    text-shadow:0 0 12px #3fb7ff;
+  }
+
+  .tool-link {
+    padding:12px;
+    background:#1a2336;
+    border-radius:10px;
+    margin-bottom:10px;
+    cursor:pointer;
+    transition:0.15s;
+  }
+  .tool-link:hover { background:#223148; }
+
+  .active {
+    background:#3fb7ff;
+    color:black;
+    font-weight:700;
+  }
+
+  /* Topbar */
+  .topbar {
+    height:60px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:0 20px;
+    background:#111827;
+    border-bottom:1px solid #1f2937;
+  }
+
+  .upgrade-btn {
+    background:linear-gradient(135deg,#1f8bff,#3fb7ff);
+    padding:10px 18px;
+    border-radius:10px;
+    color:white;
+    font-weight:700;
+    cursor:pointer;
+    box-shadow:0 0 18px #1f8bff;
+  }
+
+  /* Main */
+  .main {
+    flex:1;
+    display:flex;
+    flex-direction:column;
+  }
+
+  .content {
+    padding:30px;
+    overflow-y:auto;
+    text-align:center;
+  }
+
+  /* Upload UI */
+  .upload-box {
+    border:2px dashed #3fb7ff50;
+    border-radius:18px;
+    padding:40px;
+    text-align:center;
+    cursor:pointer;
+    transition:0.2s;
+  }
+  .upload-box:hover {
+    border-color:#3fb7ff;
+    background:#112033;
+  }
+
+  #editorCanvas {
+    max-width:90%;
+    max-height:70vh;
+    margin-top:20px;
+    border-radius:12px;
+    background:#000;
+  }
+
+  .action-btn {
+    margin-top:20px;
+    background:#3fb7ff;
+    border:none;
+    padding:14px 22px;
+    border-radius:10px;
+    font-weight:700;
+    cursor:pointer;
+    color:black;
+    font-size:16px;
+  }
+
+  /* Background Gallery */
+  .bg-grid {
+    margin-top:25px;
+    display:grid;
+    grid-template-columns:repeat(auto-fill, minmax(120px, 1fr));
+    gap:15px;
+  }
+
+  .bg-option {
+    height:80px;
+    border-radius:10px;
+    cursor:pointer;
+    border:1px solid #1f2937;
+    background-size:cover;
+    background-position:center;
+    transition:0.2s;
+  }
+  .bg-option:hover {
+    transform:scale(1.05);
+    border-color:#3fb7ff;
+  }
+</style>
+
+<!-- ONNX -->
+<script src="https://cdn.jsdelivr.net/npm/onnxruntime-web/dist/ort.js"></script>
+
+<!-- Firebase -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-app.js";
+  import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-auth.js";
+  import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyCM6r66kW9xkBA5rgVcz4sP57N2v2BMbkg",
+    authDomain: "ai-photo-studio-24354.firebaseapp.com",
+    projectId: "ai-photo-studio-24354",
+    storageBucket: "ai-photo-studio-24354.firebasestorage.app",
+    messagingSenderId: "411346648650",
+    appId: "1:411346648650:web:aefd1b26027ed5e8fab0b3",
+    measurementId: "G-8TXC63YKPD"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const db = getFirestore(app);
+
+  window.userPlan = "free";
+
+  onAuthStateChanged(auth, async (user) => {
+    if (!user) return window.location.href = "/signin.html";
+
+    const ref = doc(db, "users", user.uid);
+    const snap = await getDoc(ref);
+
+    if (snap.exists()) window.userPlan = snap.data().plan;
+  });
+</script>
+
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<div class="sidebar">
+  <div class="logo">AI Photo Studio</div>
+
+  <div class="tool-link" onclick="location.href='/editor-remove.html'">Remove Background</div>
+  <div class="tool-link active">Change Background</div>
+  <div class="tool-link" onclick="location.href='/index.html'">← Back to Dashboard</div>
+</div>
+
+<!-- MAIN -->
+<div class="main">
+
+  <div class="topbar">
+    <div style="font-size:18px;font-weight:600;">Change Background</div>
+    <div class="upgrade-btn" onclick="location.href='/upgrade.html'">Upgrade to Pro ✨</div>
+  </div>
+
+  <div class="content">
+
+    <div class="upload-box" onclick="document.getElementById('fileInput').click()">
+      <h3>Upload your photo</h3>
+      <p>PNG / JPG supported</p>
+    </div>
+    <input id="fileInput" type="file" accept="image/*" style="display:none" onchange="loadImage(event)">
+
+    <canvas id="editorCanvas"></canvas>
+
+    <h3 style="margin-top:30px;">Choose new background</h3>
+
+    <!-- BACKGROUND OPTIONS -->
+    <div class="bg-grid">
+
+      <!-- Solid Colors -->
+      <div class="bg-option" style="background:#ffffff" onclick="setBackground('#ffffff')"></div>
+      <div class="bg-option" style="background:#000000" onclick="setBackground('#000000')"></div>
+      <div class="bg-option" style="background:#3fb7ff" onclick="setBackground('#3fb7ff')"></div>
+      <div class="bg-option" style="background:#ff5f5f" onclick="setBackground('#ff5f5f')"></div>
+
+      <!-- Photo Backgrounds -->
+      <div class="bg-option" style="background-image:url('/stock/bg1.jpg')" onclick="setBackground('/stock/bg1.jpg')"></div>
+      <div class="bg-option" style="background-image:url('/stock/bg2.jpg')" onclick="setBackground('/stock/bg2.jpg')"></div>
+      <div class="bg-option" style="background-image:url('/stock/bg3.jpg')" onclick="setBackground('/stock/bg3.jpg')"></div>
+
+    </div>
+
+    <button class="action-btn" onclick="downloadImage()">Download</button>
+
+  </div>
+</div>
+
+<script>
+  let model = null;
+  let img = new Image();
+  let cutoutCanvas = document.createElement("canvas");
+  let cutoutCtx = cutoutCanvas.getContext("2d");
+
+  const canvas = document.getElementById("editorCanvas");
+  const ctx = canvas.getContext("2d");
+
+  async function loadU2() {
+    if (!model) model = await ort.InferenceSession.create("/models/u2net.onnx");
+    return model;
+  }
+
+  function loadImage(e){
+    const file=e.target.files[0];
+    if(!file)return;
+
+    const r=new FileReader();
+    r.onload=()=>{
+      img.onload=()=>{
+        canvas.width=img.width;
+        canvas.height=img.height;
+        cutoutCanvas.width=img.width;
+        cutoutCanvas.height=img.height;
+
+        ctx.drawImage(img,0,0);
+        autoRemoveBG();
+      };
+      img.src=r.result;
+    };
+    r.readAsDataURL(file);
+  }
+
+  async function autoRemoveBG(){
+    await loadU2();
+
+    const data = ctx.getImageData(0,0,canvas.width,canvas.height);
+    const input = preprocess(data);
+    const out = await model.run({ input });
+    const mask = out.output.data;
+
+    const rgba=data.data;
+    for(let i=0;i<mask.length;i++){
+      rgba[i*4+3]=mask[i]*255;
+    }
+    cutoutCtx.putImageData(data,0,0);
+
+    applyWatermarkIfNeeded();
+  }
+
+  function preprocess(d){
+    const{data,width,height}=d;
+    const f=new Float32Array(width*height*3);
+    for(let i=0;i<width*height;i++){
+      f[i]=data[i*4]/255;
+      f[i+width*height]=data[i*4+1]/255;
+      f[i+2*width*height]=data[i*4+2]/255;
+    }
+    return new ort.Tensor("float32",f,[1,3,height,width]);
+  }
+
+  async function setBackground(bg){
+    if(!img.src)return alert("Upload an image first.");
+
+    if(typeof bg==="string" && bg.startsWith("#")){
+      ctx.fillStyle=bg;
+      ctx.fillRect(0,0,canvas.width,canvas.height);
+    } else {
+      const bgImg=new Image();
+      bgImg.src=bg;
+      await bgImg.decode();
+      ctx.drawImage(bgImg,0,0,canvas.width,canvas.height);
+    }
+
+    ctx.drawImage(cutoutCanvas,0,0);
+
+    applyWatermarkIfNeeded();
+  }
+
+  function applyWatermarkIfNeeded(){
+    if(window.userPlan==="pro" || window.userPlan==="trial") return;
+
+    ctx.font="48px Inter";
+    ctx.fillStyle="rgba(255,255,255,0.4)";
+    ctx.textAlign="center";
+    ctx.fillText("AI PHOTO STUDIO",canvas.width/2,canvas.height/2);
+  }
+
+  function downloadImage(){
+    const a=document.createElement("a");
+    a.download="edited.png";
+    a.href=canvas.toDataURL("image/png");
+    a.click();
+  }
+</script>
+
+</body>
+</html>

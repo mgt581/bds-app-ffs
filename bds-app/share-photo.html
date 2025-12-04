@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Share Photo · AI Photo Studio</title>
+
+<style>
+body {
+    margin:0;
+    padding:0;
+    background:#0f172a;
+    font-family:Inter,sans-serif;
+    color:#fff;
+    text-align:center;
+}
+header {
+    background:#1e293b;
+    padding:16px 24px;
+    border-bottom:1px solid #334155;
+}
+.header-title { font-size:20px;font-weight:700;margin:0; }
+.container { max-width:650px;margin:30px auto;padding:10px; }
+img { max-width:100%;border-radius:12px; }
+.btn { width:100%;padding:14px;margin-top:14px;border-radius:8px;border:none;
+       font-weight:700;font-size:17px;cursor:pointer; }
+.btn-primary { background:#3b82f6;color:#fff; }
+.btn-secondary { background:#334155;color:#fff; }
+</style>
+
+</head>
+<body>
+
+<header><h1 class="header-title">Share Photo</h1></header>
+
+<div class="container">
+    <img id="photo">
+
+    <button class="btn btn-primary" id="shareBtn">Share</button>
+    <button class="btn btn-secondary" id="downloadBtn">Download</button>
+</div>
+
+<script>
+const params = new URLSearchParams(window.location.search);
+const imgURL = params.get("img");
+
+const photo = document.getElementById("photo");
+photo.src = imgURL;
+
+document.getElementById("shareBtn").onclick = async () => {
+    if (navigator.share) {
+        await navigator.share({
+            title: "AI Photo Studio",
+            text: "Check out my AI edited photo!",
+            url: imgURL
+        });
+    } else {
+        alert("Sharing not supported on this device.");
+    }
+};
+
+document.getElementById("downloadBtn").onclick = () => {
+    const a = document.createElement("a");
+    a.href = imgURL;
+    a.download = "AI-Photo-Studio.png";
+    a.click();
+};
+</script>
+
+</body>
+</html>

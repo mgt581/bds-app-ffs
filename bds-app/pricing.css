@@ -1,0 +1,109 @@
+body {
+  margin: 0;
+  padding: 0;
+  background: #0b1020;
+  font-family: system-ui;
+  color: white;
+}
+
+.top-bar {
+  background: #111827;
+  padding: 16px 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #1f2937;
+}
+
+.top-bar h1 {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.top-bar nav a {
+  margin-left: 20px;
+  color: #60a5fa;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.hero {
+  text-align: center;
+  padding: 40px 20px;
+}
+
+.hero h2 {
+  margin: 0;
+  font-size: 32px;
+  font-weight: 800;
+}
+
+.hero p {
+  margin-top: 8px;
+  font-size: 16px;
+  opacity: 0.8;
+}
+
+.pricing-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 28px;
+  padding: 40px 24px;
+}
+
+.plan {
+  background: #111827;
+  padding: 28px;
+  border-radius: 14px;
+  border: 1px solid #1f2937;
+}
+
+.plan.highlight {
+  border: 2px solid #4f46e5;
+  box-shadow: 0 0 20px rgba(79, 70, 229, 0.3);
+}
+
+.plan h3 {
+  margin-top: 0;
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.price {
+  font-size: 36px;
+  margin: 8px 0 16px;
+  font-weight: 900;
+}
+
+.plan ul {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 20px;
+}
+
+.plan ul li {
+  margin-bottom: 10px;
+  opacity: 0.8;
+}
+
+.plan button {
+  width: 100%;
+  padding: 14px;
+  border: none;
+  background: #4f46e5;
+  color: white;
+  border-radius: 10px;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.plan button:hover {
+  background: #4338ca;
+}
+
+button.disabled {
+  background: #333;
+  cursor: not-allowed;
+}

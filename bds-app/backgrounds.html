@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Select Background · AI Photo Studio</title>
+<link rel="stylesheet" href="backgrounds.css">
+
+<!-- Firebase Auth -->
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-app.js";
+import {
+  getAuth,
+  onAuthStateChanged
+} from "https://www.gstatic.com/firebasejs/12.6.0/firebase-auth.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyCM6r66kW9xkBA5rgVcz4sP57N2v2BMbkg",
+  authDomain: "ai-photo-studio-24354.firebaseapp.com",
+  projectId: "ai-photo-studio-24354",
+  storageBucket: "ai-photo-studio-24354.firebasestorage.app",
+  messagingSenderId: "411346648650",
+  appId: "1:411346648650:web:aefd1b26027ed5e8fab0b3"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+
+onAuthStateChanged(auth, (user) => {
+  if (!user) window.location.href = "/signin.html";
+});
+</script>
+
+</head>
+<body>
+
+<header class="top-bar">
+  <h1>Choose a Background</h1>
+  <nav>
+    <a href="/index.html">Dashboard</a>
+    <a href="/gallery.html">Gallery</a>
+    <a href="/profile.html">Profile</a>
+  </nav>
+</header>
+
+<div class="container">
+
+  <!-- UPLOAD CUSTOM -->
+  <div class="custom-upload">
+    <p>Upload your own background</p>
+    <button onclick="triggerUpload()">Upload Background</button>
+    <input type="file" id="bgUpload" hidden accept="image/*">
+  </div>
+
+  <!-- SECTION: SOLID COLOURS -->
+  <h2>Solid Colours</h2>
+  <div class="grid">
+    <div class="bg-item" style="background:#000" onclick="selectBG('#000')"></div>
+    <div class="bg-item" style="background:#fff" onclick="selectBG('#fff')"></div>
+    <div class="bg-item" style="background:#1f2937" onclick="selectBG('#1f2937')"></div>
+    <div class="bg-item" style="background:#4f46e5" onclick="selectBG('#4f46e5')"></div>
+    <div class="bg-item" style="background:#6b7280" onclick="selectBG('#6b7280')"></div>
+    <div class="bg-item" style="background:#e11d48" onclick="selectBG('#e11d48')"></div>
+  </div>
+
+  <!-- SECTION: GRADIENTS -->
+  <h2>Gradients</h2>
+  <div class="grid">
+    <div class="bg-item premium" style="background:linear-gradient(135deg,#4f46e5,#9333ea)" onclick="selectPremium()"></div>
+    <div class="bg-item premium" style="background:linear-gradient(135deg,#14b8a6,#0ea5e9)" onclick="selectPremium()"></div>
+    <div class="bg-item premium" style="background:linear-gradient(135deg,#f59e0b,#ef4444)" onclick="selectPremium()"></div>
+  </div>
+
+  <!-- SECTION: STUDIO / ABSTRACT -->
+  <h2>Studio Backgrounds</h2>
+  <div class="grid">
+    <div class="bg-item" style="background-image:url('bg-studio-1.jpg')" onclick="selectBG('bg-studio-1.jpg')"></div>
+    <div class="bg-item" style="background-image:url('bg-studio-2.jpg')" onclick="selectBG('bg-studio-2.jpg')"></div>
+    <div class="bg-item premium" style="background-image:url('bg-studio-3.jpg')" onclick="selectPremium()"></div>
+    <div class="bg-item premium" style="background-image:url('bg-studio-4.jpg')" onclick="selectPremium()"></div>
+  </div>
+
+</div>
+
+<script src="backgrounds.js"></script>
+
+</body>
+</html>
