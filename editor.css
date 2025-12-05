@@ -35,7 +35,6 @@ body {
     font-size: 16px;
 }
 
-/* Glow animation */
 .nav-btn:hover {
     background: #213247;
     transform: translateY(-2px);
@@ -59,7 +58,12 @@ body {
     transform: translateY(-2px);
 }
 
-/* TOP BAR */
+/* MAIN AREA */
+.main-area {
+    flex: 1;
+    padding: 24px;
+}
+
 .top-bar {
     display: flex;
     justify-content: space-between;
@@ -82,7 +86,7 @@ body {
     box-shadow: 0 0 15px #009dffaa;
 }
 
-/* EDITOR LAYOUT */
+/* EDITOR WRAPPER */
 .editor-wrapper {
     display: flex;
     gap: 20px;
@@ -96,12 +100,16 @@ body {
     padding: 20px;
     border-radius: 14px;
     border: 1px solid rgba(255,255,255,0.05);
+    position: relative;
     display: flex;
     flex-direction: column;
-    justify-content: center;
 }
 
-/* DRAG-AND-DROP */
+.canvas-panel.magic-erase-active {
+    cursor: crosshair;
+}
+
+/* DRAG & DROP */
 .drop-zone {
     border: 2px dashed rgba(255,255,255,0.15);
     border-radius: 12px;
@@ -118,6 +126,7 @@ body {
     transform: scale(1.02);
 }
 
+/* CANVAS */
 #canvas {
     width: 100%;
     height: auto;
@@ -125,7 +134,7 @@ body {
     background: #0b111a;
 }
 
-/* RIGHT PANEL — MATCHES BACKGROUND EDITOR STYLE */
+/* RIGHT PANEL */
 .tool-panel {
     width: 260px;
     background: #0f1621;
@@ -136,7 +145,7 @@ body {
 
 .tool-title {
     font-size: 20px;
-    margin-bottom: 16px;
+    margin: 16px 0;
     color: #4cc2ff;
     text-shadow: 0 0 12px #009dff77;
 }
