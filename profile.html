@@ -3,144 +3,146 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Your Account · AI Photo Studio</title>
+<title>My Account · AI Photo Studio</title>
 
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet" />
 
 <style>
     body {
-        margin: 0;
-        font-family: 'Inter', sans-serif;
-        background: #0f172a;
-        color: #fff;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
+        margin:0;
+        background:#0b0f1c;
+        font-family:Inter, system-ui, sans-serif;
+        color:white;
     }
 
-    /* TOP BAR */
-    .top-bar {
-        width: 100%;
-        background: #1e293b;
-        padding: 16px 22px;
-        border-bottom: 1px solid #334155;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        box-sizing: border-box;
+    .container {
+        max-width:650px;
+        margin:50px auto;
+        padding:20px;
+        background:#111827;
+        border-radius:16px;
+        border:1px solid #1f2937;
     }
 
-    .top-bar h1 {
-        margin: 0;
-        font-size: 20px;
-        font-weight: 700;
+    h1 {
+        font-size:30px;
+        margin-bottom:10px;
+        text-align:center;
     }
 
-    .top-bar a {
-        color: #60a5fa;
-        text-decoration: none;
-        font-size: 15px;
-        font-weight: 500;
+    p {
+        font-size:17px;
+        opacity:0.8;
+        text-align:center;
     }
 
-    /* PROFILE CARD */
-    .profile-wrapper {
-        margin-top: 60px;
-        background: #1e293b;
-        padding: 40px;
-        width: 380px;
-        border-radius: 14px;
-        border: 1px solid #334155;
-        box-shadow: 0 0 20px rgba(0,0,0,0.35);
-        text-align: center;
+    .info-box {
+        margin-top:30px;
+        background:#0f172a;
+        padding:20px;
+        border-radius:12px;
+        border:1px solid #1e293b;
     }
 
-    .profile-title {
-        font-size: 26px;
-        font-weight: 700;
-        margin-bottom: 10px;
+    .label {
+        opacity:0.6;
+        margin-bottom:6px;
+        font-size:14px;
     }
 
-    .user-email {
-        opacity: 0.8;
-        margin-bottom: 24px;
-        font-size: 15px;
+    .value {
+        font-size:18px;
+        margin-bottom:15px;
     }
 
-    .plan-box {
-        background: #0f172a;
-        padding: 18px;
-        border-radius: 10px;
-        border: 1px solid #334155;
-        margin-bottom: 28px;
+    button, .btn {
+        margin-top:20px;
+        width:100%;
+        padding:14px;
+        border-radius:10px;
+        border:none;
+        font-size:17px;
+        cursor:pointer;
     }
 
-    .plan-status {
-        font-size: 16px;
-        font-weight: 600;
-        margin-bottom: 6px;
+    .upgrade-btn {
+        background:#3fb7ff;
+        color:black;
+        font-weight:700;
     }
 
-    .plan-details {
-        opacity: 0.75;
-        font-size: 14px;
+    .logout-btn {
+        background:#dc2626;
+        color:white;
+        font-weight:600;
     }
 
-    /* BUTTONS */
-    .btn {
-        width: 100%;
-        padding: 14px;
-        border-radius: 8px;
-        border: none;
-        cursor: pointer;
-        font-size: 16px;
-        font-weight: 600;
-        margin-top: 14px;
-    }
-
-    .btn-upgrade {
-        background: #3b82f6;
-        color: #fff;
-    }
-
-    .btn-upgrade:hover {
-        background: #60a5fa;
-    }
-
-    .btn-logout {
-        background: #ef4444;
-        color: #fff;
-    }
-
-    .btn-logout:hover {
-        background: #f87171;
-    }
+    .upgrade-btn:hover { background:#60c8ff; }
+    .logout-btn:hover { background:#ef4444; }
 </style>
-</head>
 
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-app.js";
+    import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-auth.js";
+    import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+        apiKey: "AIzaSyCM6r66kW9xkBA5rgVcz4sP57N2v2BMbkg",
+        authDomain: "ai-photo-studio-24354.firebaseapp.com",
+        projectId: "ai-photo-studio-24354",
+        storageBucket: "ai-photo-studio-24354.firebasestorage.app",
+        messagingSenderId: "411346648650",
+        appId: "1:411346648650:web:aefd1b26027ed5e8fab0b3"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    onAuthStateChanged(auth, async (user) => {
+        if (!user) return window.location.href = "/signin.html";
+
+        document.getElementById("emailValue").innerText = user.email;
+
+        const ref = doc(db, "users", user.uid);
+        const snap = await getDoc(ref);
+
+        let plan = "Free User";
+        if (snap.exists()) {
+            const data = snap.data();
+            if (data.plan === "pro") plan = "Pro Member";
+            if (data.plan === "trial") plan = "Trial (7 days)";
+            if (data.plan === "daypass") plan = "Day Pass Active";
+        }
+
+        document.getElementById("planValue").innerText = plan;
+    });
+
+    window.logout = () => {
+        signOut(auth).then(() => {
+            window.location.href = "/signin.html";
+        });
+    };
+</script>
+
+</head>
 <body>
 
-    <!-- TOP BAR -->
-    <header class="top-bar">
-        <h1>AI Photo Studio</h1>
-        <a href="editor.html">Back</a>
-    </header>
+<div class="container">
+    <h1>My Account</h1>
+    <p>Manage your profile, subscription and settings.</p>
 
-    <!-- ACCOUNT CARD -->
-    <div class="profile-wrapper">
-        <div class="profile-title">Your Account</div>
+    <div class="info-box">
+        <div class="label">Email</div>
+        <div class="value" id="emailValue">Loading…</div>
 
-        <div class="user-email" id="userEmail">Loading...</div>
-
-        <div class="plan-box">
-            <div class="plan-status" id="planStatus">Checking plan...</div>
-            <div class="plan-details" id="planDetails">Please wait...</div>
-        </div>
-
-        <button class="btn btn-upgrade" id="upgradeBtn">Upgrade to PRO</button>
-        <button class="btn btn-logout" id="logoutBtn">Sign Out</button>
+        <div class="label">Subscription Plan</div>
+        <div class="value" id="planValue">Loading…</div>
     </div>
 
-    <script type="module" src="profile.js"></script>
+    <a class="btn upgrade-btn" href="/pricing.html">Upgrade Membership</a>
+    <button class="logout-btn" onclick="logout()">Log Out</button>
+</div>
+
 </body>
 </html>
