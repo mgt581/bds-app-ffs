@@ -9,9 +9,13 @@
     "cleanUrls": true,
     "rewrites": [
       {
-        "source": "**",
+        "source": "/(index|signin|signup|profile|dashboard|editor|gallery|pricing|upgrade).html",
         "destination": "/index.html"
       }
-    ]
+    ],
+    "notFound": {
+      "source": "**",
+      "destination": "/404.html"
+    }
   }
 }
