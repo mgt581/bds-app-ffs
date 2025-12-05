@@ -1,9 +1,11 @@
+/* GLOBAL */
 body {
     margin: 0;
     background: #0d1117;
     color: white;
     font-family: 'Inter', sans-serif;
     display: flex;
+    overflow: hidden;
 }
 
 /* SIDEBAR */
@@ -14,6 +16,7 @@ body {
     border-right: 1px solid rgba(255,255,255,0.05);
     display: flex;
     flex-direction: column;
+    height: 100vh;
 }
 
 .logo {
@@ -31,8 +34,9 @@ body {
     border: 1px solid #1f2a3a;
     color: white;
     cursor: pointer;
-    transition: 0.25s ease;
+    transition: 0.25s;
     font-size: 16px;
+    text-align: left;
 }
 
 .nav-btn:hover {
@@ -40,6 +44,17 @@ body {
     transform: translateY(-2px);
     box-shadow: 0 0 12px #009dffaa;
     border-color: #4cc2ff;
+}
+
+.upgrade-btn {
+    background: #0078ff;
+    border-color: #4cc2ff;
+    text-align: center;
+}
+
+.upgrade-btn:hover {
+    background: #0094ff;
+    box-shadow: 0 0 16px #00b7ffcc;
 }
 
 .sign-out {
@@ -62,6 +77,9 @@ body {
 .main-area {
     flex: 1;
     padding: 24px;
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
 }
 
 .top-bar {
@@ -70,6 +88,15 @@ body {
     margin-bottom: 20px;
 }
 
+.dropdown {
+    background: #1a2330;
+    padding: 12px 18px;
+    border-radius: 8px;
+    border: 1px solid #1f2a3a;
+    cursor: pointer;
+}
+
+/* SAVE BUTTON */
 .save-btn {
     background: #0078ff;
     padding: 12px 20px;
@@ -86,14 +113,14 @@ body {
     box-shadow: 0 0 15px #009dffaa;
 }
 
-/* EDITOR WRAPPER */
+/* WRAPPER */
 .editor-wrapper {
     display: flex;
     gap: 20px;
     height: calc(100vh - 120px);
 }
 
-/* LEFT PANEL */
+/* CANVAS PANEL */
 .canvas-panel {
     flex: 1;
     background: #0f1621;
@@ -109,7 +136,6 @@ body {
     cursor: crosshair;
 }
 
-/* DRAG & DROP */
 .drop-zone {
     border: 2px dashed rgba(255,255,255,0.15);
     border-radius: 12px;
@@ -134,13 +160,14 @@ body {
     background: #0b111a;
 }
 
-/* RIGHT PANEL */
+/* TOOL PANEL */
 .tool-panel {
-    width: 260px;
+    width: 280px;
     background: #0f1621;
     border-radius: 14px;
     border: 1px solid rgba(255,255,255,0.08);
     padding: 20px;
+    overflow-y: auto;
 }
 
 .tool-title {
@@ -148,6 +175,12 @@ body {
     margin: 16px 0;
     color: #4cc2ff;
     text-shadow: 0 0 12px #009dff77;
+}
+
+.tool-subtitle {
+    font-size: 16px;
+    opacity: 0.8;
+    margin: 12px 0 8px;
 }
 
 .tool-btn {
@@ -167,4 +200,58 @@ body {
     transform: translateY(-2px);
     border-color: #4cc2ff;
     box-shadow: 0 0 12px #009dffaa;
+}
+
+/* BACKGROUND GALLERY */
+.bg-gallery {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 14px;
+}
+
+.bg-gallery img {
+    width: 75px;
+    height: 75px;
+    border-radius: 8px;
+    object-fit: cover;
+    cursor: pointer;
+    border: 2px solid transparent;
+    transition: 0.2s;
+}
+
+.bg-gallery img:hover {
+    border-color: #4cc2ff;
+    box-shadow: 0 0 8px #009dff88;
+}
+
+/* SOLID COLOURS */
+.color-selector {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 14px;
+}
+
+.color-swatch {
+    width: 55px;
+    height: 55px;
+    border-radius: 12px;
+    cursor: pointer;
+    border: 2px solid transparent;
+    transition: 0.2s;
+}
+
+.color-swatch:hover {
+    transform: scale(1.07);
+    border-color: #4cc2ff;
+    box-shadow: 0 0 12px #009dffaa;
+}
+
+/* SCROLL FIX */
+.tool-panel::-webkit-scrollbar {
+    width: 6px;
+}
+.tool-panel::-webkit-scrollbar-thumb {
+    background: #1f2d40;
+    border-radius: 10px;
 }
