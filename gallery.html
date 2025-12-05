@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gallery - AI Photo Studio</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="gallery.css">
+</head>
+
+<body>
+
+<header class="gallery-header">
+    <h1>My Albums</h1>
+
+    <div class="header-buttons">
+        <button onclick="location.href='editor.html'" class="back-btn">⬅ Back to Editor</button>
+        <button onclick="logout()" class="logout-btn">Sign Out</button>
+    </div>
+</header>
+
+<main>
+    <div id="albumGrid" class="album-grid">
+        <p id="loadingText">Loading your albums...</p>
+    </div>
+
+    <!-- PRO-ONLY ALBUM CREATION BUTTON -->
+    <button id="createAlbumBtn" class="create-album-btn">+ New Album</button>
+</main>
+
+<!-- MODAL FOR CREATING ALBUM -->
+<div id="albumModal" class="modal hidden">
+    <div class="modal-content">
+        <h2>Create New Album</h2>
+
+        <input id="albumNameInput" type="text" placeholder="Album Name">
+
+        <div class="modal-actions">
+            <button onclick="closeAlbumModal()" class="cancel-btn">Cancel</button>
+            <button onclick="createAlbum()" class="create-btn">Create</button>
+        </div>
+    </div>
+</div>
+
+<script type="module" src="gallery.js"></script>
+
+</body>
+</html>

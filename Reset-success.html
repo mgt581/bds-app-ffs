@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Password Reset Sent</title>
+
+<link rel="manifest" href="/bds-app/public/manifest.webmanifest">
+<link rel="apple-touch-icon" href="/bds-app/public/logo192.png">
+
+<style>
+ /* success theme */
+</style>
+</head>
+
+<body>
+
+<div class="card">
+  <h1>✔ Email Sent</h1>
+  <p>Please check your inbox to finish resetting your password.</p>
+  <button onclick="window.location='/bds-app/public/signin.html'">Return to Sign In</button>
+</div>
+
+<script>
+if ("serviceWorker" in navigator) {
+  navigator.serviceWorker.register("/bds-app/public/sw.js")
+    .catch(err => console.log("SW failed:", err));
+}
+</script>
+
+</body>
+</html>
