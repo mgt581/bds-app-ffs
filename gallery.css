@@ -1,47 +1,187 @@
+/* ============================================================
+   GLOBAL
+============================================================ */
 body {
     margin: 0;
-    font-family: Inter, sans-serif;
     background: #0d1117;
-    color: #fff;
+    color: white;
+    font-family: 'Inter', sans-serif;
     display: flex;
+    overflow: hidden;
 }
 
-/* SIDEBAR */
+/* ============================================================
+   SIDEBAR
+============================================================ */
 .sidebar {
     width: 260px;
     background: #0b0f14;
-    height: 100vh;
     padding: 24px 16px;
+    border-right: 1px solid rgba(255,255,255,0.05);
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
 }
 
 .logo {
-    font-size: 24px;
+    font-size: 26px;
     color: #4cc2ff;
-    text-shadow: 0 0 12px #009dff77;
+    text-shadow: 0 0 15px #00aaff77;
     margin-bottom: 20px;
 }
 
-/* MAIN */
-.main {
-    flex: 1;
-    padding: 20px;
+.nav-btn {
+    padding: 14px;
+    border-radius: 10px;
+    margin-bottom: 12px;
+    background: #1a2330;
+    border: 1px solid #1f2a3a;
+    color: white;
+    cursor: pointer;
+    transition: 0.25s;
 }
 
+.nav-btn:hover {
+    background: #213247;
+    transform: translateY(-2px);
+    border-color: #4cc2ff;
+    box-shadow: 0 0 12px #009dffaa;
+}
+
+.sign-out {
+    background: #d94141;
+    padding: 14px;
+    border-radius: 10px;
+    margin-top: auto;
+    border: none;
+    cursor: pointer;
+    transition: 0.25s;
+}
+
+.sign-out:hover {
+    background: #ff6060;
+    transform: translateY(-2px);
+}
+
+/* ============================================================
+   MAIN AREA
+============================================================ */
+.main-area {
+    flex: 1;
+    padding: 24px;
+    overflow-y: auto;
+}
+
+.page-title {
+    font-size: 24px;
+    color: #4cc2ff;
+    margin-bottom: 20px;
+    text-shadow: 0 0 12px #00aaff77;
+}
+
+/* ============================================================
+   GALLERY GRID
+============================================================ */
 .gallery-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
     gap: 18px;
-    margin-top: 20px;
+    padding-bottom: 30px;
 }
 
-.gallery-grid img {
-    width: 100%;
+.gallery-item {
+    position: relative;
     border-radius: 12px;
+    overflow: hidden;
+    background: #111821;
+    border: 1px solid rgba(255,255,255,0.06);
+    transition: 0.25s;
+}
+
+.gallery-item:hover {
+    transform: scale(1.04);
+    border-color: #4cc2ff;
+    box-shadow: 0 0 16px #009dffaa;
+}
+
+.gallery-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* ============================================================
+   TOP-RIGHT BUTTONS (VIEW / DELETE)
+============================================================ */
+.item-actions {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    display: flex;
+    gap: 8px;
+}
+
+.action-btn {
+    background: rgba(0,0,0,0.55);
+    padding: 8px;
+    border-radius: 6px;
+    font-size: 16px;
+    border: 1px solid rgba(255,255,255,0.2);
     cursor: pointer;
     transition: 0.2s;
 }
 
-.gallery-grid img:hover {
-    transform: scale(1.04);
+.action-btn:hover {
+    background: rgba(0,0,0,0.85);
+    border-color: #4cc2ff;
     box-shadow: 0 0 12px #009dffaa;
+}
+
+/* ============================================================
+   FULLSCREEN VIEWER
+============================================================ */
+#fullscreenViewer {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.85);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 999;
+}
+
+#fullscreenViewer img {
+    max-width: 90%;
+    max-height: 90%;
+    border-radius: 12px;
+    box-shadow: 0 0 20px #009dffaa;
+}
+
+#closeViewer {
+    position: absolute;
+    top: 25px;
+    right: 25px;
+    font-size: 32px;
+    cursor: pointer;
+    color: white;
+}
+
+/* ============================================================
+   MOBILE RESPONSIVE
+============================================================ */
+@media (max-width: 860px) {
+    .sidebar {
+        display: none;
+    }
+
+    .main-area {
+        padding: 15px;
+    }
+
+    .gallery-grid {
+        grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    }
 }
