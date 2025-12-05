@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Subscription Expired · AI Photo Studio</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: radial-gradient(circle at center, #0d1127, #000);
+            font-family: "Inter", sans-serif;
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            height: 100vh;
+        }
+
+        .card {
+            width: 90%;
+            max-width: 420px;
+            background: rgba(17, 25, 48, 0.55);
+            padding: 38px;
+            border-radius: 18px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(12px);
+            box-shadow: 0 0 35px rgba(255, 0, 0, 0.22);
+        }
+
+        h1 {
+            margin: 0;
+            font-size: 28px;
+            margin-bottom: 10px;
+            font-weight: 700;
+            color: #ff5b5b;
+            text-shadow: 0 0 15px rgba(255, 0, 0, 0.55);
+        }
+
+        p {
+            opacity: 0.8;
+            font-size: 15px;
+            margin-bottom: 25px;
+            line-height: 1.45;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 14px;
+            border-radius: 12px;
+            border: none;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 12px;
+            transition: 0.25s ease;
+        }
+
+        .upgrade {
+            background: linear-gradient(90deg, #3b82f6, #4f46e5);
+            color: white;
+            box-shadow: 0 0 25px rgba(59,130,246,0.4);
+        }
+
+        .upgrade:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 0 35px rgba(59,130,246,0.7);
+        }
+
+        .back {
+            background: rgba(255,255,255,0.12);
+            color: white;
+        }
+
+        .back:hover {
+            background: rgba(255,255,255,0.18);
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="card">
+        <h1>Subscription Expired</h1>
+
+        <p>Your PRO membership has ended.<br>
+        Upgrade now to restore unlimited editing and remove all watermarks.</p>
+
+        <button class="btn upgrade" onclick="location.href='pricing.html'">
+            Upgrade to PRO
+        </button>
+
+        <button class="btn back" onclick="location.href='account.html'">
+            View Your Account
+        </button>
+    </div>
+
+</body>
+</html>

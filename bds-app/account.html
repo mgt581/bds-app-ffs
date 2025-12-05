@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>My Account · AI Photo Studio</title>
+
+<style>
+  body {
+    margin:0;
+    font-family:system-ui;
+    background:#0b1020;
+    color:white;
+  }
+
+  header {
+    background:#111827;
+    padding:20px;
+    text-align:center;
+    font-size:20px;
+    font-weight:700;
+    border-bottom:1px solid #1f2937;
+  }
+
+  .container {
+    max-width:700px;
+    margin:30px auto;
+    padding:20px;
+  }
+
+  .section {
+    background:#111827;
+    padding:22px;
+    border-radius:14px;
+    margin-bottom:20px;
+    border:1px solid #1f2937;
+  }
+
+  h2 {
+    margin-top:0;
+    font-size:18px;
+  }
+
+  .label {
+    color:#9ca3af;
+    font-size:14px;
+    margin-bottom:4px;
+  }
+
+  .value {
+    font-size:16px;
+    margin-bottom:14px;
+  }
+
+  .btn {
+    width:100%;
+    padding:14px;
+    border-radius:10px;
+    border:0;
+    font-size:16px;
+    font-weight:700;
+    cursor:pointer;
+    margin-top:10px;
+  }
+
+  .primary-btn {
+    background:#3b82f6;
+    color:white;
+  }
+
+  .secondary-btn {
+    background:#1f2937;
+    color:white;
+    border:1px solid #374151;
+  }
+
+  .danger-btn {
+    background:#b91c1c;
+    color:white;
+  }
+</style>
+</head>
+
+<body>
+
+<header>My Account</header>
+
+<div class="container">
+
+  <!-- USER INFO -->
+  <div class="section">
+    <h2>Profile</h2>
+    <div class="label">Email</div>
+    <div id="userEmail" class="value">Loading…</div>
+
+    <div class="label">Account Type</div>
+    <div id="planType" class="value">Checking…</div>
+  </div>
+
+  <!-- SUBSCRIPTION -->
+  <div class="section">
+    <h2>Subscription</h2>
+
+    <div class="label">Status</div>
+    <div id="subStatus" class="value">Loading…</div>
+
+    <div class="label">Next Billing</div>
+    <div id="billingDate" class="value">—</div>
+
+    <button id="upgradeBtn" class="btn primary-btn" onclick="window.location.href='/pricing.html'">
+      Upgrade to Premium
+    </button>
+
+    <button id="manageBtn" class="btn secondary-btn hidden"
+      onclick="window.location.href='https://billing.stripe.com/p/login/28E28t1Lx7WKdzDcpX6J200'">
+      Manage Subscription
+    </button>
+  </div>
+
+  <!-- OTHER LINKS -->
+  <div class="section">
+    <button class="btn secondary-btn" onclick="window.location.href='/gallery.html'">
+      View My Saves
+    </button>
+
+    <button class="btn secondary-btn" onclick="window.location.href='/index.html'">
+      Back to Editor
+    </button>
+
+    <button class="btn danger-btn" onclick="logout()">
+      Sign Out
+    </button>
+  </div>
+
+</div>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-app.js";
+  import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-auth.js";
+  import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyCM6r66kW9xkBA5rgVcz4sP57N2v2BMbkg",
+    authDomain: "ai-photo-studio-24354.firebaseapp.com",
+    projectId: "ai-photo-studio-24354",
+    storageBucket: "ai-photo-studio-24354.firebasestorage.app",
+    messagingSenderId: "411346648650",
+    appId: "1:411346648650:web:aefd1b26027ed5e8fab0b3",
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const db = getFirestore(app);
+
+  onAuthStateChanged(auth, async (user) => {
+    if (!user) {
+      window.location.href = "/signin.html";
+      return;
+    }
+
+    // Display user email
+    document.getElementById("userEmail").innerText = user.email;
+
+    // Load subscription info
+    const ref = doc(db, "users", user.uid);
+    const snap = await getDoc(ref);
+
+    let plan = "Free";
+    let status = "Not Subscribed";
+
+    if (snap.exists() && snap.data().plan) {
+      plan = snap.data().plan;
+      status = snap.data().status || "Active";
+    }
+
+    // Display plan
+    document.getElementById("planType").innerText = plan;
+    document.getElementById("subStatus").innerText = status;
+
+    // Billing date placeholder (Stripe webhooks later)
+    document.getElementById("billingDate").innerText =
+      snap.exists() && snap.data().billingDate
+        ? snap.data().billingDate
+        : "—";
+
+    // Switch buttons depending on plan
+    if (plan === "Free") {
+      document.getElementById("upgradeBtn").classList.remove("hidden");
+      document.getElementById("manageBtn").classList.add("hidden");
+    } else {
+      document.getElementById("upgradeBtn").classList.add("hidden");
+      document.getElementById("manageBtn").classList.remove("hidden");
+    }
+  });
+
+  window.logout = function () {
+    signOut(auth).then(() => window.location.href = "/signin.html");
+  };
+</script>
+
+</body>
+</html>

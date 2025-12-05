@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Finished Edit · AI Photo Studio</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<!-- PWA -->
+<link rel="manifest" href="/bds-app/public/manifest.webmanifest">
+<link rel="apple-touch-icon" href="/bds-app/public/logo192.png">
+<meta name="theme-color" content="#0f172a">
+
+<style>
+    body {
+        margin: 0;
+        padding: 0;
+        background: #0f172a;
+        font-family: "Inter", sans-serif;
+        color: white;
+        text-align: center;
+    }
+
+    header {
+        background: #1e293b;
+        padding: 16px 24px;
+        border-bottom: 1px solid #334155;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    header h1 {
+        margin: 0;
+        font-size: 20px;
+        font-weight: 700;
+    }
+
+    header a {
+        color: #60a5fa;
+        text-decoration: none;
+        font-size: 15px;
+    }
+
+    .container {
+        max-width: 650px;
+        margin: 30px auto;
+        padding: 10px;
+    }
+
+    .card {
+        background: #1e293b;
+        border: 1px solid #334155;
+        border-radius: 14px;
+        padding: 20px;
+        margin-bottom: 26px;
+        box-shadow: 0 0 24px rgba(0,0,0,0.35);
+    }
+
+    img {
+        max-width: 100%;
+        border-radius: 12px;
+        background: #000;
+    }
+
+    h2 {
+        margin-bottom: 16px;
+        font-size: 22px;
+        font-weight: 600;
+    }
+
+    .btn {
+        width: 100%;
+        padding: 14px;
+        margin-top: 14px;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 17px;
+        font-weight: 600;
+    }
+
+    .btn-primary { background:#3b82f6;color:#fff; }
+    .btn-secondary { background:#334155;color:#fff; }
+    .btn-secondary:hover { background:#475569; }
+    .btn-success { background:#10b981;color:#fff; }
+</style>
+
+</head>
+
+<body>
+
+<header>
+    <h1>Finished Edit</h1>
+    <a href="editor.html">Back</a>
+</header>
+
+<div class="container">
+
+    <div class="card">
+        <h2>Before</h2>
+        <img id="beforeImg" alt="Before Image">
+    </div>
+
+    <div class="card">
+        <h2>After</h2>
+        <img id="afterImg" alt="After Image">
+    </div>
+
+    <button class="btn btn-primary" id="downloadBtn">Download Image</button>
+    <button class="btn btn-success" id="saveGalleryBtn">Save to My Gallery</button>
+    <button class="btn btn-secondary" id="shareBtn">Share Photo</button>
+
+    <button class="btn btn-secondary" onclick="location.href='editor.html'">Back to Editor</button>
+
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { 
+    getFirestore, 
+    collection, 
+    addDoc, 
+    serverTimestamp 
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+import {
+    getAuth,
+    onAuthStateChanged
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+
+// FIREBASE CONFIG
+const firebaseConfig = {
+    apiKey: "AIzaSyCM6r66kW9xkBA5rgVcz4sP57N2v2BMbkg",
+    authDomain: "ai-photo-studio-24354.firebaseapp.com",
+    projectId: "ai-photo-studio-24354",
+    storageBucket: "ai-photo-studio-24354.firebasestorage.app",
+    messagingSenderId: "411346648650",
+    appId: "1:411346648650:web:aefd1b26027ed5e8fab0b3"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+const auth = getAuth(app);
+
+// LOAD IMAGES FROM LOCALSTORAGE
+const beforeImg = document.getElementById("beforeImg");
+const afterImg = document.getElementById("afterImg");
+
+const before = localStorage.getItem("beforeImage");
+const after = localStorage.getItem("afterImage");
+
+if (!before || !after) {
+    alert("No images found.");
+    window.location.href = "editor.html";
+}
+
+beforeImg.src = before;
+afterImg.src = after;
+
+// DOWNLOAD BUTTON
+document.getElementById("downloadBtn").onclick = () => {
+    const a = document.createElement("a");
+    a.href = after;
+    a.download = "AI-Photo-Studio.png";
+    a.click();
+};
+
+// SHARE BUTTON
+document.getElementById("shareBtn").onclick = async () => {
+    if (navigator.share) {
+        await navigator.share({
+            title: "AI Photo Studio",
+            text: "Check out my AI-edited photo!",
+            url: after
+        });
+    } else {
+        alert("Sharing not supported on this device.");
+    }
+};
+
+// SAVE TO GALLERY
+document.getElementById("saveGalleryBtn").onclick = () => {
+    onAuthStateChanged(auth, async (user) => {
+        if (!user) return alert("You must be signed in.");
+
+        await addDoc(
+            collection(db, "users", user.uid, "gallery"),
+            {
+                before,
+                after,
+                createdAt: serverTimestamp()
+            }
+        );
+
+        alert("Saved to your gallery!");
+        window.location.href = "gallery.html";
+    });
+};
+</script>
+
+<!-- PREMIUM CHECK -->
+<script type="module" src="premium-check.js"></script>
+
+<!-- SERVICE WORKER -->
+<script>
+if ("serviceWorker" in navigator) {
+    navigator.serviceWorker.register("/bds-app/public/sw.js")
+      .catch(err => console.log("SW failed:", err));
+}
+</script>
+
+</body>
+</html>

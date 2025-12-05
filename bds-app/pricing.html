@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pricing · AI Photo Studio</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<link rel="manifest" href="/bds-app/public/manifest.webmanifest">
+<link rel="apple-touch-icon" href="/bds-app/public/logo192.png">
+<meta name="theme-color" content="#0f172a">
+
+<style>
+body {
+    margin: 0;
+    background: #0f172a;
+    font-family: "Inter", sans-serif;
+    color: white;
+    text-align: center;
+}
+
+header {
+    background: #1e293b;
+    padding: 16px;
+    border-bottom: 1px solid #334155;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+header h1 { margin: 0; font-size: 20px; }
+header a { color: #60a5fa; text-decoration:none; }
+
+.container {
+    max-width: 900px;
+    margin: 20px auto;
+    padding: 10px;
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit,minmax(280px,1fr));
+    gap: 20px;
+}
+
+.card {
+    background: #1e293b;
+    border: 1px solid #334155;
+    border-radius: 16px;
+    padding: 25px 20px;
+    box-shadow: 0 0 24px rgba(0,0,0,0.35);
+}
+
+h2 {
+    font-size: 22px;
+    margin-bottom: 10px;
+}
+
+.price {
+    font-size: 34px;
+    font-weight: 700;
+    margin: 10px 0;
+}
+
+ul {
+    list-style: none;
+    padding: 0;
+    font-size: 14px;
+    color: #cbd5e1;
+}
+
+ul li {
+    margin-bottom: 8px;
+}
+
+.btn {
+    width: 100%;
+    margin-top: 14px;
+    padding: 14px;
+    border-radius: 10px;
+    border: none;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.btn-primary { background:#3b82f6;color:white; }
+.btn-secondary { background:#334155;color:white; }
+</style>
+
+</head>
+
+<body>
+
+<header>
+    <h1>Pricing</h1>
+    <a href="index.html">Back</a>
+</header>
+
+<div class="container">
+
+    <h2 style="margin-bottom:25px;">Unlock the full power of AI Photo Studio</h2>
+
+    <div class="grid">
+
+        <!-- DAY PASS -->
+        <div class="card">
+            <h2>Day Pass</h2>
+            <div class="price">£1.00</div>
+            <ul>
+                <li>Full access for 24 hours</li>
+                <li>No watermark</li>
+                <li>Unlimited edits</li>
+            </ul>
+            <button class="btn btn-primary"
+                onclick="location.href='https://buy.stripe.com/28E28t1Lx7WKdzDcpX6J200'">
+                Buy Day Pass
+            </button>
+        </div>
+
+        <!-- MONTHLY -->
+        <div class="card">
+            <h2>Monthly</h2>
+            <div class="price">£4.99</div>
+            <ul>
+                <li>Unlimited editing</li>
+                <li>No watermark</li>
+                <li>HD downloads</li>
+            </ul>
+            <button class="btn btn-primary"
+                onclick="location.href='https://buy.stripe.com/5kQ14p89Vel8gLP75D6J20d'">
+                Go Monthly
+            </button>
+        </div>
+
+        <!-- YEARLY -->
+        <div class="card">
+            <h2>Yearly</h2>
+            <div class="price">£24.99</div>
+            <ul>
+                <li>Save 60%</li>
+                <li>No watermark</li>
+                <li>Unlimited HD exports</li>
+            </ul>
+            <button class="btn btn-primary"
+                onclick="location.href='https://buy.stripe.com/5kQeVfduf4Kybrv75D6J20e'">
+                Go Yearly
+            </button>
+        </div>
+
+    </div>
+</div>
+
+<script type="module" src="premium-check.js"></script>
+
+<script>
+if ("serviceWorker" in navigator) {
+    navigator.serviceWorker.register("/bds-app/public/sw.js");
+}
+</script>
+
+</body>
+</html>

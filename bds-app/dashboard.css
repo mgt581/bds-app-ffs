@@ -1,0 +1,289 @@
+/* -----------------------------------------------------------
+   GLOBAL STYLING
+----------------------------------------------------------- */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: system-ui, sans-serif;
+    background: #0b1020;
+    color: white;
+    display: flex;
+    height: 100vh;
+    overflow: hidden;
+}
+
+/* Hide scrollbars for panels */
+::-webkit-scrollbar { width: 0; }
+
+/* -----------------------------------------------------------
+   SIDEBAR
+----------------------------------------------------------- */
+.sidebar {
+    width: 230px;
+    background: #111827;
+    border-right: 1px solid #1f2937;
+    padding: 25px 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.logo {
+    font-size: 26px;
+    font-weight: 700;
+    line-height: 1.2;
+    color: #60a5fa;
+    margin-bottom: 40px;
+}
+
+nav .nav-item {
+    display: block;
+    padding: 12px 0;
+    font-size: 15px;
+    font-weight: 600;
+    color: #cbd5e1;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+nav .nav-item:hover {
+    color: white;
+}
+
+nav .active {
+    color: #60a5fa;
+}
+
+.sidebar-bottom {
+    margin-top: 40px;
+}
+
+.user-email {
+    color: #9ca3af;
+    font-size: 13px;
+    margin-bottom: 12px;
+}
+
+.logout-btn {
+    width: 100%;
+    background: #ef4444;
+    border: none;
+    padding: 10px;
+    color: white;
+    font-weight: 600;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.logout-btn:hover {
+    background: #dc2626;
+}
+
+/* -----------------------------------------------------------
+   MAIN CONTENT
+----------------------------------------------------------- */
+.main-content {
+    flex: 1;
+    padding: 25px;
+    overflow: auto;
+}
+
+/* -----------------------------------------------------------
+   UPGRADE BANNER
+----------------------------------------------------------- */
+.upgrade-banner {
+    background: linear-gradient(90deg, #1e3a8a, #1d4ed8);
+    padding: 14px 20px;
+    border-radius: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+    color: #e0e7ff;
+    box-shadow: 0 0 15px rgba(29, 78, 216, 0.3);
+}
+
+.upgrade-btn {
+    background: #facc15;
+    color: #0f172a;
+    font-weight: 700;
+    padding: 10px 18px;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.upgrade-btn:hover {
+    background: #eab308;
+}
+
+/* Hide banner when user is PRO */
+body.pro-user .upgrade-banner {
+    display: none !important;
+}
+
+/* -----------------------------------------------------------
+   EDITOR WRAPPER
+----------------------------------------------------------- */
+.editor-wrapper {
+    display: flex;
+    gap: 25px;
+    height: calc(100vh - 150px);
+}
+
+/* -----------------------------------------------------------
+   IMAGE PREVIEW AREA
+----------------------------------------------------------- */
+.preview-box {
+    background: #0f172a;
+    flex: 1;
+    border-radius: 12px;
+    border: 1px solid #1f2937;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.preview-img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+    transition: 0.3s;
+}
+
+/* Canvas overlay for edits */
+#workCanvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+/* Watermark (free users only) */
+.wm {
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
+    font-size: 22px;
+    opacity: 0.35;
+    font-weight: 700;
+}
+
+/* -----------------------------------------------------------
+   BEFORE/AFTER SLIDER
+----------------------------------------------------------- */
+.before-after {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 50%;
+    height: 100%;
+    pointer-events: none;
+    border-right: 2px solid #60a5fa;
+    transition: width 0.25s ease;
+}
+
+/* Hidden utility */
+.hidden {
+    display: none !important;
+}
+
+/* -----------------------------------------------------------
+   TOOL DOCK
+----------------------------------------------------------- */
+.tool-dock {
+    width: 220px;
+    background: #111827;
+    border-left: 1px solid #1f2937;
+    border-radius: 12px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.tool-dock button {
+    background: #1f2937;
+    border: 1px solid #334155;
+    padding: 12px;
+    border-radius: 10px;
+    font-size: 14px;
+    color: white;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.tool-dock button:hover {
+    background: #374151;
+}
+
+/* -----------------------------------------------------------
+   BACKGROUND PANEL
+----------------------------------------------------------- */
+.bg-panel {
+    position: fixed;
+    right: 0;
+    top: 0;
+    width: 320px;
+    height: 100vh;
+    background: #111827;
+    border-left: 1px solid #1f2937;
+    padding: 25px;
+    z-index: 50;
+    transform: translateX(100%);
+    transition: transform 0.25s ease-in-out;
+}
+
+.bg-panel.open {
+    transform: translateX(0);
+}
+
+.bg-panel h3 {
+    font-size: 20px;
+    margin-bottom: 20px;
+}
+
+.bg-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+}
+
+.bg-option {
+    width: 100%;
+    height: 110px;
+    border-radius: 8px;
+    background-size: cover;
+    background-position: center;
+    cursor: pointer;
+    transition: 0.2s;
+    border: 1px solid #1f2937;
+}
+
+.bg-option:hover {
+    transform: scale(1.04);
+}
+
+/* Solid backgrounds */
+.bg-option.solid.dark { background: #0f172a; }
+.bg-option.solid.light { background: #e5e7eb; }
+
+.close-bg-panel {
+    margin-top: 20px;
+    padding: 12px;
+    width: 100%;
+    background: #374151;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+}
