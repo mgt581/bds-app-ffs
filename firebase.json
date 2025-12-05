@@ -1,21 +1,14 @@
-{
   "hosting": {
-    "public": "public",
+    "public": ".",
     "ignore": [
       "firebase.json",
       "**/.*",
       "**/node_modules/**"
     ],
-    "cleanUrls": true,
     "rewrites": [
       {
-        "source": "/(index|signin|signup|profile|dashboard|editor|gallery|pricing|upgrade).html",
+        "source": "**",
         "destination": "/index.html"
       }
-    ],
-    "notFound": {
-      "source": "**",
-      "destination": "/404.html"
-    }
+    ]
   }
-}
