@@ -4,12 +4,20 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>AI Photo Studio – Editor</title>
+
     <link rel="stylesheet" href="editor.css" />
+
+    <!-- Firebase -->
     <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-storage.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js"></script>
+
+    <!-- Your Firebase config (safe to commit) -->
     <script src="firebase-config.js"></script>
+
+    <!-- Your AI keys (NOT committed → safe) -->
+    <script src="/config/aiKeys.js"></script>
 </head>
 
 <body>
@@ -19,9 +27,9 @@
         <h1 class="logo">AI Photo Studio</h1>
 
         <button class="nav-btn" onclick="goTo('upload')">📁 Upload</button>
-        <button class="nav-btn" onclick="goTo('enhance')">✨ Enhance</button>
         <button class="nav-btn" onclick="runBackgroundRemoval()">🫧 Remove Background</button>
         <button class="nav-btn" onclick="showBackgroundTools()">🌄 Change Background</button>
+        <button class="nav-btn" onclick="applyEnhance()">✨ Enhance</button>
         <button class="nav-btn" onclick="applyBlur()">💨 Blur</button>
         <button class="nav-btn" onclick="enableMagicErase()">🪄 Magic Erase</button>
 
@@ -41,13 +49,13 @@
             <button class="save-btn" onclick="saveFinalImage()">Save</button>
         </div>
 
-        <!-- EDITOR WRAPPER -->
         <div class="editor-wrapper">
 
             <!-- CANVAS PANEL -->
             <div class="canvas-panel" id="canvasPanel">
+
                 <div id="dropZone" class="drop-zone">
-                    <p>Drag & Drop or Tap to Upload</p>
+                    <p>Tap or Drag an Image to Upload</p>
                     <input type="file" id="fileInput" accept="image/*" hidden />
                 </div>
 
@@ -60,7 +68,9 @@
                 <h2 class="tool-title">Background Options</h2>
 
                 <input type="file" id="bgInput" accept="image/*" hidden />
-                <button class="tool-btn" onclick="document.getElementById('bgInput').click()">📁 Upload Background</button>
+                <button class="tool-btn" onclick="document.getElementById('bgInput').click()">
+                    📁 Upload Background
+                </button>
 
                 <div class="bg-gallery">
                     <img src="backgrounds/bg1.jpg" onclick="selectPresetBackground(this.src)" />
@@ -86,8 +96,10 @@
 
             </div>
         </div>
+
     </div>
 
     <script src="editor.js"></script>
+
 </body>
 </html>
