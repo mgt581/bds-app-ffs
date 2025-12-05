@@ -1,4 +1,4 @@
-<!DOCTYPE html> 
+<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="utf-8"/>
@@ -99,11 +99,6 @@
     opacity:0.9;
   }
 
-  /* Coming Soon */
-  .soon {
-    opacity:0.4;
-  }
-
   /* Before/After section */
   .gallery {
     margin-top:50px;
@@ -138,14 +133,12 @@
     border-radius:10px;
   }
 
-  /* Footer */
   footer {
     text-align:center;
     opacity:0.5;
     padding:20px;
     margin-top:40px;
   }
-
 </style>
 
 <!-- Firebase -->
@@ -171,7 +164,6 @@
   onAuthStateChanged(auth, async (user) => {
     if (!user) return window.location.href = "/signin.html";
 
-    // Load user plan
     const ref = doc(db, "users", user.uid);
     const snap = await getDoc(ref);
 
@@ -191,7 +183,7 @@
 <body>
 
 <div class="topbar">
-  <div class="logo">AI Photo Studio</div>
+  <div class="logo" onclick="location.href='/'">AI Photo Studio</div>
   <button class="account-btn" onclick="location.href='/profile.html'">My Account</button>
 </div>
 
@@ -214,16 +206,14 @@
     <h3>Change Background</h3>
   </div>
 
-  <div class="tool-card soon">
+  <div class="tool-card" onclick="location.href='/face-enhance.html'">
     <img src="https://cdn-icons-png.flaticon.com/512/747/747968.png">
     <h3>AI Face Enhance</h3>
-    <p>Coming Soon</p>
   </div>
 
-  <div class="tool-card soon">
+  <div class="tool-card" onclick="location.href='/remove-people.html'">
     <img src="https://cdn-icons-png.flaticon.com/512/6819/6819290.png">
     <h3>AI Remove People</h3>
-    <p>Coming Soon</p>
   </div>
 
   <div class="tool-card soon">
@@ -239,15 +229,9 @@
   <h2>Before & After Examples</h2>
 
   <div class="gallery-grid">
-    <div class="ba-card">
-      <img src="/stock/example1.jpg">
-    </div>
-    <div class="ba-card">
-      <img src="/stock/example2.jpg">
-    </div>
-    <div class="ba-card">
-      <img src="/stock/example3.jpg">
-    </div>
+    <div class="ba-card"><img src="/stock/example1.jpg"></div>
+    <div class="ba-card"><img src="/stock/example2.jpg"></div>
+    <div class="ba-card"><img src="/stock/example3.jpg"></div>
   </div>
 </div>
 
