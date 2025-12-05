@@ -6,33 +6,61 @@
     <title>AI Photo Studio – Editor</title>
     <link rel="stylesheet" href="editor.css">
 </head>
-
 <body>
+
+    <!-- SIDEBAR -->
     <div class="sidebar">
         <h1 class="logo">AI Photo Studio</h1>
 
-        <button class="nav-btn">📁 Upload</button>
-        <button class="nav-btn">✨ Enhance</button>
-        <button class="nav-btn">🫧 Remove Background</button>
-        <button class="nav-btn">🌄 Backgrounds</button>
-        <button class="nav-btn">💨 Blur</button>
-
-        <button class="sign-out">Sign Out</button>
+        <button class="nav-btn" onclick="goTo('upload')">📁 Upload</button>
+        <button class="nav-btn" onclick="goTo('enhance')">✨ Enhance</button>
+        <button class="nav-btn" onclick="goTo('remove')">🫧 Remove Background</button>
+        <button class="nav-btn" onclick="goTo('backgrounds')">🌄 Backgrounds</button>
+        <button class="nav-btn" onclick="goTo('blur')">💨 Blur</button>
+        
+        <button class="sign-out" onclick="logout()">Sign Out</button>
     </div>
 
+    <!-- MAIN AREA -->
     <div class="main-area">
+
+        <!-- TOP BAR -->
         <div class="top-bar">
-            <div class="dropdown">
-                <span>All Photos ▾</span>
-            </div>
-            <button class="save-btn">Save</button>
+            <div class="dropdown">All Photos ▾</div>
+            <button class="save-btn" onclick="saveImage()">Save</button>
         </div>
 
-        <div class="editor-panel">
-            <div class="preview-box">
-                <p class="placeholder-text">Your photo preview appears here</p>
+        <!-- EDITOR PANEL -->
+        <div class="editor-wrapper">
+
+            <!-- LEFT: UPLOAD + PREVIEW CANVAS -->
+            <div class="canvas-panel">
+                <div id="dropZone" class="drop-zone">
+                    <p>Drag & Drop or Click to Upload</p>
+                    <input type="file" id="fileInput" accept="image/*" hidden>
+                </div>
+
+                <canvas id="canvas"></canvas>
             </div>
+
+            <!-- RIGHT: TOOLS (MATCHES YOUR NEW UI STYLE) -->
+            <div class="tool-panel">
+                
+                <h2 class="tool-title">Tools</h2>
+
+                <button class="tool-btn" onclick="runBackgroundRemoval()">🫧 Remove Background</button>
+
+                <button class="tool-btn" onclick="applyBlur()">💨 Blur Image</button>
+                
+                <button class="tool-btn" onclick="applyEnhance()">✨ Enhance Quality</button>
+
+                <button class="tool-btn" onclick="replaceBackground()">🌄 Change Background</button>
+
+            </div>
+
         </div>
     </div>
+
+    <script src="editor.js"></script>
 </body>
 </html>
