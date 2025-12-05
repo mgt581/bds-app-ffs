@@ -1,0 +1,47 @@
+.gitignore
+=================================
+# ============================================================
+#   GITIGNORE FOR AI PHOTO STUDIO
+#   Prevents secret keys & private config from being exposed
+# ============================================================
+
+# ------------------------
+# Node / Build Files
+# ------------------------
+node_modules/
+dist/
+build/
+.vscode/
+.DS_Store
+
+# ------------------------
+# Environment / Secrets
+# ------------------------
+
+# AI KEYS (DO NOT COMMIT)
+config/aiKeys.js
+
+# Firebase config private (user fills manually)
+firebase-config.js
+
+# Firebase admin / service accounts (if ever added)
+service-account.json
+serviceAccountKey.json
+
+# .env files
+.env
+.env.local
+.env.production
+.env.development
+
+# ------------------------
+# System Files
+# ------------------------
+*.log
+*.tmp
+
+# ------------------------
+# OS Files
+# ------------------------
+Thumbs.db
+.DS_Store
