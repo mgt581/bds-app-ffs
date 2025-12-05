@@ -5,10 +5,14 @@
       "**/.*",
       "**/node_modules/**"
     ],
+    "cleanUrls": true,
     "rewrites": [
       {
         "source": "**",
         "destination": "/index.html"
       }
-    ]
+    ],
+    // You can remove the separate "notFound" block. 
+    // The rewrite rule will handle all unknown paths by sending them to index.html,
+    // which can then redirect to 404.html if the internal routing fails.
   }
