@@ -6,8 +6,8 @@
     <title>AI Photo Studio – Editor</title>
     <link rel="stylesheet" href="editor.css">
 </head>
-<body>
 
+<body>
     <!-- SIDEBAR -->
     <div class="sidebar">
         <h1 class="logo">AI Photo Studio</h1>
@@ -17,7 +17,7 @@
         <button class="nav-btn" onclick="goTo('remove')">🫧 Remove Background</button>
         <button class="nav-btn" onclick="goTo('backgrounds')">🌄 Backgrounds</button>
         <button class="nav-btn" onclick="goTo('blur')">💨 Blur</button>
-        
+
         <button class="sign-out" onclick="logout()">Sign Out</button>
     </div>
 
@@ -33,29 +33,28 @@
         <!-- EDITOR PANEL -->
         <div class="editor-wrapper">
 
-            <!-- LEFT: UPLOAD + PREVIEW CANVAS -->
-            <div class="canvas-panel">
+            <!-- LEFT PANEL: Upload + Canvas -->
+            <div class="canvas-panel" id="canvasPanel">
                 <div id="dropZone" class="drop-zone">
-                    <p>Drag & Drop or Click to Upload</p>
+                    <p>Drag & Drop or Tap to Upload</p>
                     <input type="file" id="fileInput" accept="image/*" hidden>
                 </div>
 
                 <canvas id="canvas"></canvas>
             </div>
 
-            <!-- RIGHT: TOOLS (MATCHES YOUR NEW UI STYLE) -->
+            <!-- RIGHT PANEL: Tools -->
             <div class="tool-panel">
-                
                 <h2 class="tool-title">Tools</h2>
 
                 <button class="tool-btn" onclick="runBackgroundRemoval()">🫧 Remove Background</button>
-
                 <button class="tool-btn" onclick="applyBlur()">💨 Blur Image</button>
-                
-                <button class="tool-btn" onclick="applyEnhance()">✨ Enhance Quality</button>
-
+                <button class="tool-btn" onclick="applyEnhance()">✨ Enhance</button>
                 <button class="tool-btn" onclick="replaceBackground()">🌄 Change Background</button>
 
+                <h2 class="tool-title">Magic Erase</h2>
+                <button class="tool-btn" onclick="enableMagicErase()">🪄 Start Erasing</button>
+                <button class="tool-btn" onclick="runMagicErase()">Apply Magic Erase</button>
             </div>
 
         </div>
