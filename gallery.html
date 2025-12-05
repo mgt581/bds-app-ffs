@@ -3,29 +3,45 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Your Gallery</title>
+    <title>Your Gallery – AI Photo Studio</title>
+
     <link rel="stylesheet" href="gallery.css">
+
+    <!-- Firebase -->
     <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-storage.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js"></script>
+
+    <!-- Your Firebase Config -->
     <script src="firebase-config.js"></script>
+
 </head>
+
 <body>
 
+    <!-- SIDEBAR -->
     <div class="sidebar">
         <h1 class="logo">AI Photo Studio</h1>
-        <button class="nav-btn" onclick="window.location.href='/editor.html'">Back to Editor</button>
+
+        <button class="nav-btn" onclick="goTo('editor')">🎨 Editor</button>
+        <button class="nav-btn" onclick="goTo('pricing')">✨ Upgrade to Pro</button>
+
         <button class="sign-out" onclick="logout()">Sign Out</button>
     </div>
 
-    <div class="main">
-        <h2>Your Gallery</h2>
-        <p>Your saved edits appear here automatically.</p>
+    <!-- MAIN AREA -->
+    <div class="main-area">
 
-        <div id="galleryGrid" class="gallery-grid"></div>
+        <h2 class="page-title">Your Saved Gallery</h2>
+
+        <div id="galleryGrid" class="gallery-grid">
+            <!-- Auto filled by gallery.js -->
+        </div>
+
     </div>
 
-<script src="gallery.js"></script>
+    <script src="gallery.js"></script>
+
 </body>
 </html>
