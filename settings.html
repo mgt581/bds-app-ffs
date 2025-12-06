@@ -1,210 +1,220 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Settings – AI Photo Studio</title>
-<link rel="stylesheet" href="editor.css" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Settings — AI Photo Studio</title>
 
-<!-- Firebase -->
-<script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-    import { 
-        getAuth, 
-        onAuthStateChanged, 
-        signOut,
-        deleteUser
-    } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-
-    import { 
-        getFirestore, 
-        doc, 
-        getDoc,
-        updateDoc 
-    } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
-
-    const firebaseConfig = {
-        apiKey: "AIzaSyCM6r66kW9xkBA5rgVcz4sP57N2v2BMbkg",
-        authDomain: "ai-photo-studio-24354.firebaseapp.com",
-        projectId: "ai-photo-studio-24354",
-        storageBucket: "ai-photo-studio-24354.firebasestorage.app",
-        messagingSenderId: "411346648650",
-        appId: "1:411346648650:web:aefd1b26027ed5e8fab0b3"
-    };
-
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-    const db = getFirestore(app);
-
-    let currentUID = null;
-
-    onAuthStateChanged(auth, async (user) => {
-        if (!user) {
-            window.location.href = "/signin.html";
-            return;
+    <style>
+        body {
+            background: #0b0f19;
+            margin: 0;
+            padding: 0;
+            color: #ffffff;
+            font-family: Inter, system-ui, sans-serif;
         }
 
-        currentUID = user.uid;
-
-        const ref = doc(db, "users", user.uid);
-        const snap = await getDoc(ref);
-
-        if (snap.exists()) {
-            const data = snap.data();
-
-            document.getElementById("darkModeToggle").checked = data.darkMode ?? true;
-            document.getElementById("beforeAfterToggle").checked = data.beforeAfter ?? true;
-
-            // Only PRO can toggle watermark off
-            if (data.plan === "free" || !data.plan) {
-                document.getElementById("watermarkToggle").checked = true;
-                document.getElementById("watermarkToggle").disabled = true;
-                document.getElementById("wmNote").innerText = "Pro feature";
-            } else {
-                document.getElementById("watermarkToggle").checked = data.watermark ?? false;
-            }
+        .topbar {
+            display: flex;
+            justify-content: space-between;
+            padding: 18px 22px;
+            background: #111827;
+            border-bottom: 1px solid #1f2937;
+            font-weight: 600;
         }
-    });
 
-    // SAVE SETTINGS
-    window.saveSettings = async function () {
-        const ref = doc(db, "users", currentUID);
+        .topbar a {
+            color: #60a5fa;
+            text-decoration: none;
+        }
 
-        await updateDoc(ref, {
-            darkMode: document.getElementById("darkModeToggle").checked,
-            beforeAfter: document.getElementById("beforeAfterToggle").checked,
-            watermark: document.getElementById("watermarkToggle").checked
-        });
+        .container {
+            padding: 24px;
+            max-width: 500px;
+            margin: auto;
+        }
 
-        alert("Settings saved!");
-    }
+        h1 {
+            font-size: 28px;
+            margin-bottom: 8px;
+        }
 
-    // SIGN OUT
-    window.doSignOut = function () {
-        signOut(auth).then(() => {
-            window.location.href = "/signin.html";
-        });
-    }
+        .section-title {
+            margin-top: 28px;
+            margin-bottom: 10px;
+            font-size: 15px;
+            opacity: 0.7;
+        }
 
-    // DELETE ACCOUNT
-    window.deleteMyAccount = async function () {
-        if (!confirm("Are you sure? This cannot be undone.")) return;
+        .card {
+            background: #111827;
+            padding: 18px 20px;
+            border-radius: 14px;
+            margin-bottom: 16px;
+            border: 1px solid #1f2937;
+        }
 
-        const user = auth.currentUser;
-        await deleteUser(user);
+        .row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 14px 0;
+        }
 
-        alert("Account deleted.");
-        window.location.href = "/signin.html";
-    }
-</script>
+        .row span {
+            font-size: 16px;
+        }
 
-<style>
-.settings-box {
-    max-width: 450px;
-    margin: 40px auto;
-    padding: 25px;
-    background: #111827;
-    border: 1px solid #1f2937;
-    border-radius: 14px;
-}
+        .toggle {
+            width: 44px;
+            height: 24px;
+            background: #1f2937;
+            border-radius: 20px;
+            position: relative;
+            cursor: pointer;
+        }
 
-.settings-box h2 {
-    margin-top: 0;
-    font-size: 24px;
-    font-weight: 700;
-    text-align: center;
-}
+        .toggle .circle {
+            width: 20px;
+            height: 20px;
+            background: #4f46e5;
+            border-radius: 50%;
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            transition: 0.25s;
+        }
 
-.setting-row {
-    display: flex;
-    justify-content: space-between;
-    margin: 20px 0;
-    font-size: 16px;
-}
+        .toggle.active {
+            background: #4f46e5;
+        }
 
-.toggle {
-    transform: scale(1.4);
-    cursor: pointer;
-}
+        .toggle.active .circle {
+            left: 22px;
+            background: #fff;
+        }
 
-.save-btn {
-    width: 100%;
-    padding: 14px;
-    margin-top: 20px;
-    border-radius: 10px;
-    background: #4f8cff;
-    color: white;
-    font-size: 16px;
-    font-weight: 700;
-    border: none;
-    cursor: pointer;
-}
-.save-btn:hover {
-    background: #3d6edf;
-}
+        .btn {
+            width: 100%;
+            padding: 14px;
+            border: none;
+            border-radius: 10px;
+            margin-top: 14px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+        }
 
-.signout {
-    margin-top: 30px;
-    text-align: center;
-    cursor: pointer;
-    color: #ff5252;
-    font-size: 15px;
-}
+        .btn-primary {
+            background: #4f46e5;
+            color: white;
+        }
 
-.delete-btn {
-    margin-top: 25px;
-    width: 100%;
-    padding: 12px;
-    border-radius: 10px;
-    background: #b91c1c;
-    color: white;
-    border: none;
-    font-weight: bold;
-    cursor: pointer;
-}
-.delete-btn:hover {
-    background: #991111;
-}
+        .btn-danger {
+            background: #991b1b;
+            color: white;
+        }
 
-.note {
-    font-size: 13px;
-    color: #9ca3af;
-}
-</style>
+        .back {
+            margin-top: 20px;
+            display: block;
+            text-align: center;
+            padding: 12px;
+            background: #1f2937;
+            border-radius: 10px;
+            text-decoration: none;
+            color: #60a5fa;
+            font-weight: 600;
+        }
+    </style>
 </head>
 
 <body>
 
-<header class="top-bar">
-    <h1>Settings</h1>
-    <button onclick="window.location.href='/index.html'" class="account-btn">Back</button>
-</header>
-
-<div class="settings-box">
-    <h2>Your Settings</h2>
-
-    <div class="setting-row">
-        <span>Dark Mode</span>
-        <input type="checkbox" id="darkModeToggle" class="toggle" />
+    <!-- TOPBAR -->
+    <div class="topbar">
+        <span>Settings</span>
+        <a href="dashboard.html">Dashboard</a>
     </div>
 
-    <div class="setting-row">
-        <span>Before/After Slider</span>
-        <input type="checkbox" id="beforeAfterToggle" class="toggle" />
+    <div class="container">
+
+        <h1>App Settings</h1>
+
+        <!-- APP OPTIONS -->
+        <div class="section-title">Preferences</div>
+        <div class="card">
+
+            <div class="row">
+                <span>Dark Mode</span>
+                <div class="toggle active" id="darkModeToggle">
+                    <div class="circle"></div>
+                </div>
+            </div>
+
+            <div class="row">
+                <span>Save images to device</span>
+                <div class="toggle" id="saveToggle">
+                    <div class="circle"></div>
+                </div>
+            </div>
+
+            <div class="row">
+                <span>Remove Watermark (PRO only)</span>
+                <button class="btn-primary" onclick="window.location.href='subscription.html'">
+                    Upgrade
+                </button>
+            </div>
+
+        </div>
+
+        <!-- ACCOUNT ACTIONS -->
+        <div class="section-title">Account</div>
+        <div class="card">
+
+            <div class="row">
+                <span>Change Email</span>
+                <button class="btn-primary" onclick="window.location.href='reset.html'">Update</button>
+            </div>
+
+            <div class="row">
+                <span>Change Password</span>
+                <button class="btn-primary" onclick="window.location.href='reset.html'">Update</button>
+            </div>
+
+            <button class="btn-danger" id="logoutBtn">Sign Out</button>
+
+        </div>
+
+        <!-- BACK -->
+        <a class="back" href="profile.html">← Back to Profile</a>
+
     </div>
 
-    <div class="setting-row">
-        <span>Watermark</span>
-        <input type="checkbox" id="watermarkToggle" class="toggle" />
-    </div>
-    <p id="wmNote" class="note"></p>
+    <!-- LOGIC -->
+    <script type="module">
+        import { auth, signOut, onAuthStateChanged } from "./firebase-app.js";
 
-    <button class="save-btn" onclick="saveSettings()">Save Settings</button>
+        onAuthStateChanged(auth, (user) => {
+            if (!user) {
+                window.location.href = "signin.html";
+            }
+        });
 
-    <div class="signout" onclick="doSignOut()">Sign Out</div>
+        // LOG OUT
+        document.getElementById("logoutBtn").onclick = () => {
+            signOut(auth).then(() => window.location.href = "signin.html");
+        };
 
-    <button class="delete-btn" onclick="deleteMyAccount()">Delete Account</button>
-</div>
+        // TOGGLES
+        function setupToggle(id) {
+            const el = document.getElementById(id);
+            el.onclick = () => el.classList.toggle("active");
+        }
+
+        setupToggle("darkModeToggle");
+        setupToggle("saveToggle");
+    </script>
 
 </body>
 </html>
