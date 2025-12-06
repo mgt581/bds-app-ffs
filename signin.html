@@ -2,123 +2,188 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Sign In · AI Photo Studio</title>
 
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+<!-- Fonts -->
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet"/>
 
 <style>
     body {
-        margin: 0;
-        background: #0b0f1c;
-        font-family: Inter, sans-serif;
-        color: white;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        height: 100vh;
-        padding: 20px;
+        margin:0;
+        background:#0a0f1a;
+        font-family:Inter, sans-serif;
+        color:white;
+        display:flex;
+        justify-content:center;
+        align-items:center;
+        height:100vh;
+        padding:20px;
     }
 
-    .card {
-        background: #111827;
-        border: 1px solid #1f2937;
-        padding: 32px;
-        border-radius: 18px;
-        width: 100%;
-        max-width: 380px;
-        text-align: center;
-        box-shadow: 0 0 22px rgba(0, 153, 255, 0.15);
+    .container {
+        width:100%;
+        max-width:420px;
+        background:#111827;
+        padding:35px;
+        border-radius:18px;
+        box-shadow:0 0 32px rgba(0,150,255,0.25);
+        border:1px solid #1e293b;
+        text-align:center;
     }
 
     h1 {
-        margin-bottom: 6px;
-        font-size: 26px;
-        color: #3fb7ff;
-        text-shadow: 0 0 10px #3fb7ff;
+        font-size:28px;
+        font-weight:700;
+        margin-bottom:6px;
+        color:#3fb7ff;
+        text-shadow:0 0 10px #3fb7ff;
     }
 
-    p.sub {
-        margin-top: 0;
-        opacity: 0.7;
-        font-size: 14px;
-    }
+    p { opacity:0.75; font-size:14px; margin-bottom:25px; }
 
     input {
-        width: 100%;
-        padding: 14px;
-        margin-top: 14px;
-        background: #0f172a;
-        border: 1px solid #1e293b;
-        border-radius: 10px;
-        color: white;
+        width:100%;
+        padding:14px;
+        margin-bottom:16px;
+        border-radius:10px;
+        background:#0f172a;
+        border:1px solid #1f2b3d;
+        color:white;
+        font-size:15px;
     }
 
     button {
-        width: 100%;
-        padding: 14px;
-        border-radius: 10px;
-        background: #3fb7ff;
-        border: none;
-        font-weight: 700;
-        margin-top: 14px;
-        cursor: pointer;
+        width:100%;
+        padding:14px;
+        border-radius:12px;
+        border:none;
+        font-size:16px;
+        font-weight:700;
+        cursor:pointer;
+        margin-top:8px;
+        transition:0.2s;
     }
 
-    button:hover {
-        opacity: 0.85;
+    .primary {
+        background:#3fb7ff;
+        color:#000;
+        text-shadow:0 0 10px #ffffff;
+    }
+
+    .primary:hover {
+        transform:translateY(-2px);
+        box-shadow:0 0 18px #3fb7ff;
     }
 
     .google-btn {
-        background: #ffffff;
-        color: #000;
-        margin-top: 14px;
-        font-weight: 600;
+        background:#ffffff;
+        color:#000;
+        margin-top:14px;
     }
 
-    .guest-btn {
-        background: transparent;
-        border: 1px solid #334155;
-        color: #3fb7ff;
-        margin-top: 14px;
+    .google-btn:hover {
+        transform:translateY(-2px);
+        box-shadow:0 0 18px rgba(255,255,255,0.5);
     }
 
-    .links {
-        margin-top: 20px;
-        font-size: 14px;
+    a {
+        color:#3fb7ff;
+        font-size:14px;
+        text-decoration:none;
+        display:block;
+        margin-top:14px;
     }
 
-    .links a {
-        color: #3fb7ff;
-        text-decoration: none;
-        font-weight: 600;
+    .bottom-links {
+        margin-top:22px;
+        opacity:0.7;
     }
-
 </style>
-</head>
 
+<!-- Firebase -->
+<script type="module">
+import { 
+    initializeApp
+} from "https://www.gstatic.com/firebasejs/12.6.0/firebase-app.js";
+
+import {
+    getAuth,
+    signInWithEmailAndPassword,
+    signInAnonymously,
+    GoogleAuthProvider,
+    signInWithPopup
+} from "https://www.gstatic.com/firebasejs/12.6.0/firebase-auth.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyCM6r66kW9xkBA5rgVcz4sP57N2v2BMbkg",
+  authDomain: "ai-photo-studio-24354.firebaseapp.com",
+  projectId: "ai-photo-studio-24354",
+  storageBucket: "ai-photo-studio-24354.firebasestorage.app",
+  messagingSenderId: "411346648650",
+  appId: "1:411346648650:web:aefd1b26027ed5e8fab0b3",
+  measurementId: "G-8TXC63YKPD"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+
+document.getElementById("emailSignIn").onclick = async () => {
+    const email = document.getElementById("email").value.trim();
+    const pass = document.getElementById("password").value.trim();
+    if (!email || !pass) return alert("Enter email and password.");
+
+    try {
+        await signInWithEmailAndPassword(auth, email, pass);
+        window.location.href = "/index.html";
+    } catch (err) {
+        alert(err.message);
+    }
+};
+
+document.getElementById("googleBtn").onclick = async () => {
+    try {
+        const provider = new GoogleAuthProvider();
+        await signInWithPopup(auth, provider);
+        window.location.href = "/index.html";
+    } catch (err) {
+        alert(err.message);
+    }
+};
+
+document.getElementById("anonBtn").onclick = async () => {
+    try {
+        await signInAnonymously(auth);
+        window.location.href = "/index.html";
+    } catch (err) {
+        alert(err.message);
+    }
+};
+</script>
+
+</head>
 <body>
 
-<div class="card">
+<div class="container">
     <h1>Welcome Back</h1>
-    <p class="sub">Sign in to continue</p>
+    <p>Sign in to continue using AI Photo Studio</p>
 
-    <input id="email" type="email" placeholder="Email address">
-    <input id="password" type="password" placeholder="Password">
+    <input id="email" type="email" placeholder="Email" />
+    <input id="password" type="password" placeholder="Password" />
 
-    <button onclick="emailLogin()">Sign In</button>
+    <button class="primary" id="emailSignIn">Sign In</button>
 
-    <button class="google-btn" onclick="googleLogin()">Sign in with Google</button>
+    <button class="google-btn" id="googleBtn">Sign in with Google</button>
 
-    <button class="guest-btn" onclick="guestLogin()">Continue as Guest</button>
+    <a href="/reset.html">Forgot Password?</a>
 
-    <div class="links">
-        <a href="/reset-password.html">Forgot Password?</a><br><br>
-        <a href="/signup.html">Create an Account</a>
+    <div class="bottom-links">
+        Don’t have an account?
+        <a href="/signup.html">Create Account</a>
     </div>
-</div>
 
-<script type="module" src="/signin.js"></script>
+    <a href="#" id="anonBtn" style="margin-top:12px;opacity:0.5;">Continue without account</a>
+</div>
 
 </body>
 </html>
