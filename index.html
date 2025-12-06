@@ -2,10 +2,8 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
 <title>AI Photo Studio</title>
-
-<link rel="stylesheet" href="styles/index.css">
 
 <style>
     body {
@@ -19,7 +17,7 @@
     .topbar {
         background: #111827;
         border-bottom: 1px solid #1f2937;
-        height: 60px;
+        height: 65px;
         display: flex;
         align-items: center;
         justify-content: space-between;
@@ -29,76 +27,55 @@
         z-index: 10;
     }
     .logo {
-        font-size: 22px;
+        font-size: 20px;
         font-weight: 700;
         color: #3fb7ff;
-        text-shadow: 0 0 12px #3fb7ff;
+        text-shadow: 0 0 10px #3fb7ff;
     }
-    .settings-link {
-        color: #9ca3af;
-        font-size: 15px;
-        text-decoration: none;
+    .top-links {
         display: flex;
-        align-items: center;
-        gap: 6px;
+        gap: 20px;
     }
-
-    /* CONTAINER */
-    .container {
-        max-width: 480px;
-        margin: auto;
-        padding: 20px;
-        text-align: center;
-    }
-
-    h1 {
-        font-size: 30px;
-        margin-top: 10px;
-        font-weight: 700;
-    }
-    .subtitle {
-        opacity: .75;
-        margin-top: -8px;
-        margin-bottom: 18px;
-        font-size: 14px;
-    }
-
-    /* TOP BUTTONS */
-    .top-buttons {
-        display: flex;
-        justify-content: space-between;
-        margin-bottom: 25px;
-    }
-    .top-buttons button {
-        flex: 1;
-        margin: 0 5px;
-        padding: 14px;
-        border-radius: 10px;
-        border: 1px solid #1f2937;
-        background: #111827;
+    .top-links a {
         color: #60a5fa;
         font-size: 15px;
-        font-weight: 600;
-    }
-    .top-buttons .trial {
-        background: #2563eb;
-        color: white;
-        border: none;
+        text-decoration: none;
+        cursor: pointer;
     }
 
-    /* TOOL GRID */
+    /* MAIN */
+    .container {
+        max-width: 430px;
+        margin: auto;
+        padding: 20px;
+        padding-top: 40px; /* moves tools down */
+    }
+    h1 {
+        text-align: center;
+        font-size: 26px;
+        margin-top: 10px;
+    }
+    p.subtitle {
+        text-align: center;
+        opacity: .75;
+        font-size: 14px;
+        margin-top: 5px;
+        margin-bottom: 20px;
+    }
+
+    /* GRID OF TOOLS */
     .tool-grid {
         display: grid;
         grid-template-columns: repeat(2, 1fr);
         gap: 18px;
-        margin-top: 15px;
+        margin-top: 20px;
     }
-
     .tool-card {
         background: #111827;
+        padding: 18px;
         border: 1px solid #1f2937;
         border-radius: 14px;
-        padding: 18px;
+        text-align: center;
         cursor: pointer;
         transition: .2s;
     }
@@ -109,84 +86,127 @@
     .tool-card img {
         width: 70px;
         height: 70px;
-        margin-bottom: 8px;
+        margin-bottom: 10px;
     }
     .tool-card span {
+        display: block;
         font-weight: 600;
         font-size: 15px;
     }
 
-    /* NOTICE */
+    /* BUTTONS */
+    .btn {
+        width: 100%;
+        padding: 16px;
+        border-radius: 12px;
+        border: none;
+        background: #2563eb;
+        color: white;
+        font-weight: 700;
+        font-size: 17px;
+        margin-top: 22px;
+        cursor: pointer;
+    }
+    .btn:hover {
+        opacity: .85;
+    }
+
+    /* FREE TRIAL BIG BUTTON */
+    .trial-btn {
+        width: 100%;
+        padding: 18px;
+        background: #3fb7ff;
+        color: #0b0f19;
+        font-weight: 800;
+        font-size: 20px;
+        border-radius: 14px;
+        margin-top: 35px;
+        text-align: center;
+        cursor: pointer;
+        border: none;
+    }
+
+    .trial-btn:hover {
+        opacity: .9;
+    }
+
     .notice {
-        margin-top: 25px;
+        margin-top: 20px;
         opacity: .65;
         font-size: 13px;
+        text-align: center;
     }
 </style>
-
 </head>
+
 <body>
 
-<!-- TOP BAR -->
 <div class="topbar">
     <div class="logo">AI Photo Studio</div>
-    <a class="settings-link" href="settings.html">
-        ⚙️ Settings
-    </a>
+
+    <div class="top-links">
+        <a href="settings.html">Settings</a>
+        <a id="authBtn">Sign Out</a>
+    </div>
 </div>
 
-<!-- MAIN -->
 <div class="container">
 
     <h1>Welcome 👋</h1>
     <p class="subtitle">Choose a tool below to start editing your photo</p>
 
-    <!-- TOP BUTTONS -->
-    <div class="top-buttons">
-        <button onclick="location.href='gallery.html'">Gallery</button>
-        <button onclick="location.href='profile.html'">My Account</button>
-        <button class="trial" onclick="location.href='subscription.html'">Free Trial</button>
-    </div>
-
-    <!-- TOOL GRID -->
     <div class="tool-grid">
-
         <div class="tool-card" onclick="location.href='editor-remove.html'">
-            <img src="icons/icon-remove-background.png" alt="">
+            <img src="icons/icon-remove-background.PNG" />
             <span>Remove Background</span>
         </div>
 
         <div class="tool-card" onclick="location.href='editor-change.html'">
-            <img src="icons/icon-change-background.png" alt="">
+            <img src="icons/icon-change-background.PNG" />
             <span>Change Background</span>
         </div>
 
         <div class="tool-card" onclick="location.href='editor-person.html'">
-            <img src="icons/icon-remove-person.png" alt="">
+            <img src="icons/icon-remove-person.PNG" />
             <span>Remove Person</span>
         </div>
 
         <div class="tool-card" onclick="location.href='editor-object.html'">
-            <img src="icons/icon-remove-object.png" alt="">
+            <img src="icons/icon-remove-object.PNG" />
             <span>Magic Eraser</span>
         </div>
     </div>
 
+    <button class="btn" onclick="location.href='gallery.html'">My Gallery</button>
+    <button class="btn" onclick="location.href='profile.html'">My Account</button>
+
+    <!-- BIG FREE TRIAL BUTTON -->
+    <button class="trial-btn" onclick="location.href='subscription.html'">Start FREE Trial →</button>
+
     <p class="notice">
-        Free users have a small watermark added.<br>
+        Free users have a watermark.  
         Upgrade to Pro for unlimited edits & no watermark.
     </p>
 
 </div>
 
-<!-- AUTH REDIRECT -->
 <script type="module">
-import { auth, onAuthStateChanged } from "./firebase-app.js";
+import { auth, onAuthStateChanged, signOut } from "./firebase-app.js";
 
-onAuthStateChanged(auth, user => {
+const authBtn = document.getElementById("authBtn");
+
+onAuthStateChanged(auth, (user) => {
     if (!user) {
-        window.location.href = "signin.html"; // force login first time
+        window.location.href = "signin.html";
+        return;
     }
+
+    authBtn.textContent = "Sign Out";
+    authBtn.onclick = () => {
+        signOut(auth).then(() => {
+            window.location.href = "signin.html";
+        });
+    };
 });
 </script>
 
