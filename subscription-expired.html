@@ -1,104 +1,62 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Subscription Expired – AI Photo Studio</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Subscription Expired · AI Photo Studio</title>
 
-    <style>
-        body {
-            margin: 0;
-            padding: 0;
-            background: #050b16;
-            color: white;
-            font-family: "Inter", sans-serif;
-            text-align: center;
-        }
+<style>
+    body {
+        margin: 0;
+        background: #0b0f1c;
+        font-family: Inter, system-ui, sans-serif;
+        color: white;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        height: 100vh;
+        text-align: center;
+        padding: 20px;
+    }
 
-        .container {
-            max-width: 480px;
-            margin: 60px auto;
-            padding: 20px;
-        }
+    h1 {
+        font-size: 34px;
+        margin-bottom: 10px;
+        color: #3fb7ff;
+        text-shadow: 0 0 8px #3fb7ff;
+    }
 
-        h1 {
-            font-size: 28px;
-            margin-bottom: 10px;
-            color: #ff7d7d;
-        }
+    p {
+        font-size: 17px;
+        opacity: 0.8;
+        margin-bottom: 25px;
+    }
 
-        .card {
-            background: #0e1624;
-            border-radius: 16px;
-            padding: 25px;
-            border: 1px solid rgba(255,255,255,0.07);
-        }
+    .button {
+        background: #3fb7ff;
+        padding: 14px 28px;
+        border-radius: 12px;
+        color: #000;
+        font-weight: 700;
+        text-decoration: none;
+        font-size: 18px;
+        box-shadow: 0 0 12px #3fb7ff;
+        transition: 0.2s;
+    }
 
-        p {
-            font-size: 17px;
-            opacity: 0.85;
-            margin-bottom: 20px;
-        }
+    .button:hover {
+        transform: scale(1.05);
+    }
 
-        .btn {
-            width: 100%;
-            background: #3ea8ff;
-            border: none;
-            padding: 16px;
-            border-radius: 12px;
-            font-size: 18px;
-            color: #000;
-            font-weight: 600;
-            cursor: pointer;
-            transition: 0.25s;
-        }
-
-        .btn:hover {
-            background: #63c4ff;
-        }
-
-        .logout {
-            margin-top: 25px;
-            font-size: 16px;
-            color: #ff7d7d;
-            cursor: pointer;
-        }
-    </style>
+</style>
 </head>
-
 <body>
 
-<div class="container">
-    <h1>Subscription Expired</h1>
+<h1>Subscription Expired</h1>
+<p>Your plan has ended. Reactivate now to unlock all tools again.</p>
 
-    <div class="card">
-        <p>Your premium plan has expired.  
-           You no longer have access to background removal, change background, magic eraser, or person removal.</p>
-
-        <button class="btn" id="renewBtn">Renew Subscription</button>
-
-        <p style="font-size: 14px; margin-top: 15px; opacity: 0.6;">
-            Restore access instantly by renewing your subscription.
-        </p>
-    </div>
-
-    <div class="logout" id="logoutBtn">Sign Out</div>
-</div>
-
-<script type="module">
-    import { auth, logout } from "./firebase-app.js";
-
-    // Go back to subscription page
-    document.getElementById("renewBtn").onclick = () => {
-        window.location.href = "/subscription.html";
-    };
-
-    // Log out
-    document.getElementById("logoutBtn").onclick = async () => {
-        await logout();
-        window.location.href = "/signin.html";
-    };
-</script>
+<a href="subscription.html" class="button">Renew Subscription</a>
 
 </body>
 </html>
