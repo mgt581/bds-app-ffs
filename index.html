@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>AI Photo Studio</title>
 
 <style>
@@ -13,18 +13,18 @@
         font-family: Inter, system-ui, sans-serif;
     }
 
-    /* TOP BAR */
+    /* TOP NAV */
     .topbar {
         background: #111827;
         border-bottom: 1px solid #1f2937;
-        height: 65px;
+        height: 60px;
         display: flex;
         align-items: center;
         justify-content: space-between;
         padding: 0 20px;
         position: sticky;
         top: 0;
-        z-index: 10;
+        z-index: 20;
     }
     .logo {
         font-size: 20px;
@@ -32,50 +32,45 @@
         color: #3fb7ff;
         text-shadow: 0 0 10px #3fb7ff;
     }
-    .top-links {
-        display: flex;
-        gap: 20px;
-    }
     .top-links a {
-        color: #60a5fa;
+        margin-left: 20px;
+        color: #93c5fd;
         font-size: 15px;
         text-decoration: none;
         cursor: pointer;
     }
+    .top-links a:hover { opacity: .7; }
 
     /* MAIN */
     .container {
         max-width: 430px;
         margin: auto;
         padding: 20px;
-        padding-top: 40px; /* moves tools down */
+        text-align: center;
     }
     h1 {
-        text-align: center;
-        font-size: 26px;
+        font-size: 28px;
         margin-top: 10px;
     }
-    p.subtitle {
-        text-align: center;
-        opacity: .75;
+    .subtitle {
+        margin-top: -5px;
         font-size: 14px;
-        margin-top: 5px;
+        opacity: .7;
         margin-bottom: 20px;
     }
 
-    /* GRID OF TOOLS */
+    /* GRID */
     .tool-grid {
         display: grid;
         grid-template-columns: repeat(2, 1fr);
-        gap: 18px;
-        margin-top: 20px;
+        gap: 16px;
+        margin-bottom: 20px;
     }
     .tool-card {
         background: #111827;
         padding: 18px;
         border: 1px solid #1f2937;
         border-radius: 14px;
-        text-align: center;
         cursor: pointer;
         transition: .2s;
     }
@@ -97,95 +92,90 @@
     /* BUTTONS */
     .btn {
         width: 100%;
-        padding: 16px;
+        padding: 15px;
         border-radius: 12px;
-        border: none;
         background: #2563eb;
+        border: none;
         color: white;
-        font-weight: 700;
         font-size: 17px;
+        font-weight: 700;
+        margin-top: 15px;
+        cursor: pointer;
+    }
+    .btn:hover { opacity: .85; }
+
+    .btn-trial {
+        width: 100%;
+        padding: 15px;
+        border-radius: 12px;
+        background: #3fb7ff;
+        border: none;
+        color: #000;
+        font-size: 18px;
+        font-weight: 800;
         margin-top: 22px;
         cursor: pointer;
-    }
-    .btn:hover {
-        opacity: .85;
-    }
-
-    /* FREE TRIAL BIG BUTTON */
-    .trial-btn {
-        width: 100%;
-        padding: 18px;
-        background: #3fb7ff;
-        color: #0b0f19;
-        font-weight: 800;
-        font-size: 20px;
-        border-radius: 14px;
-        margin-top: 35px;
-        text-align: center;
-        cursor: pointer;
-        border: none;
-    }
-
-    .trial-btn:hover {
-        opacity: .9;
     }
 
     .notice {
         margin-top: 20px;
-        opacity: .65;
         font-size: 13px;
-        text-align: center;
+        opacity: .6;
     }
 </style>
 </head>
 
 <body>
 
+<!-- TOP BAR -->
 <div class="topbar">
     <div class="logo">AI Photo Studio</div>
 
     <div class="top-links">
         <a href="settings.html">Settings</a>
-        <a id="authBtn">Sign Out</a>
+        <a id="signOutBtn">Sign Out</a>
     </div>
 </div>
 
+<!-- MAIN CONTENT -->
 <div class="container">
 
     <h1>Welcome 👋</h1>
     <p class="subtitle">Choose a tool below to start editing your photo</p>
 
     <div class="tool-grid">
+
         <div class="tool-card" onclick="location.href='editor-remove.html'">
-            <img src="icons/icon-remove-background.PNG" />
+            <img src="icons/icon-remove-background.png" alt="Remove Background">
             <span>Remove Background</span>
         </div>
 
         <div class="tool-card" onclick="location.href='editor-change.html'">
-            <img src="icons/icon-change-background.PNG" />
+            <img src="icons/icon-change-background.png" alt="Change Background">
             <span>Change Background</span>
         </div>
 
         <div class="tool-card" onclick="location.href='editor-person.html'">
-            <img src="icons/icon-remove-person.PNG" />
+            <img src="icons/icon-remove-person.png" alt="Remove Person">
             <span>Remove Person</span>
         </div>
 
         <div class="tool-card" onclick="location.href='editor-object.html'">
-            <img src="icons/icon-remove-object.PNG" />
+            <img src="icons/icon-remove-object.png" alt="Magic Eraser">
             <span>Magic Eraser</span>
         </div>
+
     </div>
 
     <button class="btn" onclick="location.href='gallery.html'">My Gallery</button>
     <button class="btn" onclick="location.href='profile.html'">My Account</button>
 
-    <!-- BIG FREE TRIAL BUTTON -->
-    <button class="trial-btn" onclick="location.href='subscription.html'">Start FREE Trial →</button>
+    <button class="btn-trial" onclick="location.href='subscription.html'">
+        Start FREE Trial →
+    </button>
 
     <p class="notice">
-        Free users have a watermark.  
-        Upgrade to Pro for unlimited edits & no watermark.
+        Free users have a watermark. Upgrade to Pro for unlimited edits & no watermark.
     </p>
 
 </div>
@@ -193,20 +183,14 @@
 <script type="module">
 import { auth, onAuthStateChanged, signOut } from "./firebase-app.js";
 
-const authBtn = document.getElementById("authBtn");
+onAuthStateChanged(auth, user => {
+    if (!user) window.location.href = "signin.html";
+});
 
-onAuthStateChanged(auth, (user) => {
-    if (!user) {
+document.getElementById("signOutBtn").addEventListener("click", () => {
+    signOut(auth).then(() => {
         window.location.href = "signin.html";
-        return;
-    }
-
-    authBtn.textContent = "Sign Out";
-    authBtn.onclick = () => {
-        signOut(auth).then(() => {
-            window.location.href = "signin.html";
-        });
-    };
+    });
 });
 </script>
 
