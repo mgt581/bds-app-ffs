@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Subscribe · AI Photo Studio PRO</title>
+<link rel="stylesheet" href="subscription.css" />
+
+<!-- Firebase -->
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-app.js";
+import { 
+  getAuth, 
+  onAuthStateChanged 
+} from "https://www.gstatic.com/firebasejs/12.6.0/firebase-auth.js";
+import { 
+  getFirestore, 
+  doc, 
+  setDoc 
+} from "https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyCM6r66kW9xkBA5rgVcz4sP57N2v2BMbkg",
+  authDomain: "ai-photo-studio-24354.firebaseapp.com",
+  projectId: "ai-photo-studio-24354",
+  storageBucket: "ai-photo-studio-24354.firebasestorage.app",
+  messagingSenderId: "411346648650",
+  appId: "1:411346648650:web:aefd1b26027ed5e8fab0b3",
+  measurementId: "G-8TXC63YKPD"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth();
+const db = getFirestore();
+
+// Check login
+onAuthStateChanged(auth, (user) => {
+  if (!user) {
+    window.location.href = "signin.html";
+    return;
+  }
+});
+
+// Activate Trial
+async function startTrial() {
+  const user = auth.currentUser;
+  if (!user) return;
+
+  const trialEnds = new Date();
+  trialEnds.setDate(trialEnds.getDate() + 7);
+
+  await setDoc(doc(db, "users", user.uid), {
+    plan: "trial",
+    trialEnds: trialEnds.toISOString()
+  }, { merge: true });
+
+  window.location.href = "dashboard.html";
+}
+
+window.startTrial = startTrial;
+</script>
+
+</head>
+<body>
+
+<div class="container">
+  
+  <!-- LEFT COLUMN: FEATURES -->
+  <div class="left">
+    <h1>Unlock AI Photo Studio PRO</h1>
+    <p class="subtitle">Everything you need for perfect photos — fast.</p>
+
+    <ul class="features">
+      <li>✔ Unlimited Background Removal</li>
+      <li>✔ Remove People & Objects</li>
+      <li>✔ Change Backgrounds Instantly</li>
+      <li>✔ HD + Transparent Downloads</li>
+      <li>✔ Fastest AI Models Available</li>
+      <li>✔ Priority Rendering Queue</li>
+    </ul>
+
+  </div>
+
+  <!-- RIGHT COLUMN: PRICING CARD -->
+  <div class="right">
+    <div class="card">
+      <h2>PRO Membership</h2>
+      <p class="price">£24.99 / year</p>
+      <p class="trial">Includes 7-Day Free Trial</p>
+
+      <button class="trial-btn" onclick="startTrial()">Start Free Trial</button>
+
+      <p class="fineprint">
+        You won't be charged until the trial ends.<br/>
+        Cancel anytime in your account settings.
+      </p>
+    </div>
+  </div>
+
+</div>
+
+</body>
+</html>
