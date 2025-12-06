@@ -2,8 +2,10 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>AI Photo Studio · Home</title>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>AI Photo Studio</title>
+
+<link rel="stylesheet" href="styles/index.css">
 
 <style>
     body {
@@ -15,80 +17,88 @@
 
     /* TOP BAR */
     .topbar {
-        height: 60px;
         background: #111827;
         border-bottom: 1px solid #1f2937;
+        height: 60px;
         display: flex;
         align-items: center;
         justify-content: space-between;
         padding: 0 20px;
+        position: sticky;
+        top: 0;
+        z-index: 10;
     }
     .logo {
-        font-size: 20px;
+        font-size: 22px;
         font-weight: 700;
         color: #3fb7ff;
-        text-shadow: 0 0 10px #3fb7ff;
+        text-shadow: 0 0 12px #3fb7ff;
     }
-    .menu-btn {
-        color: #60a5fa;
-        font-size: 14px;
-        cursor: pointer;
+    .settings-link {
+        color: #9ca3af;
+        font-size: 15px;
         text-decoration: none;
+        display: flex;
+        align-items: center;
+        gap: 6px;
     }
 
-    /* MAIN */
+    /* CONTAINER */
     .container {
-        max-width: 430px;
+        max-width: 480px;
         margin: auto;
         padding: 20px;
-    }
-    h1 {
         text-align: center;
-        font-size: 26px;
-        margin-top: 10px;
-    }
-    p.subtitle {
-        text-align: center;
-        opacity: .75;
-        font-size: 14px;
-        margin-top: 5px;
     }
 
-    /* BUTTON ROW */
-    .top-buttons {
-        display: grid;
-        grid-template-columns: repeat(3, 1fr);
-        gap: 12px;
-        margin: 20px 0;
+    h1 {
+        font-size: 30px;
+        margin-top: 10px;
+        font-weight: 700;
     }
-    .small-btn {
-        background: #111827;
+    .subtitle {
+        opacity: .75;
+        margin-top: -8px;
+        margin-bottom: 18px;
+        font-size: 14px;
+    }
+
+    /* TOP BUTTONS */
+    .top-buttons {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 25px;
+    }
+    .top-buttons button {
+        flex: 1;
+        margin: 0 5px;
+        padding: 14px;
+        border-radius: 10px;
         border: 1px solid #1f2937;
-        padding: 12px;
-        border-radius: 12px;
-        text-align: center;
-        font-size: 13px;
+        background: #111827;
         color: #60a5fa;
-        cursor: pointer;
+        font-size: 15px;
         font-weight: 600;
     }
-    .small-btn:hover {
-        background: #1f2937;
+    .top-buttons .trial {
+        background: #2563eb;
+        color: white;
+        border: none;
     }
 
     /* TOOL GRID */
     .tool-grid {
         display: grid;
         grid-template-columns: repeat(2, 1fr);
-        gap: 16px;
-        margin-top: 20px;
+        gap: 18px;
+        margin-top: 15px;
     }
+
     .tool-card {
         background: #111827;
-        padding: 18px;
         border: 1px solid #1f2937;
         border-radius: 14px;
-        text-align: center;
+        padding: 18px;
         cursor: pointer;
         transition: .2s;
     }
@@ -98,31 +108,34 @@
     }
     .tool-card img {
         width: 70px;
-        margin-bottom: 10px;
+        height: 70px;
+        margin-bottom: 8px;
     }
     .tool-card span {
         font-weight: 600;
         font-size: 15px;
     }
 
-    /* WATERMARK */
+    /* NOTICE */
     .notice {
-        margin-top: 20px;
+        margin-top: 25px;
         opacity: .65;
         font-size: 13px;
-        text-align: center;
     }
 </style>
-</head>
 
+</head>
 <body>
 
 <!-- TOP BAR -->
 <div class="topbar">
     <div class="logo">AI Photo Studio</div>
-    <a class="menu-btn" href="settings.html">⚙ Settings</a>
+    <a class="settings-link" href="settings.html">
+        ⚙️ Settings
+    </a>
 </div>
 
+<!-- MAIN -->
 <div class="container">
 
     <h1>Welcome 👋</h1>
@@ -130,31 +143,31 @@
 
     <!-- TOP BUTTONS -->
     <div class="top-buttons">
-        <div class="small-btn" onclick="location.href='gallery.html'">Gallery</div>
-        <div class="small-btn" onclick="location.href='profile.html'">My Account</div>
-        <div class="small-btn" onclick="location.href='subscription.html'">Free Trial</div>
+        <button onclick="location.href='gallery.html'">Gallery</button>
+        <button onclick="location.href='profile.html'">My Account</button>
+        <button class="trial" onclick="location.href='subscription.html'">Free Trial</button>
     </div>
 
-    <!-- TOOL ICON GRID -->
+    <!-- TOOL GRID -->
     <div class="tool-grid">
 
         <div class="tool-card" onclick="location.href='editor-remove.html'">
-            <img src="icons/icon-remove-background.png">
+            <img src="icons/icon-remove-background.png" alt="">
             <span>Remove Background</span>
         </div>
 
         <div class="tool-card" onclick="location.href='editor-change.html'">
-            <img src="icons/icon-change-background.png">
+            <img src="icons/icon-change-background.png" alt="">
             <span>Change Background</span>
         </div>
 
         <div class="tool-card" onclick="location.href='editor-person.html'">
-            <img src="icons/icon-remove-person.png">
+            <img src="icons/icon-remove-person.png" alt="">
             <span>Remove Person</span>
         </div>
 
         <div class="tool-card" onclick="location.href='editor-object.html'">
-            <img src="icons/icon-remove-object.png">
+            <img src="icons/icon-remove-object.png" alt="">
             <span>Magic Eraser</span>
         </div>
     </div>
@@ -166,33 +179,13 @@
 
 </div>
 
+<!-- AUTH REDIRECT -->
 <script type="module">
 import { auth, onAuthStateChanged } from "./firebase-app.js";
-import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js";
 
-const db = getFirestore();
-
-/*
-    REDIRECT LOGIC:
-    • First time user → signup page
-    • Logged in but no subscription plan → subscription page
-    • Otherwise → stay on index (home)
-*/
-onAuthStateChanged(auth, async user => {
-    if (!user) return window.location.href = "signin.html";
-
-    const ref = doc(db, "users", user.uid);
-    const snap = await getDoc(ref);
-
-    if (!snap.exists()) {
-        // brand new user → go set up account/subscription
-        return window.location.href = "subscription.html";
-    }
-
-    const data = snap.data();
-
-    if (!data.plan || data.plan === "free") {
-        return window.location.href = "subscription.html";
+onAuthStateChanged(auth, user => {
+    if (!user) {
+        window.location.href = "signin.html"; // force login first time
     }
 });
 </script>
