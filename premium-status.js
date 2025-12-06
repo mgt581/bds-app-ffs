@@ -1,47 +1,16 @@
-export default {
-  async fetch(request, env) {
-    // Allow CORS for your domain
-    const headers = {
-      "Access-Control-Allow-Origin": "https://aiphotostudio.co.uk",
-      "Access-Control-Allow-Methods": "GET, OPTIONS",
-      "Access-Control-Allow-Headers": "Content-Type",
-    };
+import { db, auth } from "./firebase-app.js";
+import { doc, getDoc } from "firebase/firestore";
 
-    if (request.method === "OPTIONS") {
-      return new Response(null, { headers });
-    }
+export async function getUserSubscriptionStatus(uid) {
+    const ref = doc(db, "subscriptions", uid);
+    const snap = await getDoc(ref);
 
-    // Get email query parameter
-    const url = new URL(request.url);
-    const email = url.searchParams.get("email");
+    if (!snap.exists()) return "none";
 
-    if (!email) {
-      return new Response(JSON.stringify({ error: "Missing email" }), {
-        headers,
-        status: 400,
-      });
-    }
+    const data = snap.data();
 
-    // Lookup in Cloudflare KV storage
-    const record = await env.PREMIUM.get(email);
+    if (data.status === "active") return "active";
+    if (data.status === "expired") return "expired";
 
-    // If no record → free user
-    if (!record) {
-      return new Response(
-        JSON.stringify({
-          email,
-          premium: false,
-          plan: null,
-          expires: null,
-          status: "free",
-        }),
-        { headers }
-      );
-    }
-
-    const data = JSON.parse(record);
-
-    // Return the premium status
-    return new Response(JSON.stringify(data), { headers });
-  },
-};
+    return "none";
+}
