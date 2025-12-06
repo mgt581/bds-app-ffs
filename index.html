@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>AI Photo Studio</title>
 
 <style>
@@ -13,6 +13,7 @@
         font-family: Inter, system-ui, sans-serif;
     }
 
+    /* TOP BAR */
     .topbar {
         background: #111827;
         border-bottom: 1px solid #1f2937;
@@ -21,8 +22,6 @@
         align-items: center;
         justify-content: space-between;
         padding: 0 20px;
-        position: sticky;
-        top: 0;
     }
 
     .logo {
@@ -32,13 +31,23 @@
         text-shadow: 0 0 10px #3fb7ff;
     }
 
-    .account-btn {
+    .top-buttons {
+        display: flex;
+        gap: 18px;
+    }
+
+    .top-btn {
         color: #60a5fa;
         font-size: 14px;
         cursor: pointer;
         text-decoration: none;
+        transition: 0.2s;
+    }
+    .top-btn:hover {
+        color: #93c5fd;
     }
 
+    /* MAIN CONTAINER */
     .container {
         max-width: 430px;
         margin: auto;
@@ -50,7 +59,6 @@
         font-size: 26px;
         margin-top: 10px;
     }
-
     p.subtitle {
         text-align: center;
         opacity: .75;
@@ -59,6 +67,7 @@
         margin-bottom: 20px;
     }
 
+    /* TOOL GRID */
     .tool-grid {
         display: grid;
         grid-template-columns: repeat(2, 1fr);
@@ -75,7 +84,6 @@
         cursor: pointer;
         transition: .2s;
     }
-
     .tool-card:hover {
         border-color: #3fb7ff;
         transform: translateY(-3px);
@@ -93,6 +101,7 @@
         font-size: 15px;
     }
 
+    /* BIG BUTTONS */
     .btn {
         width: 100%;
         padding: 15px;
@@ -105,11 +114,11 @@
         margin-top: 22px;
         cursor: pointer;
     }
-
     .btn:hover {
         opacity: .85;
     }
 
+    /* NOTICE */
     .notice {
         margin-top: 20px;
         opacity: .65;
@@ -121,40 +130,47 @@
 
 <body>
 
+<!-- TOP NAVIGATION -->
 <div class="topbar">
     <div class="logo">AI Photo Studio</div>
-    <a class="account-btn" href="profile.html">My Account →</a>
+
+    <div class="top-buttons">
+        <a class="top-btn" href="profile.html">My Account</a>
+        <a class="top-btn" href="settings.html">Settings</a>
+        <a class="top-btn" href="#" id="logoutBtn">Sign Out</a>
+    </div>
 </div>
 
+<!-- MAIN SECTION -->
 <div class="container">
-
     <h1>Welcome Back 👋</h1>
     <p class="subtitle">Choose a tool below to start editing your photo</p>
 
+    <!-- TOOLS -->
     <div class="tool-grid">
 
         <div class="tool-card" onclick="location.href='editor-remove.html'">
-            <img src="icons/icon-remove-background.png" alt="">
+            <img src="icons/icon-remove-bg.PNG" alt="">
             <span>Remove Background</span>
         </div>
 
         <div class="tool-card" onclick="location.href='editor-change.html'">
-            <img src="icons/icon-change-background.png" alt="">
+            <img src="icons/icon-change-bg.PNG" alt="">
             <span>Change Background</span>
         </div>
 
         <div class="tool-card" onclick="location.href='editor-person.html'">
-            <img src="icons/icon-remove-person.png" alt="">
+            <img src="icons/icon-remove-person.PNG" alt="">
             <span>Remove Person</span>
         </div>
 
         <div class="tool-card" onclick="location.href='editor-object.html'">
-            <img src="icons/icon-remove-object.png" alt="">
+            <img src="icons/icon-remove-object.PNG" alt="">
             <span>Magic Eraser</span>
         </div>
-
     </div>
 
+    <!-- BUTTONS -->
     <button class="btn" onclick="location.href='gallery.html'">My Gallery</button>
     <button class="btn" onclick="location.href='subscription.html'">Manage Subscription</button>
 
@@ -162,17 +178,22 @@
         Free users will have a small watermark added.<br>
         Upgrade to Pro to remove all limits.
     </p>
-
 </div>
 
+<!-- SCRIPT -->
 <script type="module">
-import { auth, onAuthStateChanged } from "./firebase-app.js";
+import { auth, onAuthStateChanged, signOut } from "./firebase-app.js";
 
 onAuthStateChanged(auth, user => {
     if (!user) {
-        // Force new users to sign-in first
         window.location.href = "signin.html";
     }
+});
+
+document.getElementById("logoutBtn").addEventListener("click", () => {
+    signOut(auth).then(() => {
+        window.location.href = "signin.html";
+    });
 });
 </script>
 
