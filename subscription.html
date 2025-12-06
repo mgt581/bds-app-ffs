@@ -1,103 +1,160 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Subscribe · AI Photo Studio PRO</title>
-<link rel="stylesheet" href="subscription.css" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Photo Studio – Subscription</title>
 
-<!-- Firebase -->
-<script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-app.js";
-import { 
-  getAuth, 
-  onAuthStateChanged 
-} from "https://www.gstatic.com/firebasejs/12.6.0/firebase-auth.js";
-import { 
-  getFirestore, 
-  doc, 
-  setDoc 
-} from "https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js";
+    <link rel="stylesheet" href="/pricing.css">
 
-const firebaseConfig = {
-  apiKey: "AIzaSyCM6r66kW9xkBA5rgVcz4sP57N2v2BMbkg",
-  authDomain: "ai-photo-studio-24354.firebaseapp.com",
-  projectId: "ai-photo-studio-24354",
-  storageBucket: "ai-photo-studio-24354.firebasestorage.app",
-  messagingSenderId: "411346648650",
-  appId: "1:411346648650:web:aefd1b26027ed5e8fab0b3",
-  measurementId: "G-8TXC63YKPD"
-};
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: #050b16;
+            font-family: "Inter", sans-serif;
+            color: white;
+            text-align: center;
+        }
 
-const app = initializeApp(firebaseConfig);
-const auth = getAuth();
-const db = getFirestore();
+        .container {
+            max-width: 450px;
+            margin: 40px auto;
+            padding: 20px;
+        }
 
-// Check login
-onAuthStateChanged(auth, (user) => {
-  if (!user) {
-    window.location.href = "signin.html";
-    return;
-  }
-});
+        h1 {
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
 
-// Activate Trial
-async function startTrial() {
-  const user = auth.currentUser;
-  if (!user) return;
+        .card {
+            background: #0e1624;
+            border-radius: 16px;
+            padding: 25px;
+            margin-top: 20px;
+            border: 1px solid rgba(255,255,255,0.06);
+        }
 
-  const trialEnds = new Date();
-  trialEnds.setDate(trialEnds.getDate() + 7);
+        .price {
+            font-size: 40px;
+            font-weight: 700;
+            margin: 10px 0;
+            color: #3ea8ff;
+        }
 
-  await setDoc(doc(db, "users", user.uid), {
-    plan: "trial",
-    trialEnds: trialEnds.toISOString()
-  }, { merge: true });
+        .trial {
+            margin-bottom: 15px;
+            font-size: 18px;
+            opacity: 0.9;
+        }
 
-  window.location.href = "dashboard.html";
-}
+        .btn {
+            display: block;
+            width: 100%;
+            background: #3ea8ff;
+            border: none;
+            padding: 16px;
+            border-radius: 10px;
+            font-size: 18px;
+            color: black;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.25s;
+        }
 
-window.startTrial = startTrial;
-</script>
+        .btn:hover {
+            background: #66c3ff;
+        }
 
+        .features {
+            margin-top: 20px;
+            text-align: left;
+            padding-left: 30px;
+        }
+
+        .features li {
+            margin: 10px 0;
+            font-size: 16px;
+        }
+
+        .footer-note {
+            margin-top: 25px;
+            font-size: 14px;
+            opacity: 0.7;
+        }
+
+        .logout {
+            margin-top: 20px;
+            color: #ff7676;
+            cursor: pointer;
+        }
+    </style>
 </head>
+
 <body>
 
 <div class="container">
-  
-  <!-- LEFT COLUMN: FEATURES -->
-  <div class="left">
-    <h1>Unlock AI Photo Studio PRO</h1>
-    <p class="subtitle">Everything you need for perfect photos — fast.</p>
+    <h1>Unlock Premium</h1>
+    <p>Start your free 7-day trial</p>
 
-    <ul class="features">
-      <li>✔ Unlimited Background Removal</li>
-      <li>✔ Remove People & Objects</li>
-      <li>✔ Change Backgrounds Instantly</li>
-      <li>✔ HD + Transparent Downloads</li>
-      <li>✔ Fastest AI Models Available</li>
-      <li>✔ Priority Rendering Queue</li>
-    </ul>
-
-  </div>
-
-  <!-- RIGHT COLUMN: PRICING CARD -->
-  <div class="right">
     <div class="card">
-      <h2>PRO Membership</h2>
-      <p class="price">£24.99 / year</p>
-      <p class="trial">Includes 7-Day Free Trial</p>
+        <div class="price">£24.99 / year</div>
+        <div class="trial">7-day free trial • Cancel anytime</div>
 
-      <button class="trial-btn" onclick="startTrial()">Start Free Trial</button>
+        <button class="btn" id="startTrialBtn">Start Free Trial</button>
 
-      <p class="fineprint">
-        You won't be charged until the trial ends.<br/>
-        Cancel anytime in your account settings.
-      </p>
+        <ul class="features">
+            <li>✔ Unlimited Remove Background</li>
+            <li>✔ Change Background Tool</li>
+            <li>✔ Magic Eraser / Remove Objects</li>
+            <li>✔ Remove Person from Photos</li>
+            <li>✔ No Watermark</li>
+            <li>✔ Faster Processing</li>
+            <li>✔ Full Gallery Storage</li>
+        </ul>
+
+        <div class="footer-note">
+            You will not be charged until the end of your 7-day trial.<br>
+            Cancel anytime in your account page.
+        </div>
     </div>
-  </div>
 
+    <div class="logout" id="logoutBtn">Sign Out</div>
 </div>
+
+<script type="module">
+    import { auth, db, logout } from "./firebase-app.js";
+    import { doc, updateDoc } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js";
+
+    // ------------------------------------------------------------
+    // START FREE TRIAL → activates premium: true after payment (mock)
+    // ------------------------------------------------------------
+    document.getElementById("startTrialBtn").onclick = async () => {
+
+        const user = auth.currentUser;
+        if (!user) {
+            alert("You must be signed in.");
+            return;
+        }
+
+        const userRef = doc(db, "users", user.uid);
+
+        await updateDoc(userRef, {
+            premium: true
+        });
+
+        window.location.href = "/dashboard.html";
+    };
+
+    // ------------------------------------------------------------
+    // LOGOUT BUTTON
+    // ------------------------------------------------------------
+    document.getElementById("logoutBtn").onclick = async () => {
+        await logout();
+        window.location.href = "/signin.html";
+    };
+</script>
 
 </body>
 </html>
