@@ -1,68 +1,212 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Remove Person · AI Photo Studio</title>
 
-<link rel="stylesheet" href="editor.css">
-
 <style>
-body { margin:0;background:#0b1020;color:white;font-family:Inter,system-ui,sans-serif; }
-.topbar {
-  height:60px;background:#111827;border-bottom:1px solid #1f2937;
-  display:flex;align-items:center;justify-content:space-between;padding:0 20px;
-}
-.topbar h1 { font-size:18px;font-weight:700; }
-.topbar a { color:#60a5fa;text-decoration:none;font-weight:600; }
+    body {
+        margin: 0;
+        background: #050b16;
+        color: white;
+        font-family: "Inter", sans-serif;
+    }
 
-.tool-header { text-align:center;padding:25px; }
-.tool-header img { width:70px;margin-bottom:10px; }
+    .topbar {
+        background: #0b1120;
+        padding: 16px 20px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-bottom: 1px solid rgba(255,255,255,0.06);
+    }
 
-.upload-box {
-  margin:20px auto;padding:30px;border:2px dashed #1f2937;
-  width:90%;max-width:380px;text-align:center;border-radius:12px;
-}
-.upload-box button {
-  background:#3b82f6;border:none;padding:12px 26px;border-radius:10px;
-  color:white;font-size:15px;font-weight:600;cursor:pointer;
-}
+    .topbar h2 {
+        margin: 0;
+        font-size: 20px;
+        color: #3ea8ff;
+        font-weight: 700;
+    }
 
-#previewBox { display:none;text-align:center;margin-top:25px; }
-#previewBox img { width:90%;border-radius:10px;margin-bottom:15px; }
+    .nav-btns a {
+        color: #3ea8ff;
+        margin-left: 18px;
+        text-decoration: none;
+        font-size: 15px;
+    }
 
-.action-btn {
-  display:block;margin:12px auto;background:#3b82f6;
-  border:none;padding:12px 28px;border-radius:10px;font-weight:700;
-  cursor:pointer;color:white;font-size:16px;text-align:center;
-}
+    .container {
+        padding: 20px;
+        text-align: center;
+    }
+
+    .upload-box {
+        margin-top: 30px;
+        padding: 30px;
+        border: 2px dashed #3ea8ff55;
+        border-radius: 14px;
+        cursor: pointer;
+        background: #0b1223;
+    }
+
+    .upload-box:hover { border-color: #3ea8ff; }
+    .upload-box p { opacity: 0.8; margin-top: 8px; }
+
+    #previewImage {
+        max-width: 95%;
+        margin-top: 20px;
+        border-radius: 12px;
+        display: none;
+    }
+
+    #processBtn, #downloadBtn {
+        margin-top: 25px;
+        width: 100%;
+        padding: 16px;
+        font-size: 18px;
+        border-radius: 12px;
+        border: none;
+        background: #3ea8ff;
+        font-weight: 700;
+        color: #000;
+        cursor: pointer;
+        display: none;
+    }
+
+    #processBtn:hover, #downloadBtn:hover {
+        background: #63c4ff;
+    }
+
+    .loading {
+        margin-top: 25px;
+        font-size: 16px;
+        opacity: 0.7;
+        display: none;
+    }
+
 </style>
-
 </head>
+
 <body>
 
 <div class="topbar">
-  <h1>Remove Person</h1>
-  <a href="index.html">Back</a>
+    <h2>Remove Person</h2>
+    <div class="nav-btns">
+        <a href="/index.html">Home</a>
+        <a href="/gallery.html">Gallery</a>
+        <a href="/profile.html">Account</a>
+    </div>
 </div>
 
-<div class="tool-header">
-  <img src="icons/icon-remove-person.png">
-  <h2>Upload your photo</h2>
-  <p>AI will remove selected people automatically</p>
+<div class="container">
+
+    <!-- Upload -->
+    <div class="upload-box" onclick="fileInput.click()">
+        <img src="/icons/icon-remove-person.png" width="90" />
+        <p>Tap to upload your photo</p>
+    </div>
+
+    <input type="file" id="fileInput" accept="image/*" style="display:none" />
+
+    <img id="previewImage" />
+
+    <button id="processBtn">Remove Person</button>
+    <button id="downloadBtn">Download Result</button>
+
+    <p class="loading" id="loading">Removing people… please wait…</p>
+
 </div>
 
-<div class="upload-box">
-  <input id="uploadInput" type="file" accept="image/*" style="display:none">
-  <button onclick="uploadInput.click()">Select Image</button>
-</div>
+<script type="module">
+    import { auth, onAuthStateChanged } from "./firebase-app.js";
+    import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js";
 
-<div id="previewBox">
-  <img id="previewImg" src="">
-  <button class="action-btn" onclick="processPerson()">Remove Person</button>
-  <button class="action-btn" onclick="saveImage()">Save Image</button>
-</div>
+    const db = getFirestore();
 
-<script src="editor-person.js"></script>
+    let uploadedImage = null;
+    let processedImage = null;
+    let userIsPro = false;
+
+    // Require login
+    onAuthStateChanged(auth, async user => {
+        if (!user) window.location.href = "/signin.html";
+
+        const ref = doc(db, "users", user.uid);
+        const snap = await getDoc(ref);
+
+        if (snap.exists()) {
+            userIsPro =
+                snap.data().plan === "pro" ||
+                snap.data().plan === "daypass";
+        }
+    });
+
+    const fileInput = document.getElementById("fileInput");
+    const preview = document.getElementById("previewImage");
+    const processBtn = document.getElementById("processBtn");
+    const downloadBtn = document.getElementById("downloadBtn");
+    const loading = document.getElementById("loading");
+
+    fileInput.onchange = e => {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.onload = () => {
+            uploadedImage = reader.result;
+            preview.src = uploadedImage;
+            preview.style.display = "block";
+            processBtn.style.display = "block";
+        };
+        reader.readAsDataURL(file);
+    };
+
+    processBtn.onclick = async () => {
+        if (!uploadedImage) return;
+
+        loading.style.display = "block";
+        processBtn.style.display = "none";
+
+        // --- Simulated Processing (replace with your own model later) ---
+        await new Promise(r => setTimeout(r, 2000));
+
+        // Placeholder: return original image
+        processedImage = uploadedImage;
+
+        loading.style.display = "none";
+        downloadBtn.style.display = "block";
+        preview.src = processedImage;
+    };
+
+    downloadBtn.onclick = () => {
+        const canvas = document.createElement("canvas");
+        const img = new Image();
+
+        img.onload = () => {
+            canvas.width = img.width;
+            canvas.height = img.height;
+
+            const ctx = canvas.getContext("2d");
+            ctx.drawImage(img, 0, 0);
+
+            // Watermark for free users
+            if (!userIsPro) {
+                ctx.fillStyle = "rgba(255,255,255,0.45)";
+                ctx.font = "48px Inter";
+                ctx.fillText("AI Photo Studio", 30, canvas.height - 40);
+            }
+
+            const url = canvas.toDataURL("image/png");
+            const a = document.createElement("a");
+            a.href = url;
+            a.download = "remove-person.png";
+            a.click();
+        };
+
+        img.src = processedImage;
+    };
+</script>
+
 </body>
 </html>
