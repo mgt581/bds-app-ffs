@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Magic Eraser – Remove Object</title>
+<title>Magic Eraser · AI Photo Studio</title>
 
 <style>
     body {
@@ -50,20 +50,15 @@
         background: #0b1223;
     }
 
-    .upload-box:hover {
-        border-color: #3ea8ff;
-    }
+    .upload-box p { opacity: 0.8; margin-top: 8px; }
+    .upload-box:hover { border-color: #3ea8ff; }
 
-    .upload-box p {
-        opacity: 0.8;
-        margin-top: 8px;
-    }
-
-    #previewImage {
+    canvas {
         max-width: 95%;
         margin-top: 20px;
         border-radius: 12px;
         display: none;
+        cursor: crosshair;
     }
 
     #processBtn, #downloadBtn {
@@ -90,17 +85,6 @@
         opacity: 0.7;
         display: none;
     }
-
-    /* Watermark */
-    .watermark {
-        position: absolute;
-        bottom: 12px;
-        right: 12px;
-        opacity: 0.5;
-        font-size: 14px;
-        color: white;
-        font-weight: 700;
-    }
 </style>
 </head>
 
@@ -119,17 +103,18 @@
 
     <div class="upload-box" onclick="fileInput.click()">
         <img src="/icons/icon-remove-object.png" width="90" />
-        <p>Tap to upload a photo</p>
+        <p>Tap to upload your photo</p>
     </div>
 
     <input type="file" id="fileInput" accept="image/*" style="display:none" />
 
-    <img id="previewImage" />
+    <canvas id="imageCanvas"></canvas>
+    <canvas id="maskCanvas"></canvas>
 
-    <button id="processBtn">Remove Object</button>
+    <button id="processBtn">Erase Object</button>
     <button id="downloadBtn">Download Result</button>
 
-    <p class="loading" id="loading">Removing object… please wait…</p>
+    <p class="loading" id="loading">Erasing object… please wait…</p>
 
 </div>
 
@@ -139,84 +124,123 @@
 
     const db = getFirestore();
 
-    let originalImage = null;
-    let processedImage = null;
     let userIsPro = false;
 
-    // Ensure the user is logged in
+    // Require login
     onAuthStateChanged(auth, async user => {
         if (!user) window.location.href = "/signin.html";
 
-        // Check subscription
         const ref = doc(db, "users", user.uid);
         const snap = await getDoc(ref);
 
         if (snap.exists()) {
-            userIsPro = snap.data().plan === "pro" || snap.data().plan === "daypass";
+            userIsPro =
+                snap.data().plan === "pro" ||
+                snap.data().plan === "daypass";
         }
     });
 
     const fileInput = document.getElementById("fileInput");
-    const preview = document.getElementById("previewImage");
+    const imageCanvas = document.getElementById("imageCanvas");
+    const maskCanvas = document.getElementById("maskCanvas");
+
+    const ctxImage = imageCanvas.getContext("2d");
+    const ctxMask = maskCanvas.getContext("2d");
+
     const processBtn = document.getElementById("processBtn");
     const downloadBtn = document.getElementById("downloadBtn");
     const loading = document.getElementById("loading");
 
-    // Upload + preview
+    let img = new Image();
+    let drawing = false;
+
     fileInput.onchange = e => {
         const file = e.target.files[0];
         if (!file) return;
 
         const reader = new FileReader();
         reader.onload = () => {
-            originalImage = reader.result;
-            preview.src = originalImage;
-            preview.style.display = "block";
-            processBtn.style.display = "block";
+            img.onload = () => {
+                imageCanvas.width = img.width;
+                imageCanvas.height = img.height;
+                maskCanvas.width = img.width;
+                maskCanvas.height = img.height;
+
+                imageCanvas.style.display = "block";
+                maskCanvas.style.display = "block";
+
+                ctxImage.drawImage(img, 0, 0);
+                ctxMask.clearRect(0, 0, maskCanvas.width, maskCanvas.height);
+
+                processBtn.style.display = "block";
+            };
+            img.src = reader.result;
         };
         reader.readAsDataURL(file);
     };
 
-    // Fake Magic Eraser (replace later with real API)
+    // --- Brush Painting ---
+    maskCanvas.onmousedown = () => drawing = true;
+    maskCanvas.onmouseup = () => drawing = false;
+    maskCanvas.onmousemove = drawMask;
+
+    function drawMask(e) {
+        if (!drawing) return;
+
+        const rect = maskCanvas.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+
+        ctxMask.fillStyle = "rgba(255,0,0,0.9)";
+        ctxMask.beginPath();
+        ctxMask.arc(x, y, 25, 0, Math.PI * 2);
+        ctxMask.fill();
+    }
+
+    // --- PROCESS (Fake AI for now) ---
     processBtn.onclick = async () => {
-        processBtn.style.display = "none";
         loading.style.display = "block";
+        processBtn.style.display = "none";
 
-        await new Promise(r => setTimeout(r, 1800));
+        // Simulate processing
+        await new Promise(r => setTimeout(r, 2000));
 
-        processedImage = originalImage;
+        // Fake remove: blur masked area
+        const blurred = document.createElement("canvas");
+        blurred.width = img.width;
+        blurred.height = img.height;
+        const ctxB = blurred.getContext("2d");
 
+        ctxB.drawImage(img, 0, 0);
+        ctxB.globalAlpha = 0.4;
+        ctxB.fillStyle = "#000";
+        ctxB.fillRect(0, 0, blurred.width, blurred.height);
+
+        ctxImage.drawImage(blurred, 0, 0);
         loading.style.display = "none";
         downloadBtn.style.display = "block";
-        preview.src = processedImage;
     };
 
-    // Download with watermark if NOT pro
+    // --- DOWNLOAD ---
     downloadBtn.onclick = () => {
-        const canvas = document.createElement("canvas");
-        const img = new Image();
+        const finalCanvas = document.createElement("canvas");
+        finalCanvas.width = imageCanvas.width;
+        finalCanvas.height = imageCanvas.height;
+        const ctx = finalCanvas.getContext("2d");
 
-        img.onload = () => {
-            canvas.width = img.width;
-            canvas.height = img.height;
+        ctx.drawImage(imageCanvas, 0, 0);
 
-            const ctx = canvas.getContext("2d");
-            ctx.drawImage(img, 0, 0);
+        if (!userIsPro) {
+            ctx.fillStyle = "rgba(255,255,255,0.45)";
+            ctx.font = "48px Inter";
+            ctx.fillText("AI Photo Studio", 30, finalCanvas.height - 40);
+        }
 
-            if (!userIsPro) {
-                ctx.fillStyle = "rgba(255,255,255,0.5)";
-                ctx.font = "48px Inter";
-                ctx.fillText("AI Photo Studio", 30, canvas.height - 40);
-            }
-
-            const url = canvas.toDataURL("image/png");
-            const a = document.createElement("a");
-            a.href = url;
-            a.download = "magic-eraser.png";
-            a.click();
-        };
-
-        img.src = processedImage;
+        const url = finalCanvas.toDataURL("image/png");
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = "magic-eraser.png";
+        a.click();
     };
 </script>
 
