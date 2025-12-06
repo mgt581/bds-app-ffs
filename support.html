@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Help & Support · AI Photo Studio</title>
+
+<style>
+    body {
+        margin:0;
+        background:#0b0f19;
+        color:white;
+        font-family:Inter,system-ui,sans-serif;
+    }
+
+    /* Topbar */
+    .topbar {
+        height:60px;
+        background:#111827;
+        border-bottom:1px solid #1f2937;
+        display:flex;
+        align-items:center;
+        justify-content:space-between;
+        padding:0 20px;
+        position:sticky;
+        top:0;
+    }
+
+    .logo {
+        color:#3fb7ff;
+        font-size:20px;
+        font-weight:700;
+        text-shadow:0 0 10px #3fb7ff;
+    }
+
+    .back {
+        color:#60a5fa;
+        cursor:pointer;
+        font-size:15px;
+    }
+
+    .container {
+        max-width:430px;
+        margin:auto;
+        padding:20px;
+    }
+
+    h1 {
+        text-align:center;
+        font-size:26px;
+        margin-bottom:10px;
+    }
+
+    p {
+        opacity:.8;
+        text-align:center;
+    }
+
+    /* Help cards */
+    .card {
+        background:#111827;
+        border:1px solid #1f2937;
+        padding:18px;
+        border-radius:14px;
+        margin-top:20px;
+        cursor:pointer;
+        transition:.2s;
+    }
+
+    .card:hover {
+        border-color:#3fb7ff;
+        transform:translateY(-3px);
+    }
+
+    .card h3 {
+        margin:0 0 6px 0;
+        font-size:18px;
+        color:#3fb7ff;
+    }
+
+    .card p {
+        margin:0;
+        opacity:.7;
+        text-align:left;
+        font-size:14px;
+    }
+
+    /* FAQ */
+    .faq-item {
+        background:#111827;
+        border:1px solid #1f2937;
+        border-radius:14px;
+        padding:15px;
+        margin-top:15px;
+    }
+
+    .faq-q {
+        font-weight:700;
+        margin-bottom:6px;
+    }
+
+    /* Buttons */
+    .btn {
+        width:100%;
+        padding:16px;
+        margin-top:25px;
+        border:none;
+        border-radius:12px;
+        background:#2563eb;
+        color:white;
+        font-weight:700;
+        cursor:pointer;
+        font-size:16px;
+    }
+
+    .btn:hover {
+        opacity:.9;
+    }
+
+    .email {
+        display:block;
+        text-align:center;
+        margin-top:12px;
+        color:#60a5fa;
+        font-size:15px;
+        text-decoration:none;
+    }
+
+</style>
+</head>
+<body>
+
+<div class="topbar">
+    <div class="logo">AI Photo Studio</div>
+    <div class="back" onclick="history.back()">← Back</div>
+</div>
+
+<div class="container">
+
+    <h1>Help & Support</h1>
+    <p>Find answers, manage your subscription, or contact support.</p>
+
+    <!-- QUICK ACTION CARDS -->
+    <div class="card" onclick="location.href='subscription.html'">
+        <h3>Manage Subscription</h3>
+        <p>Upgrade, cancel trial, or view billing details.</p>
+    </div>
+
+    <div class="card" onclick="location.href='gallery.html'">
+        <h3>My Saved Photos</h3>
+        <p>Find and download your edited images.</p>
+    </div>
+
+    <div class="card" onclick="location.href='settings.html'">
+        <h3>Account Settings</h3>
+        <p>Email, password, sign-in methods & privacy.</p>
+    </div>
+
+    <div class="card" onclick="location.href='forgot-password.html'">
+        <h3>Reset Password</h3>
+        <p>Get a reset link instantly.</p>
+    </div>
+
+    <!-- FAQ SECTION -->
+    <h2 style="margin-top:25px;">FAQs</h2>
+
+    <div class="faq-item">
+        <div class="faq-q">Why am I seeing a watermark?</div>
+        <div class="faq-a">Watermarks are removed instantly for Pro members or during the free trial.</div>
+    </div>
+
+    <div class="faq-item">
+        <div class="faq-q">How do I cancel my free trial?</div>
+        <div class="faq-a">Go to Subscription → Manage Subscription. Cancel anytime before the 7-day trial ends to avoid charges.</div>
+    </div>
+
+    <div class="faq-item">
+        <div class="faq-q">Why is my image not loading?</div>
+        <div class="faq-a">Make sure your image is under 10MB and you have a stable connection.</div>
+    </div>
+
+    <div class="faq-item">
+        <div class="faq-q">Can I restore purchases?</div>
+        <div class="faq-a">Yes, simply sign in with the same email you used before.</div>
+    </div>
+
+    <!-- CONTACT SUPPORT -->
+    <button class="btn" onclick="location.href='mailto:support@aiphotostudio.co.uk'">
+        Contact Support
+    </button>
+
+    <a class="email" href="mailto:support@aiphotostudio.co.uk">support@aiphotostudio.co.uk</a>
+
+</div>
+
+</body>
+</html>
