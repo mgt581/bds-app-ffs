@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sign In · AI Photo Studio</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+<style>
+    body {
+        margin: 0;
+        background: #0b0f1c;
+        font-family: Inter, sans-serif;
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 100vh;
+        padding: 20px;
+    }
+
+    .card {
+        background: #111827;
+        border: 1px solid #1f2937;
+        padding: 32px;
+        border-radius: 18px;
+        width: 100%;
+        max-width: 380px;
+        text-align: center;
+        box-shadow: 0 0 22px rgba(0, 153, 255, 0.15);
+    }
+
+    h1 {
+        margin-bottom: 6px;
+        font-size: 26px;
+        color: #3fb7ff;
+        text-shadow: 0 0 10px #3fb7ff;
+    }
+
+    p.sub {
+        margin-top: 0;
+        opacity: 0.7;
+        font-size: 14px;
+    }
+
+    input {
+        width: 100%;
+        padding: 14px;
+        margin-top: 14px;
+        background: #0f172a;
+        border: 1px solid #1e293b;
+        border-radius: 10px;
+        color: white;
+    }
+
+    button {
+        width: 100%;
+        padding: 14px;
+        border-radius: 10px;
+        background: #3fb7ff;
+        border: none;
+        font-weight: 700;
+        margin-top: 14px;
+        cursor: pointer;
+    }
+
+    button:hover {
+        opacity: 0.85;
+    }
+
+    .google-btn {
+        background: #ffffff;
+        color: #000;
+        margin-top: 14px;
+        font-weight: 600;
+    }
+
+    .guest-btn {
+        background: transparent;
+        border: 1px solid #334155;
+        color: #3fb7ff;
+        margin-top: 14px;
+    }
+
+    .links {
+        margin-top: 20px;
+        font-size: 14px;
+    }
+
+    .links a {
+        color: #3fb7ff;
+        text-decoration: none;
+        font-weight: 600;
+    }
+
+</style>
+</head>
+
+<body>
+
+<div class="card">
+    <h1>Welcome Back</h1>
+    <p class="sub">Sign in to continue</p>
+
+    <input id="email" type="email" placeholder="Email address">
+    <input id="password" type="password" placeholder="Password">
+
+    <button onclick="emailLogin()">Sign In</button>
+
+    <button class="google-btn" onclick="googleLogin()">Sign in with Google</button>
+
+    <button class="guest-btn" onclick="guestLogin()">Continue as Guest</button>
+
+    <div class="links">
+        <a href="/reset-password.html">Forgot Password?</a><br><br>
+        <a href="/signup.html">Create an Account</a>
+    </div>
+</div>
+
+<script type="module" src="/signin.js"></script>
+
+</body>
+</html>
