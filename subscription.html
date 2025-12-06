@@ -1,176 +1,158 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>Subscription · AI Photo Studio</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Start Your Free Trial – AI Photo Studio</title>
 
 <style>
     body {
-        margin:0;
-        background:#0b0f19;
-        color:white;
-        font-family:Inter,system-ui,sans-serif;
+        margin: 0;
+        background: #0b0f19;
+        font-family: Inter, system-ui, sans-serif;
+        color: white;
     }
 
     .topbar {
-        height:60px;
-        background:#111827;
-        border-bottom:1px solid #1f2937;
-        display:flex;
-        align-items:center;
-        justify-content:space-between;
-        padding:0 20px;
+        background: #111827;
+        border-bottom: 1px solid #1f2937;
+        height: 60px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 20px;
+        font-weight: 700;
+        color: #3fb7ff;
+        text-shadow: 0 0 10px #3fb7ff;
     }
 
-    .logo {
-        font-size:20px;
-        color:#3fb7ff;
-        font-weight:700;
-        text-shadow:0 0 10px #3fb7ff;
-    }
-
-    .content {
-        max-width:430px;
-        margin:30px auto;
-        padding:20px;
+    .container {
+        max-width: 450px;
+        margin: auto;
+        padding: 25px;
+        text-align: center;
     }
 
     h1 {
-        font-size:26px;
-        margin-bottom:10px;
-        text-align:center;
+        font-size: 28px;
+        margin-bottom: 10px;
     }
 
-    p {
-        opacity:0.8;
-        text-align:center;
-        margin-bottom:20px;
+    .subtitle {
+        opacity: .8;
+        font-size: 15px;
+        margin-bottom: 30px;
     }
 
     .card {
-        background:#111827;
-        border:1px solid #1f2937;
-        padding:20px;
-        border-radius:14px;
-        margin-bottom:25px;
+        background: #111827;
+        border: 1px solid #1f2937;
+        border-radius: 16px;
+        padding: 25px;
+        box-shadow: 0 0 25px rgba(0,0,0,0.3);
+        text-align: left;
     }
 
     .price {
-        font-size:34px;
-        font-weight:900;
-        text-align:center;
-        margin-bottom:6px;
-        color:#3fb7ff;
-        text-shadow:0 0 12px #3fb7ff;
+        font-size: 34px;
+        margin: 10px 0;
+        color: #3fb7ff;
+        text-shadow: 0 0 10px #3fb7ff;
+    }
+
+    ul {
+        margin: 20px 0;
+        padding-left: 20px;
+        font-size: 15px;
+        line-height: 1.6em;
     }
 
     .btn {
-        width:100%;
-        padding:16px;
-        border:none;
-        border-radius:12px;
-        cursor:pointer;
-        font-weight:700;
-        font-size:16px;
-        margin-top:10px;
-        color:white;
-        background:#2563eb;
+        width: 100%;
+        background: #2563eb;
+        color: white;
+        border: none;
+        padding: 16px;
+        border-radius: 12px;
+        margin-top: 20px;
+        font-size: 18px;
+        font-weight: 700;
+        cursor: pointer;
     }
 
     .btn:hover {
-        opacity:.9;
+        opacity: .85;
     }
 
-    .link {
-        margin-top:12px;
-        display:block;
-        text-align:center;
-        color:#60a5fa;
-        font-size:14px;
+    .small-link {
+        display: block;
+        margin-top: 18px;
+        font-size: 14px;
+        opacity: .7;
+        cursor: pointer;
+        text-decoration: underline;
     }
-
-    .feature {
-        padding:8px 0;
-        border-bottom:1px solid #1f2937;
-        opacity:0.85;
-        font-size:15px;
-    }
-
 </style>
 </head>
+
 <body>
 
-<div class="topbar">
-    <div class="logo">AI Photo Studio</div>
-    <div onclick="history.back()" style="color:#60a5fa;cursor:pointer;">← Back</div>
-</div>
+<div class="topbar">AI Photo Studio</div>
 
-<div class="content">
+<div class="container">
 
-    <h1>Unlock AI Photo Studio Pro</h1>
-    <p>Start your free 7-day trial, cancel anytime. No charge until the trial ends.</p>
+    <h1>Start Your 7-Day Free Trial</h1>
+    <p class="subtitle">Unlock full HD editing, no limits, no watermarks.</p>
 
     <div class="card">
-
         <div class="price">£24.99 / year</div>
 
-        <div class="feature">✔ Unlimited Remove Background</div>
-        <div class="feature">✔ Unlimited Change Background</div>
-        <div class="feature">✔ Unlimited Remove Person</div>
-        <div class="feature">✔ Unlimited Magic Eraser / Object Removal</div>
-        <div class="feature">✔ No Ads</div>
-        <div class="feature">✔ No Watermarks</div>
-        <div class="feature">✔ High-Resolution Exports</div>
-        <div class="feature">✔ Priority Processing Speed</div>
+        <ul>
+            <li>✔ Unlimited background removal</li>
+            <li>✔ Change background (upload or presets)</li>
+            <li>✔ Magic Eraser – remove objects & people</li>
+            <li>✔ No watermarks on exports</li>
+            <li>✔ Auto-save to your gallery folders</li>
+            <li>✔ Priority processing speed</li>
+        </ul>
 
-        <button class="btn" id="startTrialBtn">Start Free 7-Day Trial</button>
+        <!-- PAY BUTTON -->
+        <button class="btn" id="startTrialBtn">
+            Start Free Trial (7 Days)
+        </button>
 
-        <a class="link" id="manageSubLink" style="display:none;">Manage Subscription</a>
+        <span class="small-link" id="alreadySub">
+            Already subscribed? Continue to app →
+        </span>
     </div>
 
 </div>
 
 <script type="module">
-    import { auth, onAuthStateChanged } from "./firebase-app.js";
-    import { db } from "./db.js";
-    import { doc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js";
+import { auth, onAuthStateChanged } from "./firebase-app.js";
+import { getUserSubscriptionStatus } from "./premium-status.js";
 
-    let customerPortalURL = ""; // You will paste your Stripe customer portal link here later
+onAuthStateChanged(auth, async (user) => {
+    if (!user) {
+        window.location.href = "signin.html";
+        return;
+    }
 
-    onAuthStateChanged(auth, async (user) => {
-        if (!user) return location.href = "signin.html";
+    const status = await getUserSubscriptionStatus(user.uid);
 
-        const ref = doc(db, "users", user.uid);
-        const snap = await getDoc(ref);
+    if (status === "active") {
+        window.location.href = "index.html";
+    }
+});
 
-        if (!snap.exists()) return;
+document.getElementById("alreadySub").addEventListener("click", () => {
+    window.location.href = "index.html";
+});
 
-        const data = snap.data();
-
-        // Show manage subscription button for paying users
-        if (data.plan === "pro") {
-            document.getElementById("manageSubLink").style.display = "block";
-            document.getElementById("manageSubLink").onclick = () => {
-                if (!customerPortalURL) return alert("Subscription portal not connected yet.");
-                location.href = customerPortalURL;
-            };
-        }
-    });
-
-    document.getElementById("startTrialBtn").onclick = async () => {
-        const user = auth.currentUser;
-        if (!user) return location.href = "signin.html";
-
-        const ref = doc(db, "users", user.uid);
-
-        await updateDoc(ref, {
-            plan: "trial",
-            trialStarted: Date.now()
-        });
-
-        location.href = "subscription-success.html";
-    };
+document.getElementById("startTrialBtn").addEventListener("click", () => {
+    // ⭐ This will open Stripe later once we add your link
+    window.location.href = "payment-start.html"; 
+});
 </script>
 
 </body>
