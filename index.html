@@ -1,170 +1,188 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>AI Photo Studio</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AI Photo Studio</title>
 
-<link rel="manifest" href="manifest.webmanifest">
-<link rel="stylesheet" href="dashboard.css">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: #0a0f18;
+            font-family: "Inter", sans-serif;
+            color: #fff;
+            -webkit-font-smoothing: antialiased;
+        }
 
-<style>
-    body {
-        margin: 0;
-        font-family: Inter, sans-serif;
-        background: #0e1525;
-        color: white;
-    }
+        /* Smooth fade-in */
+        .fade {
+            opacity: 0;
+            animation: fadeIn 0.6s forwards ease-in-out;
+        }
+        @keyframes fadeIn {
+            to { opacity: 1; }
+        }
 
-    .nav {
-        width: 100%;
-        background: #0b1220;
-        padding: 15px 25px;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        border-bottom: 1px solid rgba(255,255,255,0.05);
-    }
+        /* HEADER */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 25px 40px;
+            position: sticky;
+            top: 0;
+            background: rgba(10, 15, 24, 0.5);
+            backdrop-filter: blur(12px);
+            z-index: 50;
+        }
 
-    .logo {
-        font-size: 26px;
-        font-weight: 700;
-        color: #3bb0ff;
-        text-shadow: 0 0 10px rgba(59,176,255,0.8);
-    }
+        .logo {
+            font-size: 28px;
+            font-weight: 700;
+            color: #4ab3ff;
+            text-shadow: 0 0 12px #007bff;
+            letter-spacing: 0.5px;
+        }
 
-    .account-btn {
-        padding: 8px 18px;
-        border-radius: 10px;
-        background: rgba(255,255,255,0.08);
-        color: #fff;
-        font-weight: 600;
-        font-size: 14px;
-        border: 1px solid rgba(255,255,255,0.15);
-        backdrop-filter: blur(6px);
-    }
+        .account-btn {
+            padding: 10px 22px;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            color: #fff;
+            font-size: 14px;
+            backdrop-filter: blur(8px);
+            cursor: pointer;
+            transition: 0.25s;
+        }
+        .account-btn:hover {
+            background: rgba(255, 255, 255, 0.12);
+        }
 
-    .container {
-        max-width: 1200px;
-        margin: 40px auto;
-        padding: 0 20px;
-        text-align: center;
-    }
+        /* HERO SECTION */
+        .hero {
+            text-align: center;
+            padding: 110px 20px 60px;
+        }
 
-    h1 {
-        font-size: 42px;
-        font-weight: 800;
-        margin-bottom: 10px;
-    }
+        .hero h1 {
+            font-size: 46px;
+            font-weight: 800;
+            line-height: 1.15;
+            margin-bottom: 15px;
+        }
 
-    p.subtitle {
-        color: #b8c2d6;
-        font-size: 18px;
-        margin-bottom: 40px;
-    }
+        .hero p {
+            font-size: 18px;
+            opacity: 0.85;
+            margin-top: 0;
+        }
 
-    p.plan {
-        margin-bottom: 40px;
-        font-size: 16px;
-        color: #79a2ff;
-        font-weight: 600;
-    }
+        .plan {
+            margin-top: 12px;
+            opacity: 0.7;
+            font-size: 15px;
+        }
 
-    .grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-        gap: 30px;
-        margin-top: 20px;
-    }
+        /* GRID SECTION */
+        .tools-container {
+            max-width: 1050px;
+            margin: 70px auto 60px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 28px;
+            padding: 0 20px;
+        }
 
-    .card {
-        background: #0f1a30;
-        padding: 25px;
-        border-radius: 18px;
-        border: 1px solid rgba(255,255,255,0.06);
-        transition: .2s;
-        cursor: pointer;
-    }
+        .tool-card {
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 16px;
+            padding: 35px 25px;
+            text-align: center;
+            transition: 0.25s ease;
+            backdrop-filter: blur(10px);
+        }
 
-    .card:hover {
-        transform: translateY(-3px);
-        border-color: #3bb0ff;
-        box-shadow: 0 0 20px rgba(59,176,255,0.12);
-    }
+        .tool-card:hover {
+            transform: translateY(-6px);
+            border-color: rgba(74, 179, 255, 0.5);
+            box-shadow: 0 0 18px rgba(74, 179, 255, 0.3);
+        }
 
-    .card img {
-        width: 70px;
-        margin-bottom: 15px;
-    }
+        .tool-card img {
+            width: 60px;
+            margin-bottom: 18px;
+        }
 
-    .card-title {
-        font-size: 20px;
-        font-weight: 600;
-        margin-bottom: 8px;
-    }
+        .tool-title {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 6px;
+        }
 
-    .coming {
-        color: #ff6584;
-        font-size: 14px;
-        font-weight: 700;
-    }
+        .coming-soon {
+            margin-top: 6px;
+            font-size: 13px;
+            opacity: 0.6;
+        }
 
-    footer {
-        margin-top: 60px;
-        text-align: center;
-        opacity: 0.6;
-        font-size: 14px;
-    }
-</style>
-
+        footer {
+            text-align: center;
+            padding: 40px 0;
+            opacity: 0.6;
+            font-size: 14px;
+            margin-top: 40px;
+        }
+    </style>
 </head>
-<body>
 
-<div class="nav">
-    <div class="logo">AI Photo Studio</div>
-    <a class="account-btn" href="profile.html">My Account</a>
-</div>
+<body class="fade">
 
-<div class="container">
+    <!-- HEADER -->
+    <header>
+        <div class="logo">AI Photo Studio</div>
+        <button class="account-btn" onclick="location.href='account.html'">My Account</button>
+    </header>
 
-    <h1>Transform Your Photos Instantly</h1>
-    <p class="subtitle">Professional AI tools for creators, businesses, and everyday users.</p>
-    <p class="plan">Your Plan: <strong>Loading...</strong></p>
+    <!-- HERO -->
+    <section class="hero">
+        <h1>Transform Your Photos Instantly</h1>
+        <p>Premium AI tools for creators, businesses, and everyday users.</p>
+        <div class="plan">Your Plan: <span id="planStatus">Loading...</span></div>
+    </section>
 
-    <div class="grid">
+    <!-- TOOL GRID -->
+    <section class="tools-container">
 
-        <a href="remove-background.html" class="card">
-            <img src="icons/remove-bg.png" alt="remove">
-            <div class="card-title">Remove Background</div>
-        </a>
-
-        <a href="change-background.html" class="card">
-            <img src="icons/change-bg.png" alt="change">
-            <div class="card-title">Change Background</div>
-        </a>
-
-        <div class="card">
-            <img src="icons/face.png" alt="face">
-            <div class="card-title">AI Face Enhance</div>
-            <div class="coming">COMING SOON</div>
+        <div class="tool-card" onclick="location.href='remove-background.html'">
+            <img src="logo-512.png" alt="">
+            <div class="tool-title">Remove Background</div>
         </div>
 
-        <div class="card">
-            <img src="icons/remove-object.png" alt="remove object">
-            <div class="card-title">Remove People / Objects</div>
-            <div class="coming">COMING SOON</div>
+        <div class="tool-card" onclick="location.href='change-background.html'">
+            <img src="logo-512.png" alt="">
+            <div class="tool-title">Change Background</div>
         </div>
 
-    </div>
+        <div class="tool-card">
+            <img src="logo-512.png" alt="">
+            <div class="tool-title">AI Face Enhance</div>
+            <div class="coming-soon">COMING SOON</div>
+        </div>
 
-</div>
+        <div class="tool-card">
+            <img src="logo-512.png" alt="">
+            <div class="tool-title">Remove People / Objects</div>
+            <div class="coming-soon">COMING SOON</div>
+        </div>
 
-<footer>
-    AI Photo Studio © 2025
-</footer>
+    </section>
 
-<script src="premium-check.js"></script>
-<script src="premium-status.js"></script>
+    <footer>
+        AI Photo Studio © 2025
+    </footer>
 
 </body>
 </html>
