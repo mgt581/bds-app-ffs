@@ -2,194 +2,146 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Create Account · AI Photo Studio</title>
-
-<!-- Fonts -->
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet"/>
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Sign Up · AI Photo Studio</title>
 
 <style>
     body {
-        margin:0;
-        background:#0a0f1a;
-        font-family:Inter, sans-serif;
-        color:white;
-        display:flex;
-        justify-content:center;
-        align-items:center;
-        height:100vh;
-        padding:20px;
+        margin: 0;
+        background: #0b0f19;
+        color: white;
+        font-family: Inter, system-ui, sans-serif;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        padding: 20px;
+        text-align: center;
     }
 
-    .container {
-        width:100%;
-        max-width:420px;
-        background:#111827;
-        padding:35px;
-        border-radius:18px;
-        box-shadow:0 0 32px rgba(0,150,255,0.25);
-        border:1px solid #1e293b;
-        text-align:center;
+    .box {
+        background: #111827;
+        padding: 28px;
+        border-radius: 14px;
+        width: 100%;
+        max-width: 380px;
+        border: 1px solid #1f2937;
     }
 
     h1 {
-        font-size:28px;
-        font-weight:700;
-        margin-bottom:6px;
-        color:#3fb7ff;
-        text-shadow:0 0 10px #3fb7ff;
+        font-size: 26px;
+        margin-bottom: 20px;
     }
 
-    p { opacity:0.75; font-size:14px; margin-bottom:25px; }
-
     input {
-        width:100%;
-        padding:14px;
-        margin-bottom:16px;
-        border-radius:10px;
-        background:#0f172a;
-        border:1px solid #1f2b3d;
-        color:white;
-        font-size:15px;
+        width: 100%;
+        padding: 14px;
+        margin-top: 12px;
+        border-radius: 10px;
+        border: 1px solid #1f2937;
+        background: #0b0f19;
+        color: white;
+        font-size: 15px;
     }
 
     button {
-        width:100%;
-        padding:14px;
-        border-radius:12px;
-        border:none;
-        font-size:16px;
-        font-weight:700;
-        cursor:pointer;
-        margin-top:8px;
-        transition:0.2s;
+        width: 100%;
+        padding: 14px;
+        margin-top: 16px;
+        border: none;
+        border-radius: 10px;
+        background: #2563eb;
+        color: white;
+        font-size: 16px;
+        font-weight: 700;
+        cursor: pointer;
     }
 
-    .primary {
-        background:#3fb7ff;
-        color:#000;
-        text-shadow:0 0 10px #ffffff;
+    button:hover {
+        opacity: .85;
     }
 
-    .primary:hover {
-        transform:translateY(-2px);
-        box-shadow:0 0 18px #3fb7ff;
+    .link {
+        color: #60a5fa;
+        font-size: 14px;
+        margin-top: 10px;
+        display: block;
+        text-decoration: none;
     }
 
     .google-btn {
-        background:#ffffff;
-        color:#000;
-        margin-top:14px;
+        background: #db4437;
     }
 
-    .google-btn:hover {
-        transform:translateY(-2px);
-        box-shadow:0 0 18px rgba(255,255,255,0.5);
-    }
-
-    a {
-        color:#3fb7ff;
-        font-size:14px;
-        text-decoration:none;
-        display:block;
-        margin-top:14px;
-    }
-
-    .bottom-links {
-        margin-top:22px;
-        opacity:0.7;
+    .anon-btn {
+        background: #6b7280;
     }
 </style>
+</head>
 
-<!-- Firebase -->
+<body>
+
+<div class="box">
+
+    <h1>Create Account</h1>
+
+    <input id="email" type="email" placeholder="Email" />
+    <input id="password" type="password" placeholder="Password (min 6 chars)" />
+
+    <button id="signupBtn">Sign Up</button>
+
+    <button class="google-btn" id="googleBtn">Sign Up with Google</button>
+
+    <button class="anon-btn" id="anonBtn">Continue as Guest</button>
+
+    <a class="link" href="signin.html">Already have an account? Sign In</a>
+
+</div>
+
 <script type="module">
-import { 
-    initializeApp
-} from "https://www.gstatic.com/firebasejs/12.6.0/firebase-app.js";
+import { auth, createUserWithEmailAndPassword, signInWithPopup, GoogleAuthProvider, signInAnonymously } from "./firebase-app.js";
+import { db } from "./db.js";
+import { doc, setDoc } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js";
 
-import {
-    getAuth,
-    createUserWithEmailAndPassword,
-    GoogleAuthProvider,
-    signInWithPopup
-} from "https://www.gstatic.com/firebasejs/12.6.0/firebase-auth.js";
-
-import {
-    getFirestore,
-    doc,
-    setDoc
-} from "https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js";
-
-const firebaseConfig = {
-  apiKey: "AIzaSyCM6r66kW9xkBA5rgVcz4sP57N2v2BMbkg",
-  authDomain: "ai-photo-studio-24354.firebaseapp.com",
-  projectId: "ai-photo-studio-24354",
-  storageBucket: "ai-photo-studio-24354.firebasestorage.app",
-  messagingSenderId: "411346648650",
-  appId: "1:411346648650:web:aefd1b26027ed5e8fab0b3",
-  measurementId: "G-8TXC63YKPD"
-};
-
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const db = getFirestore(app);
-
-async function createUserProfile(user) {
-    await setDoc(doc(db, "users", user.uid), {
+async function createUserData(uid) {
+    await setDoc(doc(db, "users", uid), {
         plan: "trial",
-        trialActive: true,
-        created: new Date().toISOString()
+        trialStart: Date.now(),
+        created: Date.now()
     });
 }
 
-// EMAIL SIGN UP
-document.getElementById("emailSignUp").onclick = async () => {
+document.getElementById("signupBtn").onclick = () => {
     const email = document.getElementById("email").value.trim();
-    const pass = document.getElementById("password").value.trim();
+    const password = document.getElementById("password").value.trim();
 
-    if (!email || !pass) return alert("Enter email and password.");
-
-    try {
-        const userCred = await createUserWithEmailAndPassword(auth, email, pass);
-        await createUserProfile(userCred.user);
-        window.location.href = "/subscription.html"; // <-- free trial page
-    } catch (err) {
-        alert(err.message);
-    }
+    createUserWithEmailAndPassword(auth, email, password)
+        .then(async (cred) => {
+            await createUserData(cred.user.uid);
+            window.location.href = "subscription.html";
+        })
+        .catch(err => alert(err.message));
 };
 
-// GOOGLE SIGN-UP
-document.getElementById("googleBtn").onclick = async () => {
-    try {
-        const provider = new GoogleAuthProvider();
-        const userCred = await signInWithPopup(auth, provider);
-        await createUserProfile(userCred.user);
-        window.location.href = "/subscription.html";
-    } catch (err) {
-        alert(err.message);
-    }
+document.getElementById("googleBtn").onclick = () => {
+    const provider = new GoogleAuthProvider();
+    signInWithPopup(auth, provider)
+        .then(async (cred) => {
+            await createUserData(cred.user.uid);
+            window.location.href = "subscription.html";
+        })
+        .catch(err => alert(err.message));
+};
+
+document.getElementById("anonBtn").onclick = () => {
+    signInAnonymously(auth)
+        .then(async (cred) => {
+            await createUserData(cred.user.uid);
+            window.location.href = "subscription.html";
+        })
+        .catch(err => alert(err.message));
 };
 </script>
-
-</head>
-<body>
-
-<div class="container">
-    <h1>Create Account</h1>
-    <p>Join AI Photo Studio — start your 7-day free trial.</p>
-
-    <input id="email" type="email" placeholder="Email" />
-    <input id="password" type="password" placeholder="Password" />
-
-    <button class="primary" id="emailSignUp">Create Account</button>
-
-    <button class="google-btn" id="googleBtn">Sign up with Google</button>
-
-    <div class="bottom-links">
-        Already have an account?
-        <a href="/signin.html">Sign In</a>
-    </div>
-</div>
 
 </body>
 </html>
