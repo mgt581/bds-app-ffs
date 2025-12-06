@@ -3,180 +3,166 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>AI Photo Studio · Dashboard</title>
+<title>Dashboard • AI Photo Studio</title>
 
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet" />
-<link rel="stylesheet" href="dashboard.css">
+<link rel="stylesheet" href="dashboard.css" />
 
 <style>
-    body {
-        margin:0;
-        background:#0b0f1c;
-        font-family:Inter, system-ui, sans-serif;
-        color:white;
-    }
+/* PAGE BASE */
+body {
+    margin: 0;
+    background: #0b1120; /* Dark navy premium theme */
+    color: #fff;
+    font-family: Inter, sans-serif;
+}
 
-    /* Header */
-    .dash-header {
-        padding:40px 20px;
-        text-align:center;
-        background:#111827;
-        border-bottom:1px solid #1f2937;
-    }
+/* HEADER */
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 22px 30px;
+    background: #0f172a;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+}
 
-    .dash-header h1 {
-        font-size:32px;
-        font-weight:800;
-        margin-bottom:10px;
-    }
+.header-title {
+    font-size: 26px;
+    font-weight: 700;
+    color: #60a5fa;
+    text-shadow: 0 0 12px rgba(96,165,250,0.6);
+}
 
-    .dash-header p {
-        font-size:18px;
-        opacity:0.8;
-    }
+.header a {
+    padding: 10px 16px;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 10px;
+    color: #fff;
+    text-decoration: none;
+    font-size: 15px;
+    backdrop-filter: blur(4px);
+}
 
-    /* Cards */
-    .dash-main {
-        padding:30px 20px;
-        max-width:1100px;
-        margin:auto;
-        display:grid;
-        grid-template-columns:repeat(auto-fit, minmax(260px,1fr));
-        gap:20px;
-    }
+/* MAIN */
+.main {
+    text-align: center;
+    padding: 25px;
+}
 
-    .dash-card {
-        background:#111827;
-        border:1px solid #1f2937;
-        border-radius:16px;
-        padding:25px;
-        text-align:left;
-        text-decoration:none;
-        color:white;
-        transition:0.2s;
-        cursor:pointer;
-    }
+.main h1 {
+    font-size: 32px;
+    margin-bottom: 10px;
+}
 
-    .dash-card:hover {
-        transform:translateY(-4px);
-        border-color:#3fb7ff;
-    }
+.sub {
+    opacity: 0.7;
+    margin-bottom: 20px;
+}
 
-    .dash-card h3 {
-        margin:0 0 10px 0;
-        font-size:22px;
-        font-weight:700;
-    }
+/* LOADING PLAN TEXT */
+.plan {
+    margin-top: 5px;
+    font-size: 18px;
+    opacity: 0.75;
+}
 
-    .dash-card p {
-        opacity:0.7;
-        font-size:15px;
-    }
+/* FEATURE GRID */
+.grid {
+    display: grid;
+    gap: 18px;
+    grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+    margin: 35px auto;
+    max-width: 950px;
+}
 
-    /* Footer */
-    .dash-footer {
-        text-align:center;
-        padding:30px;
-        margin-top:20px;
-    }
+.card {
+    background: #111827;
+    padding: 30px 20px;
+    border-radius: 16px;
+    border: 1px solid rgba(255,255,255,0.05);
+    transition: 0.25s;
+    cursor: pointer;
+}
 
-    #logoutBtn {
-        padding:12px 22px;
-        border:none;
-        border-radius:10px;
-        background:#dc2626;
-        color:white;
-        cursor:pointer;
-        font-size:16px;
-        transition:0.2s;
-    }
+.card:hover {
+    background: #1e293b;
+    transform: translateY(-4px);
+}
 
-    #logoutBtn:hover {
-        background:#ef4444;
-    }
+.card img {
+    width: 60px;
+    margin-bottom: 12px;
+}
+
+.card-title {
+    font-size: 18px;
+    font-weight: 600;
+    margin-top: 10px;
+}
+
+/* FOOTER */
+.footer {
+    text-align: center;
+    opacity: 0.4;
+    margin-top: 40px;
+    padding-bottom: 20px;
+}
 </style>
 
-<!-- FIREBASE v12 -->
-<script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-app.js";
-    import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-auth.js";
-    import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js";
-
-    const firebaseConfig = {
-        apiKey: "AIzaSyCM6r66kW9xkBA5rgVcz4sP57N2v2BMbkg",
-        authDomain: "ai-photo-studio-24354.firebaseapp.com",
-        projectId: "ai-photo-studio-24354",
-        storageBucket: "ai-photo-studio-24354.firebasestorage.app",
-        messagingSenderId: "411346648650",
-        appId: "1:411346648650:web:aefd1b26027ed5e8fab0b3",
-        measurementId: "G-8TXC63YKPD"
-    };
-
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-    const db = getFirestore(app);
-
-    onAuthStateChanged(auth, async (user) => {
-        if (!user) return window.location.href = "/signin.html";
-
-        const ref = doc(db, "users", user.uid);
-        const snap = await getDoc(ref);
-
-        let plan = "Free User";
-
-        if (snap.exists()) {
-            const data = snap.data();
-            if (data.plan === "pro") plan = "Pro Member";
-            if (data.plan === "trial") plan = "Free Trial (7 days)";
-            if (data.plan === "daypass") plan = "Day Pass Active";
-        }
-
-        document.getElementById("planName").innerText = plan;
-    });
-
-    // LOGOUT
-    window.logout = () => {
-        signOut(auth).then(() => {
-            window.location.href = "/signin.html";
-        });
-    };
-</script>
-
+<script src="premium-status.js"></script>
+<script src="firebase-app.js"></script>
+<script src="auth.js"></script>
 </head>
+
 <body>
 
-<header class="dash-header">
-    <h1>Welcome Back 👋</h1>
-    <p>Your Current Plan: <span id="planName">Loading…</span></p>
+<!-- HEADER -->
+<header class="header">
+    <div class="header-title">AI Photo Studio</div>
+    <a href="account.html">My Account</a>
 </header>
 
-<main class="dash-main">
+<!-- MAIN CONTENT -->
+<div class="main">
+    <h1>Transform Your Photos in One Click</h1>
+    <div class="sub">Professional AI tools for creators, businesses and everyday users.</div>
+    <div class="plan">Your Plan: <strong>Loading...</strong></div>
 
-    <a class="dash-card" href="/index.html">
-        <h3>Start Editing</h3>
-        <p>Use all available AI tools instantly</p>
-    </a>
+    <!-- FEATURE GRID -->
+    <div class="grid">
 
-    <a class="dash-card" href="/gallery.html">
-        <h3>Your Gallery</h3>
-        <p>See everything you've created</p>
-    </a>
+        <a href="editor.html" class="card">
+            <img src="icons/remove.png" />
+            <div class="card-title">Remove Background</div>
+        </a>
 
-    <a class="dash-card" href="/profile.html">
-        <h3>Account Settings</h3>
-        <p>Manage email, password & subscription</p>
-    </a>
+        <a href="editor-change.html" class="card">
+            <img src="icons/change.png" />
+            <div class="card-title">Change Background</div>
+        </a>
 
-    <a class="dash-card" href="/pricing.html">
-        <h3>Upgrade Plan</h3>
-        <p>Unlock full unlimited access</p>
-    </a>
+        <a href="editor-enhance.html" class="card">
+            <img src="icons/face.png" />
+            <div class="card-title">AI Face Enhance</div>
+        </a>
 
-</main>
+        <a href="editor-remove.html" class="card">
+            <img src="icons/remove-person.png" />
+            <div class="card-title">Remove People</div>
+        </a>
 
-<footer class="dash-footer">
-    <button id="logoutBtn" onclick="logout()">Log out</button>
-</footer>
+        <a class="card" style="opacity:0.5; cursor:not-allowed;">
+            <img src="icons/text.png" />
+            <div class="card-title">AI Text → Image (Coming Soon)</div>
+        </a>
+
+    </div>
+
+    <div class="footer">
+        AI Photo Studio © 2025
+    </div>
+</div>
 
 </body>
 </html>
