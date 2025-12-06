@@ -1,189 +1,183 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>View Photo · AI Photo Studio</title>
 
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-
-<link rel="manifest" href="/bds-app/public/manifest.webmanifest">
-<link rel="apple-touch-icon" href="/bds-app/public/logo192.png">
-<meta name="theme-color" content="#0f172a">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet" />
 
 <style>
-    body {
-        margin: 0;
-        background: #0f172a;
-        font-family: "Inter", sans-serif;
-        color: white;
-        text-align: center;
-    }
+body {
+    margin: 0;
+    background: #0b0f1c;
+    color: white;
+    font-family: Inter, sans-serif;
+}
 
-    header {
-        background: #1e293b;
-        padding: 16px;
-        border-bottom: 1px solid #334155;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-    }
+.topbar {
+    height: 70px;
+    background: #111827;
+    border-bottom: 1px solid #1f2937;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 24px;
+}
 
-    header h1 {
-        margin: 0;
-        font-size: 20px;
-        font-weight: 700;
-    }
+.logo {
+    font-size: 22px;
+    font-weight: 700;
+    color: #3fb7ff;
+    text-shadow: 0 0 10px #3fb7ff;
+}
 
-    a {
-        color: #60a5fa;
-        text-decoration: none;
-        font-size: 15px;
-    }
+.nav-btn {
+    padding: 10px 18px;
+    border-radius: 10px;
+    background: #1f2937;
+    border: 1px solid #334155;
+    color: white;
+    cursor: pointer;
+    margin-left: 10px;
+}
 
-    .container {
-        max-width: 700px;
-        margin: 25px auto;
-        padding: 10px;
-    }
+.page {
+    padding: 20px;
+    max-width: 900px;
+    margin: auto;
+    text-align: center;
+}
 
-    .card {
-        background: #1e293b;
-        border: 1px solid #334155;
-        border-radius: 14px;
-        padding: 16px;
-        box-shadow: 0 0 24px rgba(0,0,0,0.35);
-    }
+#viewImg {
+    width: 100%;
+    max-width: 900px;
+    border-radius: 12px;
+    margin-top: 20px;
+    border: 1px solid #1f2937;
+    box-shadow: 0 0 20px rgba(63, 183, 255, 0.2);
+}
 
-    img {
-        max-width: 100%;
-        border-radius: 10px;
-        background: #000;
-    }
+.btn-row {
+    margin-top: 20px;
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 14px;
+}
 
-    .btn {
-        width: 100%;
-        padding: 14px;
-        margin-top: 12px;
-        border-radius: 10px;
-        border: none;
-        cursor: pointer;
-        font-size: 16px;
-        font-weight: 600;
-    }
+.action-btn {
+    padding: 12px 22px;
+    background: #1f2937;
+    border: 1px solid #334155;
+    border-radius: 12px;
+    cursor: pointer;
+    color: white;
+    font-weight: 600;
+}
 
-    .btn-primary { background:#3b82f6;color:#fff; }
-    .btn-secondary { background:#334155;color:#fff; }
-    .btn-danger { background:#ef4444;color:#fff; }
+.action-btn:hover {
+    border-color: #3fb7ff;
+    box-shadow: 0 0 10px #3fb7ff70;
+}
+
+.watermark {
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
+    opacity: 0.75;
+    font-size: 18px;
+    background: rgba(0,0,0,0.45);
+    padding: 6px 12px;
+    border-radius: 8px;
+}
 </style>
-
 </head>
 
 <body>
 
-<header>
-    <h1>View Photo</h1>
-    <a href="gallery.html">Back</a>
-</header>
+<div class="topbar">
+    <div class="logo">Photo Viewer</div>
 
-<div class="container">
-    <div class="card">
-        <img id="photo" alt="View Image">
+    <div>
+        <button class="nav-btn" onclick="location.href='gallery.html'">Back to Gallery</button>
+        <button class="nav-btn" onclick="location.href='profile.html'">My Account</button>
+        <button class="nav-btn" onclick="signOutUser()">Sign Out</button>
+    </div>
+</div>
+
+<div class="page">
+    <h1>Preview</h1>
+    <div style="position: relative; display: inline-block;">
+        <img id="viewImg" src="" alt="Photo" />
+        <div id="wm" class="watermark" style="display:none;">AI Photo Studio</div>
     </div>
 
-    <button class="btn btn-primary" id="downloadBtn">Download</button>
-    <button class="btn btn-secondary" id="shareBtn">Share</button>
-    <button class="btn btn-danger" id="deleteBtn">Delete</button>
+    <div class="btn-row">
+        <button class="action-btn" onclick="downloadImage()">Download</button>
+        <button class="action-btn" onclick="shareImage()">Share</button>
+    </div>
 </div>
 
 <script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { 
-  getFirestore, 
-  doc, 
-  getDoc, 
-  deleteDoc 
-} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
-
-import { 
-  getAuth,
-  onAuthStateChanged 
-} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-app.js";
+import { getAuth, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-auth.js";
+import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyCM6r66kW9xkBA5rgVcz4sP57N2v2BMbkg",
-  authDomain: "ai-photo-studio-24354.firebaseapp.com",
-  projectId: "ai-photo-studio-24354",
-  storageBucket: "ai-photo-studio-24354.firebasestorage.app",
-  messagingSenderId: "411346648650",
-  appId: "1:411346648650:web:aefd1b26027ed5e8fab0b3"
+    apiKey: "AIzaSyCM6r66kW9xkBA5rgVcz4sP57N2v2BMbkg",
+    authDomain: "ai-photo-studio-24354.firebaseapp.com",
+    projectId: "ai-photo-studio-24354",
+    storageBucket: "ai-photo-studio-24354.appspot.com",
+    messagingSenderId: "411346648650",
+    appId: "1:411346648650:web:aefd1b26027ed5e8fab0b3"
 };
 
 const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
 const auth = getAuth(app);
+const db = getFirestore(app);
 
-const urlParams = new URLSearchParams(window.location.search);
-const id = urlParams.get("id");
+let imgURL = localStorage.getItem("selectedImage");
 
-if (!id) {
-    alert("No image selected.");
-    window.location.href = "gallery.html";
-}
+document.getElementById("viewImg").src = imgURL;
 
+// 🔵 Apply watermark for FREE USERS
 onAuthStateChanged(auth, async (user) => {
-    if (!user) return;
+    if (!user) return location.href = "signin.html";
 
-    const ref = doc(db, "users", user.uid, "gallery", id);
+    const ref = doc(db, "users", user.uid);
     const snap = await getDoc(ref);
 
-    if (!snap.exists()) {
-        alert("Image not found.");
-        window.location.href = "gallery.html";
-        return;
+    let plan = snap.exists() ? snap.data().plan : "free";
+
+    if (plan !== "pro") {
+        document.getElementById("wm").style.display = "block";
     }
-
-    const data = snap.data();
-    document.getElementById("photo").src = data.after;
-
-    // Download
-    document.getElementById("downloadBtn").onclick = () => {
-        const a = document.createElement("a");
-        a.href = data.after;
-        a.download = "AI-Photo-Studio.png";
-        a.click();
-    };
-
-    // Share
-    document.getElementById("shareBtn").onclick = async () => {
-        if (navigator.share) {
-            await navigator.share({
-                title: "AI Photo Studio",
-                text: "Check out my AI edited photo!",
-                url: data.after
-            });
-        } else {
-            alert("Sharing not supported on this device.");
-        }
-    };
-
-    // Delete
-    document.getElementById("deleteBtn").onclick = async () => {
-        const yes = confirm("Delete this photo?");
-        if (!yes) return;
-
-        await deleteDoc(ref);
-        alert("Deleted");
-        window.location.href = "gallery.html";
-    };
 });
-</script>
 
-<script type="module" src="premium-check.js"></script>
+// 🔵 DOWNLOAD IMAGE
+function downloadImage() {
+    const link = document.createElement("a");
+    link.href = imgURL;
+    link.download = "photo.png";
+    link.click();
+}
 
-<script>
-if ("serviceWorker" in navigator) {
-    navigator.serviceWorker.register("/bds-app/public/sw.js");
+// 🔵 SHARE IMAGE
+function shareImage() {
+    if (navigator.share) {
+        navigator.share({
+            title: "My Edited Photo",
+            url: imgURL
+        });
+    } else {
+        alert("Sharing not supported on this device.");
+    }
+}
+
+// 🔵 SIGN OUT
+function signOutUser() {
+    signOut(auth).then(() => location.href = "signin.html");
 }
 </script>
 
