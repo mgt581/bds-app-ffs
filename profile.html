@@ -2,164 +2,175 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>My Account – AI Photo Studio</title>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>My Account · AI Photo Studio</title>
 
 <style>
     body {
         margin: 0;
         background: #0b0f19;
-        font-family: Inter, system-ui, sans-serif;
         color: white;
+        font-family: Inter, system-ui, sans-serif;
     }
 
+    /* TOP BAR */
     .topbar {
         background: #111827;
         border-bottom: 1px solid #1f2937;
         height: 60px;
+        padding: 0 20px;
         display: flex;
         align-items: center;
-        justify-content: center;
+        justify-content: space-between;
+    }
+    .logo {
         font-size: 20px;
         font-weight: 700;
         color: #3fb7ff;
         text-shadow: 0 0 10px #3fb7ff;
+        cursor: pointer;
     }
 
+    /* MAIN CONTAINER */
     .container {
-        max-width: 460px;
+        max-width: 430px;
         margin: auto;
-        padding: 24px;
+        padding: 22px;
     }
 
     h1 {
-        text-align: center;
-        margin-bottom: 5px;
         font-size: 26px;
-    }
-
-    .subtitle {
         text-align: center;
-        opacity: .7;
-        font-size: 14px;
-        margin-bottom: 25px;
+        margin-bottom: 10px;
     }
 
-    .info-box {
+    .email {
+        text-align: center;
+        font-size: 14px;
+        opacity: .8;
+    }
+
+    /* PLAN BOX */
+    .plan-box {
+        margin-top: 20px;
         background: #111827;
         border: 1px solid #1f2937;
+        padding: 18px;
         border-radius: 14px;
-        padding: 20px;
-        margin-bottom: 25px;
+    }
+    .plan-title {
+        font-size: 18px;
+        font-weight: 600;
+        margin-bottom: 6px;
+    }
+    .plan-free {
+        color: #fb7185;
+    }
+    .plan-pro {
+        color: #3fb7ff;
+        text-shadow: 0 0 8px #3fb7ff;
     }
 
     .info-row {
-        margin-bottom: 14px;
-    }
-
-    .info-title {
-        opacity: .6;
+        opacity: .8;
         font-size: 14px;
+        margin-top: 6px;
     }
 
-    .info-value {
-        margin-top: 3px;
-        font-size: 16px;
-        font-weight: 600;
-        color: #3fb7ff;
-    }
-
+    /* BUTTONS */
     .btn {
         width: 100%;
         padding: 15px;
+        margin-top: 16px;
         border-radius: 12px;
-        border: none;
         background: #2563eb;
+        border: none;
         color: white;
         font-weight: 700;
-        font-size: 16px;
+        font-size: 15px;
         cursor: pointer;
-        margin-bottom: 12px;
+    }
+    .btn:hover {
+        opacity: .85;
     }
 
-    .btn:hover { opacity: .85; }
-
-    .btn-secondary {
-        background: #374151;
+    .logout-btn {
+        background: #ef4444;
+        margin-top: 25px;
     }
 
-    .danger {
-        background: #dc2626;
-        margin-top: 20px;
-    }
 </style>
 </head>
 
 <body>
 
-<div class="topbar">My Account</div>
+<div class="topbar">
+    <div class="logo" onclick="location.href='index.html'">AI Photo Studio</div>
+    <span></span>
+</div>
 
 <div class="container">
 
-    <h1>Account Details</h1>
-    <p class="subtitle">Manage your profile, subscription, and settings</p>
+    <h1>My Account</h1>
+    <div class="email" id="userEmail">Loading…</div>
 
-    <div class="info-box">
-        <div class="info-row">
-            <div class="info-title">Email</div>
-            <div class="info-value" id="userEmail">Loading…</div>
-        </div>
-
-        <div class="info-row">
-            <div class="info-title">Subscription</div>
-            <div class="info-value" id="subStatus">Checking…</div>
-        </div>
-
-        <div class="info-row">
-            <div class="info-title">Next Billing Date</div>
-            <div class="info-value" id="nextBilling">—</div>
-        </div>
+    <div class="plan-box">
+        <div class="plan-title" id="planStatus">Checking Subscription…</div>
+        <div class="info-row" id="nextBilling">—</div>
     </div>
 
     <button class="btn" onclick="location.href='gallery.html'">My Gallery</button>
-    <button class="btn" onclick="location.href='settings.html'">Settings</button>
     <button class="btn" onclick="location.href='subscription.html'">Manage Subscription</button>
+    <button class="btn" onclick="location.href='forgot-password.html'">Change Password</button>
 
-    <button class="btn danger" id="logoutBtn">Sign Out</button>
+    <button class="btn logout-btn" id="logoutBtn">Sign Out</button>
 
 </div>
 
 <script type="module">
-import { auth, signOut, onAuthStateChanged } from "./firebase-app.js";
-import { getUserSubscriptionStatus, getNextBillingDate } from "./premium-status.js";
+import { auth, onAuthStateChanged, signOut } from "./firebase-app.js";
+import { 
+    getFirestore, 
+    doc, 
+    getDoc 
+} from "https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js";
 
-onAuthStateChanged(auth, async (user) => {
-    if (!user) {
-        window.location.href = "signin.html";
-        return;
-    }
+const db = getFirestore();
+
+onAuthStateChanged(auth, async user => {
+    if (!user) return location.href = "signin.html";
 
     document.getElementById("userEmail").innerText = user.email;
 
-    // subscription check
-    const status = await getUserSubscriptionStatus(user.uid);
-    document.getElementById("subStatus").innerText =
-        status === "active" ? "Active" :
-        status === "trial"  ? "Trial (7 Days)" :
-        "Free / Expired";
+    const ref = doc(db, "users", user.uid);
+    const snap = await getDoc(ref);
 
-    // next billing
-    const billing = await getNextBillingDate(user.uid);
-    if (billing) {
-        document.getElementById("nextBilling").innerText = billing;
+    if (!snap.exists()) {
+        document.getElementById("planStatus").innerHTML =
+            `<span class='plan-free'>Free User</span>`;
+        document.getElementById("nextBilling").innerText = "No Active Plan";
+        return;
+    }
+
+    const data = snap.data();
+    let plan = data.plan || "free";
+
+    if (plan === "pro") {
+        document.getElementById("planStatus").innerHTML =
+            `<span class='plan-pro'>Pro Member</span>`;
+        document.getElementById("nextBilling").innerText =
+            "Renews: " + (data.nextBilling || "Unknown");
+    } else {
+        document.getElementById("planStatus").innerHTML =
+            `<span class='plan-free'>Free User</span>`;
+        document.getElementById("nextBilling").innerText = "No Active Plan";
     }
 });
 
-document.getElementById("logoutBtn").addEventListener("click", () => {
-    signOut(auth).then(() => {
-        window.location.href = "signin.html";
-    });
-});
+document.getElementById("logoutBtn").onclick = async () => {
+    await signOut(auth);
+    location.href = "signin.html";
+};
 </script>
 
 </body>
