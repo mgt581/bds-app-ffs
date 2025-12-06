@@ -1,148 +1,171 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>My Account · AI Photo Studio</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>My Account — AI Photo Studio</title>
 
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="styles.css" />
 
-<style>
-    body {
-        margin:0;
-        background:#0b0f1c;
-        font-family:Inter, system-ui, sans-serif;
-        color:white;
-    }
-
-    .container {
-        max-width:650px;
-        margin:50px auto;
-        padding:20px;
-        background:#111827;
-        border-radius:16px;
-        border:1px solid #1f2937;
-    }
-
-    h1 {
-        font-size:30px;
-        margin-bottom:10px;
-        text-align:center;
-    }
-
-    p {
-        font-size:17px;
-        opacity:0.8;
-        text-align:center;
-    }
-
-    .info-box {
-        margin-top:30px;
-        background:#0f172a;
-        padding:20px;
-        border-radius:12px;
-        border:1px solid #1e293b;
-    }
-
-    .label {
-        opacity:0.6;
-        margin-bottom:6px;
-        font-size:14px;
-    }
-
-    .value {
-        font-size:18px;
-        margin-bottom:15px;
-    }
-
-    button, .btn {
-        margin-top:20px;
-        width:100%;
-        padding:14px;
-        border-radius:10px;
-        border:none;
-        font-size:17px;
-        cursor:pointer;
-    }
-
-    .upgrade-btn {
-        background:#3fb7ff;
-        color:black;
-        font-weight:700;
-    }
-
-    .logout-btn {
-        background:#dc2626;
-        color:white;
-        font-weight:600;
-    }
-
-    .upgrade-btn:hover { background:#60c8ff; }
-    .logout-btn:hover { background:#ef4444; }
-</style>
-
-<script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-app.js";
-    import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-auth.js";
-    import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js";
-
-    const firebaseConfig = {
-        apiKey: "AIzaSyCM6r66kW9xkBA5rgVcz4sP57N2v2BMbkg",
-        authDomain: "ai-photo-studio-24354.firebaseapp.com",
-        projectId: "ai-photo-studio-24354",
-        storageBucket: "ai-photo-studio-24354.firebasestorage.app",
-        messagingSenderId: "411346648650",
-        appId: "1:411346648650:web:aefd1b26027ed5e8fab0b3"
-    };
-
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-    const db = getFirestore(app);
-
-    onAuthStateChanged(auth, async (user) => {
-        if (!user) return window.location.href = "/signin.html";
-
-        document.getElementById("emailValue").innerText = user.email;
-
-        const ref = doc(db, "users", user.uid);
-        const snap = await getDoc(ref);
-
-        let plan = "Free User";
-        if (snap.exists()) {
-            const data = snap.data();
-            if (data.plan === "pro") plan = "Pro Member";
-            if (data.plan === "trial") plan = "Trial (7 days)";
-            if (data.plan === "daypass") plan = "Day Pass Active";
+    <style>
+        body {
+            background: #0b0f19;
+            color: #ffffff;
+            font-family: Inter, system-ui, sans-serif;
+            margin: 0;
+            padding: 0;
         }
 
-        document.getElementById("planValue").innerText = plan;
-    });
+        .topbar {
+            display: flex;
+            justify-content: space-between;
+            padding: 18px 22px;
+            background: #111827;
+            border-bottom: 1px solid #1f2937;
+            font-weight: 600;
+        }
 
-    window.logout = () => {
-        signOut(auth).then(() => {
-            window.location.href = "/signin.html";
-        });
-    };
-</script>
+        .topbar a {
+            color: #60a5fa;
+            text-decoration: none;
+        }
 
+        .container {
+            padding: 24px;
+            max-width: 500px;
+            margin: auto;
+        }
+
+        h1 {
+            font-size: 28px;
+            margin-bottom: 6px;
+        }
+
+        .card {
+            background: #111827;
+            padding: 20px;
+            border-radius: 14px;
+            margin-top: 22px;
+            border: 1px solid #1f2937;
+        }
+
+        .label {
+            opacity: 0.7;
+            margin-bottom: 4px;
+            font-size: 14px;
+        }
+
+        .value {
+            font-size: 17px;
+            margin-bottom: 12px;
+        }
+
+        .btn {
+            background: #4f46e5;
+            color: #fff;
+            font-weight: 600;
+            padding: 14px;
+            width: 100%;
+            border: none;
+            border-radius: 10px;
+            margin-top: 12px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        .btn-secondary {
+            background: #1f2937;
+        }
+
+        .danger {
+            margin-top: 18px;
+            background: #991b1b;
+        }
+
+        .nav-buttons {
+            margin-top: 30px;
+        }
+
+        .nav-buttons a {
+            display: block;
+            padding: 14px;
+            margin-top: 12px;
+            text-align: center;
+            background: #1f2937;
+            border-radius: 10px;
+            text-decoration: none;
+            color: #60a5fa;
+            font-weight: 600;
+        }
+    </style>
 </head>
+
 <body>
 
-<div class="container">
-    <h1>My Account</h1>
-    <p>Manage your profile, subscription and settings.</p>
-
-    <div class="info-box">
-        <div class="label">Email</div>
-        <div class="value" id="emailValue">Loading…</div>
-
-        <div class="label">Subscription Plan</div>
-        <div class="value" id="planValue">Loading…</div>
+    <!-- TOP BAR -->
+    <div class="topbar">
+        <span>My Account</span>
+        <a href="dashboard.html">Dashboard</a>
     </div>
 
-    <a class="btn upgrade-btn" href="/pricing.html">Upgrade Membership</a>
-    <button class="logout-btn" onclick="logout()">Log Out</button>
-</div>
+    <div class="container">
+
+        <h1>Your Profile</h1>
+
+        <!-- ACCOUNT CARD -->
+        <div class="card">
+            <div class="label">Email</div>
+            <div class="value" id="userEmail">Loading…</div>
+
+            <div class="label">Account Type</div>
+            <div class="value" id="accountType">Loading…</div>
+
+            <div class="label">Subscription Status</div>
+            <div class="value" id="subStatus">Checking…</div>
+
+            <button class="btn" id="manageSubscriptionBtn">Manage Subscription</button>
+        </div>
+
+        <!-- GALLERY / SETTINGS / SIGN OUT -->
+        <div class="nav-buttons">
+            <a href="gallery.html">📸 My Gallery</a>
+            <a href="settings.html">⚙️ Settings</a>
+            <a href="dashboard.html">🏠 Back to Dashboard</a>
+        </div>
+
+        <button class="btn danger" id="logoutBtn">Sign Out</button>
+
+    </div>
+
+    <script type="module">
+        import { auth, onAuthStateChanged, signOut } from "./firebase-app.js";
+
+        // Load user info
+        onAuthStateChanged(auth, (user) => {
+            if (!user) {
+                window.location.href = "signin.html";
+                return;
+            }
+
+            document.getElementById("userEmail").textContent = user.email || "Anonymous User";
+
+            // TEMP — until Stripe connection is activated
+            document.getElementById("accountType").textContent = "Standard Account";
+            document.getElementById("subStatus").textContent = "Checking Subscription…";
+        });
+
+        // Logout button
+        document.getElementById("logoutBtn").onclick = () => {
+            signOut(auth).then(() => {
+                window.location.href = "signin.html";
+            });
+        };
+
+        // Manage sub button
+        document.getElementById("manageSubscriptionBtn").onclick = () => {
+            window.location.href = "subscription.html";
+        };
+    </script>
 
 </body>
 </html>
