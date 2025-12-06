@@ -1,188 +1,175 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>AI Photo Studio</title>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>AI Photo Studio</title>
 
-    <style>
-        body {
-            margin: 0;
-            padding: 0;
-            background: #0a0f18;
-            font-family: "Inter", sans-serif;
-            color: #fff;
-            -webkit-font-smoothing: antialiased;
-        }
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
 
-        /* Smooth fade-in */
-        .fade {
-            opacity: 0;
-            animation: fadeIn 0.6s forwards ease-in-out;
-        }
-        @keyframes fadeIn {
-            to { opacity: 1; }
-        }
+<style>
+  body {
+    margin: 0;
+    padding: 0;
+    background: #0b0f1c;
+    color: white;
+    font-family: Inter, system-ui, sans-serif;
+  }
 
-        /* HEADER */
-        header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 25px 40px;
-            position: sticky;
-            top: 0;
-            background: rgba(10, 15, 24, 0.5);
-            backdrop-filter: blur(12px);
-            z-index: 50;
-        }
+  /* Top Bar */
+  .topbar {
+    height: 68px;
+    background: #111827;
+    border-bottom: 1px solid #1f2937;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 24px;
+  }
 
-        .logo {
-            font-size: 28px;
-            font-weight: 700;
-            color: #4ab3ff;
-            text-shadow: 0 0 12px #007bff;
-            letter-spacing: 0.5px;
-        }
+  .logo {
+    font-size: 24px;
+    font-weight: 700;
+    color: #3fb7ff;
+    text-shadow: 0 0 12px #3fb7ff;
+  }
 
-        .account-btn {
-            padding: 10px 22px;
-            border-radius: 10px;
-            background: rgba(255, 255, 255, 0.06);
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            color: #fff;
-            font-size: 14px;
-            backdrop-filter: blur(8px);
-            cursor: pointer;
-            transition: 0.25s;
-        }
-        .account-btn:hover {
-            background: rgba(255, 255, 255, 0.12);
-        }
+  .account-btn {
+    padding: 10px 18px;
+    border-radius: 10px;
+    background: #1f2937;
+    border: 1px solid #334155;
+    color: white;
+    cursor: pointer;
+    transition: .2s;
+  }
 
-        /* HERO SECTION */
-        .hero {
-            text-align: center;
-            padding: 110px 20px 60px;
-        }
+  .account-btn:hover {
+    background: #334155;
+  }
 
-        .hero h1 {
-            font-size: 46px;
-            font-weight: 800;
-            line-height: 1.15;
-            margin-bottom: 15px;
-        }
+  /* Hero Section */
+  .hero {
+    text-align: center;
+    padding: 60px 20px 40px;
+  }
 
-        .hero p {
-            font-size: 18px;
-            opacity: 0.85;
-            margin-top: 0;
-        }
+  .hero h1 {
+    font-size: 34px;
+    font-weight: 800;
+    margin: 0 0 10px;
+  }
 
-        .plan {
-            margin-top: 12px;
-            opacity: 0.7;
-            font-size: 15px;
-        }
+  .hero p {
+    font-size: 17px;
+    opacity: 0.8;
+    margin-bottom: 6px;
+  }
 
-        /* GRID SECTION */
-        .tools-container {
-            max-width: 1050px;
-            margin: 70px auto 60px;
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-            gap: 28px;
-            padding: 0 20px;
-        }
+  /* Tool Grid */
+  .tools {
+    padding: 20px 20px 40px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 20px;
+    max-width: 1100px;
+    margin: auto;
+  }
 
-        .tool-card {
-            background: rgba(255, 255, 255, 0.04);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            border-radius: 16px;
-            padding: 35px 25px;
-            text-align: center;
-            transition: 0.25s ease;
-            backdrop-filter: blur(10px);
-        }
+  .tool-card {
+    background: #111827;
+    border: 1px solid #1f2937;
+    border-radius: 16px;
+    padding: 22px;
+    text-align: center;
+    transition: .20s;
+    cursor: pointer;
+  }
 
-        .tool-card:hover {
-            transform: translateY(-6px);
-            border-color: rgba(74, 179, 255, 0.5);
-            box-shadow: 0 0 18px rgba(74, 179, 255, 0.3);
-        }
+  .tool-card:hover {
+    transform: translateY(-4px);
+    border-color: #3fb7ff;
+  }
 
-        .tool-card img {
-            width: 60px;
-            margin-bottom: 18px;
-        }
+  .tool-card img {
+    width: 70px;
+    height: 70px;
+    margin-bottom: 14px;
+    filter: drop-shadow(0 0 6px #3fb7ff55);
+  }
 
-        .tool-title {
-            font-size: 20px;
-            font-weight: 600;
-            margin-bottom: 6px;
-        }
+  .tool-card h3 {
+    font-size: 19px;
+    font-weight: 700;
+    margin-bottom: 6px;
+  }
 
-        .coming-soon {
-            margin-top: 6px;
-            font-size: 13px;
-            opacity: 0.6;
-        }
+  .tool-card p {
+    font-size: 14px;
+    opacity: .75;
+  }
 
-        footer {
-            text-align: center;
-            padding: 40px 0;
-            opacity: 0.6;
-            font-size: 14px;
-            margin-top: 40px;
-        }
-    </style>
+  /* Footer */
+  footer {
+    text-align: center;
+    opacity: .4;
+    padding: 30px 0;
+    margin-top: 20px;
+    font-size: 14px;
+  }
+</style>
+
 </head>
+<body>
 
-<body class="fade">
+<!-- TOP BAR -->
+<div class="topbar">
+  <div class="logo">AI Photo Studio</div>
+  <button class="account-btn" onclick="location.href='profile.html'">My Account</button>
+</div>
 
-    <!-- HEADER -->
-    <header>
-        <div class="logo">AI Photo Studio</div>
-        <button class="account-btn" onclick="location.href='account.html'">My Account</button>
-    </header>
+<!-- HERO -->
+<div class="hero">
+  <h1>Transform Your Photos in One Tap</h1>
+  <p>Professional AI tools for creators, businesses, and everyday users.</p>
+</div>
 
-    <!-- HERO -->
-    <section class="hero">
-        <h1>Transform Your Photos Instantly</h1>
-        <p>Premium AI tools for creators, businesses, and everyday users.</p>
-        <div class="plan">Your Plan: <span id="planStatus">Loading...</span></div>
-    </section>
+<!-- TOOL GRID -->
+<div class="tools">
 
-    <!-- TOOL GRID -->
-    <section class="tools-container">
+  <!-- Remove Background -->
+  <div class="tool-card" onclick="location.href='editor-remove.html'">
+    <img src="icons/remove-bg.png" alt="Remove Background">
+    <h3>Remove Background</h3>
+    <p>Instantly remove image backgrounds with AI.</p>
+  </div>
 
-        <div class="tool-card" onclick="location.href='remove-background.html'">
-            <img src="logo-512.png" alt="">
-            <div class="tool-title">Remove Background</div>
-        </div>
+  <!-- Change Background -->
+  <div class="tool-card" onclick="location.href='editor-change.html'">
+    <img src="icons/change-bg.png" alt="Change Background">
+    <h3>Change Background</h3>
+    <p>Swap your photo background in one tap.</p>
+  </div>
 
-        <div class="tool-card" onclick="location.href='change-background.html'">
-            <img src="logo-512.png" alt="">
-            <div class="tool-title">Change Background</div>
-        </div>
+  <!-- Remove Objects -->
+  <div class="tool-card" onclick="location.href='editor-erase.html'">
+    <img src="icons/erase.png" alt="Magic Eraser">
+    <h3>Remove Objects</h3>
+    <p>Erase unwanted people or objects.</p>
+  </div>
 
-        <div class="tool-card">
-            <img src="logo-512.png" alt="">
-            <div class="tool-title">AI Face Enhance</div>
-            <div class="coming-soon">COMING SOON</div>
-        </div>
+  <!-- Remove Person -->
+  <div class="tool-card" onclick="location.href='editor-remove-person.html'">
+    <img src="icons/remove-person.png" alt="Remove Person">
+    <h3>Remove Person</h3>
+    <p>Automatically remove full people from images.</p>
+  </div>
 
-        <div class="tool-card">
-            <img src="logo-512.png" alt="">
-            <div class="tool-title">Remove People / Objects</div>
-            <div class="coming-soon">COMING SOON</div>
-        </div>
+</div>
 
-    </section>
-
-    <footer>
-        AI Photo Studio © 2025
-    </footer>
+<footer>
+  AI Photo Studio © 2025
+</footer>
 
 </body>
 </html>
