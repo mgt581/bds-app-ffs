@@ -2,178 +2,174 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Settings – AI Photo Studio</title>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Settings · AI Photo Studio</title>
 
 <style>
     body {
         margin: 0;
         background: #0b0f19;
-        font-family: Inter, system-ui, sans-serif;
         color: white;
+        font-family: Inter, system-ui, sans-serif;
     }
 
+    /* TOP BAR */
     .topbar {
-        background: #111827;
         height: 60px;
+        background: #111827;
         border-bottom: 1px solid #1f2937;
         display: flex;
         align-items: center;
-        justify-content: center;
+        justify-content: space-between;
+        padding: 0 20px;
+    }
+    .logo {
         font-size: 20px;
         font-weight: 700;
         color: #3fb7ff;
+        cursor: pointer;
         text-shadow: 0 0 10px #3fb7ff;
     }
 
     .container {
-        max-width: 460px;
+        max-width: 430px;
         margin: auto;
         padding: 22px;
     }
 
-    h2 {
-        margin-top: 25px;
-        margin-bottom: 10px;
-        font-size: 20px;
+    h1 {
+        font-size: 26px;
+        text-align: center;
+        margin-bottom: 15px;
     }
 
-    .section {
+    .section-title {
+        margin-top: 20px;
+        font-size: 15px;
+        opacity: .7;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+
+    /* INPUT BOXES */
+    .input-box {
         background: #111827;
         border: 1px solid #1f2937;
-        border-radius: 14px;
-        padding: 18px;
-        margin-bottom: 20px;
-    }
-
-    label {
-        font-size: 14px;
-        opacity: .7;
-    }
-
-    input {
-        width: 100%;
-        padding: 14px;
         border-radius: 10px;
-        border: 1px solid #1f2937;
-        margin-top: 6px;
-        margin-bottom: 12px;
-        background: #0d1322;
+        padding: 12px;
+        margin-top: 10px;
+        width: 100%;
         color: white;
         font-size: 15px;
     }
 
+    /* BUTTON */
     .btn {
         width: 100%;
-        padding: 14px;
+        padding: 15px;
         border-radius: 12px;
-        border: none;
         background: #2563eb;
         color: white;
         font-weight: 700;
-        font-size: 15px;
+        font-size: 16px;
+        border: none;
+        margin-top: 18px;
         cursor: pointer;
-        margin-top: 5px;
     }
-    .btn:hover { opacity: .85; }
+    .btn:hover {
+        opacity: .85;
+    }
 
-    .back-btn {
+    /* DELETE BUTTON */
+    .btn-danger {
+        background: #ef4444;
         margin-top: 25px;
+    }
+
+    .confirm-text {
+        margin-top: 10px;
+        font-size: 13px;
+        opacity: .6;
         text-align: center;
-        color: #60a5fa;
-        font-weight: 600;
-        cursor: pointer;
     }
-
-    .danger {
-        background: #dc2626 !important;
-    }
-
 </style>
 </head>
 
 <body>
 
-<div class="topbar">Settings</div>
+<div class="topbar">
+    <div class="logo" onclick="location.href='index.html'">AI Photo Studio</div>
+    <span></span>
+</div>
 
 <div class="container">
 
-    <!-- CHANGE EMAIL -->
-    <h2>Change Email</h2>
-    <div class="section">
-        <label>New Email Address</label>
-        <input type="email" id="newEmail" placeholder="Enter new email…" />
-        <button class="btn" id="updateEmailBtn">Update Email</button>
-    </div>
+    <h1>Settings</h1>
 
-    <!-- CHANGE PASSWORD -->
-    <h2>Change Password</h2>
-    <div class="section">
-        <label>New Password</label>
-        <input type="password" id="newPassword" placeholder="Enter new password…" />
-        <button class="btn" id="updatePasswordBtn">Update Password</button>
-    </div>
+    <p class="section-title">Account Email</p>
+    <input type="text" class="input-box" id="emailBox" disabled />
 
-    <!-- DELETE ACCOUNT -->
-    <h2>Danger Zone</h2>
-    <div class="section">
-        <button class="btn danger" id="deleteAccountBtn">Delete Account</button>
-    </div>
+    <p class="section-title">Change Display Name</p>
+    <input type="text" id="displayNameBox" class="input-box" placeholder="Enter new name…" />
 
-    <div class="back-btn" onclick="location.href='profile.html'">← Back to My Account</div>
+    <button class="btn" onclick="updateName()">Update Name</button>
+
+    <p class="section-title">Change Password</p>
+    <button class="btn" onclick="location.href='forgot-password.html'">Reset Password</button>
+
+    <p class="section-title">Danger Zone</p>
+    <button class="btn btn-danger" onclick="deleteAccount()">Delete My Account</button>
+
+    <p class="confirm-text">This action cannot be undone.</p>
 
 </div>
 
 <script type="module">
-import { auth, onAuthStateChanged } from "./firebase-app.js";
-import { updateEmail, updatePassword, deleteUser } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-auth.js";
+import { 
+  auth, 
+  onAuthStateChanged 
+} from "./firebase-app.js";
 
-onAuthStateChanged(auth, (user) => {
-    if (!user) {
-        window.location.href = "signin.html";
-    }
+import {
+  updateProfile,
+  deleteUser
+} from "https://www.gstatic.com/firebasejs/12.6.0/firebase-auth.js";
+
+onAuthStateChanged(auth, user => {
+    if (!user) return location.href = "signin.html";
+    document.getElementById("emailBox").value = user.email || "No email";
+    document.getElementById("displayNameBox").value = user.displayName || "";
 });
 
-// UPDATE EMAIL
-document.getElementById("updateEmailBtn").onclick = async () => {
-    const newEmail = document.getElementById("newEmail").value;
-    if (!newEmail) return alert("Enter a valid email.");
+/* UPDATE DISPLAY NAME */
+async function updateName() {
+    const user = auth.currentUser;
+    const newName = document.getElementById("displayNameBox").value.trim();
 
-    try {
-        await updateEmail(auth.currentUser, newEmail);
-        alert("Email updated successfully!");
-    } catch (err) {
-        alert("Error: " + err.message);
+    if (!newName) {
+        alert("Name cannot be blank.");
+        return;
     }
-};
 
-// UPDATE PASSWORD
-document.getElementById("updatePasswordBtn").onclick = async () => {
-    const newPass = document.getElementById("newPassword").value;
-    if (newPass.length < 6) return alert("Password must be at least 6 characters.");
+    await updateProfile(user, { displayName: newName });
+    alert("Name updated successfully!");
+}
 
-    try {
-        await updatePassword(auth.currentUser, newPass);
-        alert("Password updated successfully!");
-    } catch (err) {
-        alert("Error: " + err.message);
-    }
-};
+/* DELETE ACCOUNT */
+async function deleteAccount() {
+    if (!confirm("Are you sure you want to permanently delete your account?"))
+        return;
 
-// DELETE ACCOUNT
-document.getElementById("deleteAccountBtn").onclick = async () => {
-    const confirmDelete = confirm("Are you sure? This cannot be undone.");
-
-    if (!confirmDelete) return;
+    const user = auth.currentUser;
 
     try {
-        await deleteUser(auth.currentUser);
+        await deleteUser(user);
         alert("Account deleted.");
-        window.location.href = "signin.html";
-    } catch (err) {
-        alert("Error: " + err.message);
+        location.href = "signin.html";
+    } catch (error) {
+        alert("Error: You may need to sign in again before deleting your account.");
     }
-};
+}
 </script>
 
 </body>
