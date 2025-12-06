@@ -1,60 +1,224 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Magic Eraser · AI Photo Studio</title>
-
-<link rel="stylesheet" href="editor.css">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Magic Eraser – Remove Object</title>
 
 <style>
-body { margin:0;background:#0b1020;color:white;font-family:Inter,system-ui,sans-serif; }
-.topbar {
-  height:60px;background:#111827;border-bottom:1px solid #1f2937;
-  display:flex;align-items:center;justify-content:space-between;padding:0 20px;
-}
-.topbar h1 { font-size:18px;font-weight:700; }
-.topbar a { color:#60a5fa;text-decoration:none;font-weight:600; }
+    body {
+        margin: 0;
+        background: #050b16;
+        color: white;
+        font-family: "Inter", sans-serif;
+    }
 
-.tool-header { text-align:center;padding:25px; }
-.tool-header img { width:70px;margin-bottom:10px; }
+    .topbar {
+        background: #0b1120;
+        padding: 16px 20px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-bottom: 1px solid rgba(255,255,255,0.06);
+    }
 
-canvas {
-  width:90%;max-width:420px;background:#000;border-radius:12px;
-  margin-top:20px;
-}
+    .topbar h2 {
+        margin: 0;
+        font-size: 20px;
+        color: #3ea8ff;
+        font-weight: 700;
+    }
 
-.action-btn {
-  display:block;margin:12px auto;background:#3b82f6;border:none;
-  padding:12px 28px;border-radius:10px;font-weight:700;cursor:pointer;
-  color:white;font-size:16px;text-align:center;
-}
+    .nav-btns a {
+        color: #3ea8ff;
+        margin-left: 18px;
+        text-decoration: none;
+        font-size: 15px;
+    }
+
+    .container {
+        padding: 20px;
+        text-align: center;
+    }
+
+    .upload-box {
+        margin-top: 30px;
+        padding: 30px;
+        border: 2px dashed #3ea8ff55;
+        border-radius: 14px;
+        cursor: pointer;
+        background: #0b1223;
+    }
+
+    .upload-box:hover {
+        border-color: #3ea8ff;
+    }
+
+    .upload-box p {
+        opacity: 0.8;
+        margin-top: 8px;
+    }
+
+    #previewImage {
+        max-width: 95%;
+        margin-top: 20px;
+        border-radius: 12px;
+        display: none;
+    }
+
+    #processBtn, #downloadBtn {
+        margin-top: 25px;
+        width: 100%;
+        padding: 16px;
+        font-size: 18px;
+        border-radius: 12px;
+        border: none;
+        background: #3ea8ff;
+        font-weight: 700;
+        color: #000;
+        cursor: pointer;
+        display: none;
+    }
+
+    #processBtn:hover, #downloadBtn:hover {
+        background: #63c4ff;
+    }
+
+    .loading {
+        margin-top: 25px;
+        font-size: 16px;
+        opacity: 0.7;
+        display: none;
+    }
+
+    /* Watermark */
+    .watermark {
+        position: absolute;
+        bottom: 12px;
+        right: 12px;
+        opacity: 0.5;
+        font-size: 14px;
+        color: white;
+        font-weight: 700;
+    }
 </style>
-
 </head>
+
 <body>
 
 <div class="topbar">
-  <h1>Magic Eraser</h1>
-  <a href="index.html">Back</a>
+    <h2>Magic Eraser</h2>
+    <div class="nav-btns">
+        <a href="/index.html">Home</a>
+        <a href="/gallery.html">Gallery</a>
+        <a href="/profile.html">Account</a>
+    </div>
 </div>
 
-<div class="tool-header">
-  <img src="icons/icon-remove-object.png">
-  <h2>Brush over anything to erase it</h2>
-  <p>AI fills the area naturally</p>
+<div class="container">
+
+    <div class="upload-box" onclick="fileInput.click()">
+        <img src="/icons/icon-remove-object.png" width="90" />
+        <p>Tap to upload a photo</p>
+    </div>
+
+    <input type="file" id="fileInput" accept="image/*" style="display:none" />
+
+    <img id="previewImage" />
+
+    <button id="processBtn">Remove Object</button>
+    <button id="downloadBtn">Download Result</button>
+
+    <p class="loading" id="loading">Removing object… please wait…</p>
+
 </div>
 
-<div style="text-align:center;">
-  <input id="uploadInput" type="file" accept="image/*" style="display:none">
-  <button class="action-btn" onclick="uploadInput.click()">Upload Photo</button>
+<script type="module">
+    import { auth, onAuthStateChanged } from "./firebase-app.js";
+    import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js";
 
-  <canvas id="editorCanvas"></canvas>
+    const db = getFirestore();
 
-  <button class="action-btn" onclick="applyErase()">Apply Erase</button>
-  <button class="action-btn" onclick="saveImage()">Save Image</button>
-</div>
+    let originalImage = null;
+    let processedImage = null;
+    let userIsPro = false;
 
-<script src="editor-object.js"></script>
+    // Ensure the user is logged in
+    onAuthStateChanged(auth, async user => {
+        if (!user) window.location.href = "/signin.html";
+
+        // Check subscription
+        const ref = doc(db, "users", user.uid);
+        const snap = await getDoc(ref);
+
+        if (snap.exists()) {
+            userIsPro = snap.data().plan === "pro" || snap.data().plan === "daypass";
+        }
+    });
+
+    const fileInput = document.getElementById("fileInput");
+    const preview = document.getElementById("previewImage");
+    const processBtn = document.getElementById("processBtn");
+    const downloadBtn = document.getElementById("downloadBtn");
+    const loading = document.getElementById("loading");
+
+    // Upload + preview
+    fileInput.onchange = e => {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.onload = () => {
+            originalImage = reader.result;
+            preview.src = originalImage;
+            preview.style.display = "block";
+            processBtn.style.display = "block";
+        };
+        reader.readAsDataURL(file);
+    };
+
+    // Fake Magic Eraser (replace later with real API)
+    processBtn.onclick = async () => {
+        processBtn.style.display = "none";
+        loading.style.display = "block";
+
+        await new Promise(r => setTimeout(r, 1800));
+
+        processedImage = originalImage;
+
+        loading.style.display = "none";
+        downloadBtn.style.display = "block";
+        preview.src = processedImage;
+    };
+
+    // Download with watermark if NOT pro
+    downloadBtn.onclick = () => {
+        const canvas = document.createElement("canvas");
+        const img = new Image();
+
+        img.onload = () => {
+            canvas.width = img.width;
+            canvas.height = img.height;
+
+            const ctx = canvas.getContext("2d");
+            ctx.drawImage(img, 0, 0);
+
+            if (!userIsPro) {
+                ctx.fillStyle = "rgba(255,255,255,0.5)";
+                ctx.font = "48px Inter";
+                ctx.fillText("AI Photo Studio", 30, canvas.height - 40);
+            }
+
+            const url = canvas.toDataURL("image/png");
+            const a = document.createElement("a");
+            a.href = url;
+            a.download = "magic-eraser.png";
+            a.click();
+        };
+
+        img.src = processedImage;
+    };
+</script>
+
 </body>
 </html>
