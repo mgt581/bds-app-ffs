@@ -2,128 +2,54 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Sign In · AI Photo Studio</title>
-
-<style>
-    body {
-        margin: 0;
-        background: #0b0f19;
-        color: white;
-        font-family: Inter, system-ui, sans-serif;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        height: 100vh;
-        padding: 20px;
-        text-align: center;
-    }
-
-    .box {
-        background: #111827;
-        padding: 28px;
-        border-radius: 14px;
-        width: 100%;
-        max-width: 380px;
-        border: 1px solid #1f2937;
-    }
-
-    h1 {
-        font-size: 26px;
-        margin-bottom: 20px;
-    }
-
-    input {
-        width: 100%;
-        padding: 14px;
-        margin-top: 12px;
-        border-radius: 10px;
-        border: 1px solid #1f2937;
-        background: #0b0f19;
-        color: white;
-        font-size: 15px;
-    }
-
-    button {
-        width: 100%;
-        padding: 14px;
-        margin-top: 16px;
-        border: none;
-        border-radius: 10px;
-        background: #2563eb;
-        color: white;
-        font-size: 16px;
-        font-weight: 700;
-        cursor: pointer;
-    }
-
-    button:hover {
-        opacity: .85;
-    }
-
-    .link {
-        color: #60a5fa;
-        font-size: 14px;
-        margin-top: 10px;
-        display: block;
-        cursor: pointer;
-        text-decoration: none;
-    }
-
-    .google-btn {
-        background: #db4437;
-    }
-
-    .anon-btn {
-        background: #6b7280;
-    }
-</style>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Sign In – AI Photo Studio</title>
+<link rel="stylesheet" href="auth.css">
 </head>
-
 <body>
 
-<div class="box">
-
-    <h1>Sign In</h1>
+<div class="auth-container">
+    <h1>Welcome Back</h1>
 
     <input id="email" type="email" placeholder="Email" />
     <input id="password" type="password" placeholder="Password" />
 
-    <button id="emailLoginBtn">Sign In</button>
+    <button id="signinBtn">Sign In</button>
 
-    <button class="google-btn" id="googleLoginBtn">Continue with Google</button>
+    <p class="link">
+        <a href="forgot-password.html">Forgot password?</a>
+    </p>
 
-    <button class="anon-btn" id="anonLoginBtn">Continue as Guest</button>
-
-    <a class="link" href="forgot-password.html">Forgot Password?</a>
-    <a class="link" href="signup.html">Don’t have an account? Sign Up</a>
-
+    <p class="link">
+        New user? <a href="signup.html">Create Account</a>
+    </p>
 </div>
 
 <script type="module">
-import { auth, signInWithEmailAndPassword, signInWithPopup, GoogleAuthProvider, signInAnonymously } from "./firebase-app.js";
+import { auth, signInWithEmailAndPassword } from "./firebase-app.js";
+import { getUserSubscriptionStatus } from "./premium-status.js";
 
-document.getElementById("emailLoginBtn").onclick = () => {
+document.getElementById("signinBtn").addEventListener("click", async () => {
     const email = document.getElementById("email").value.trim();
     const password = document.getElementById("password").value.trim();
 
-    signInWithEmailAndPassword(auth, email, password)
-        .then(() => window.location.href = "index.html")
-        .catch(err => alert(err.message));
-};
+    try {
+        const userCred = await signInWithEmailAndPassword(auth, email, password);
 
-document.getElementById("googleLoginBtn").onclick = () => {
-    const provider = new GoogleAuthProvider();
-    signInWithPopup(auth, provider)
-        .then(() => window.location.href = "index.html")
-        .catch(err => alert(err.message));
-};
+        const status = await getUserSubscriptionStatus(userCred.user.uid);
 
-document.getElementById("anonLoginBtn").onclick = () => {
-    signInAnonymously(auth)
-        .then(() => window.location.href = "index.html")
-        .catch(err => alert(err.message));
-};
+        if (status === "active") {
+            window.location.href = "index.html";
+        } else if (status === "expired") {
+            window.location.href = "subscription-expired.html";
+        } else {
+            window.location.href = "subscription.html";
+        }
+
+    } catch (err) {
+        alert(err.message);
+    }
+});
 </script>
 
 </body>
