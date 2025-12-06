@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>My Gallery – AI Photo Studio</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>My Gallery · AI Photo Studio</title>
 
 <style>
     body {
@@ -20,133 +20,167 @@
         border-bottom: 1px solid #1f2937;
         display: flex;
         align-items: center;
-        justify-content: center;
-        font-weight: 700;
+        justify-content: space-between;
+        padding: 0 20px;
+    }
+    .logo {
         font-size: 20px;
+        font-weight: 700;
         color: #3fb7ff;
+        cursor: pointer;
         text-shadow: 0 0 10px #3fb7ff;
     }
 
+    /* CONTAINER */
     .container {
-        max-width: 460px;
+        max-width: 430px;
         margin: auto;
-        padding: 20px;
+        padding: 18px;
     }
 
-    h2 {
-        margin-top: 20px;
-        font-size: 18px;
-        opacity: 0.85;
+    h1 {
+        text-align: center;
+        font-size: 26px;
+        margin-bottom: 15px;
     }
 
-    /* GALLERY GRID */
-    .grid {
-        margin-top: 14px;
-        display: grid;
-        grid-template-columns: repeat(2, 1fr);
-        gap: 14px;
+    /* TAB BUTTONS */
+    .tabs {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 18px;
     }
-
-    .item {
+    .tab {
+        flex: 1;
+        padding: 10px 0;
+        text-align: center;
         background: #111827;
         border: 1px solid #1f2937;
-        border-radius: 14px;
-        overflow: hidden;
+        border-radius: 10px;
+        margin: 0 5px;
         cursor: pointer;
-        transition: .2s;
+        font-size: 13px;
     }
-
-    .item:hover {
-        transform: scale(1.03);
+    .tab.active {
+        background: #2563eb;
         border-color: #3fb7ff;
+        font-weight: 700;
     }
 
-    .item img {
+    /* IMAGE GRID */
+    .grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 8px;
+    }
+    .grid img {
         width: 100%;
-        height: 150px;
+        height: 120px;
         object-fit: cover;
+        border-radius: 8px;
+        cursor: pointer;
+        border: 1px solid #1f2937;
     }
 
-    .none {
-        margin-top: 40px;
-        opacity: .6;
+    /* EMPTY MESSAGE */
+    .empty {
         text-align: center;
-        font-size: 14px;
+        opacity: 0.6;
+        margin-top: 40px;
+        font-size: 15px;
     }
-
 </style>
 </head>
 
 <body>
 
-<div class="topbar">My Gallery</div>
+<div class="topbar">
+    <div class="logo" onclick="location.href='index.html'">AI Photo Studio</div>
+    <div onclick="location.href='settings.html'" style="cursor:pointer;color:#60a5fa;">Settings</div>
+</div>
 
 <div class="container">
 
-    <h2>Removed Background</h2>
-    <div class="grid" id="gallery-remove"></div>
+    <h1>My Gallery</h1>
 
-    <h2>Changed Background</h2>
-    <div class="grid" id="gallery-change"></div>
+    <!-- TABS -->
+    <div class="tabs">
+        <div class="tab active" onclick="switchFolder('all')">All</div>
+        <div class="tab" onclick="switchFolder('remove-bg')">BG Removed</div>
+        <div class="tab" onclick="switchFolder('change-bg')">Changed BG</div>
+        <div class="tab" onclick="switchFolder('person')">Remove Person</div>
+        <div class="tab" onclick="switchFolder('object')">Objects</div>
+    </div>
 
-    <h2>Remove Person</h2>
-    <div class="grid" id="gallery-person"></div>
+    <!-- IMAGE GRID -->
+    <div id="galleryGrid" class="grid"></div>
 
-    <h2>Remove Object</h2>
-    <div class="grid" id="gallery-object"></div>
-
-    <p id="emptyMessage" class="none" style="display:none;">
-        Your gallery is empty. Start editing a photo!
-    </p>
+    <p id="emptyMessage" class="empty" style="display:none;">No images found in this folder.</p>
 
 </div>
 
 <script type="module">
 import { auth, onAuthStateChanged } from "./firebase-app.js";
-import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js";
+import { storage, ref, listAll, getDownloadURL } from "./firebase-app.js";
 
-const db = getFirestore();
+let currentFolder = "all";
 
-onAuthStateChanged(auth, async (user) => {
-    if (!user) return (window.location.href = "signin.html");
+onAuthStateChanged(auth, user => {
+    if (!user) return location.href = "signin.html";
+    loadFolder("all");
+});
 
-    const uid = user.uid;
-    const folders = ["remove", "change", "person", "object"];
+/* SWITCH TABS */
+function switchFolder(folder) {
+    currentFolder = folder;
 
-    let totalImages = 0;
+    document.querySelectorAll(".tab").forEach(t => t.classList.remove("active"));
+    event.target.classList.add("active");
 
-    for (const folder of folders) {
-        const colRef = collection(db, "users", uid, folder);
-        const snap = await getDocs(colRef);
+    loadFolder(folder);
+}
 
-        const grid = document.getElementById(`gallery-${folder}`);
+/* LOAD IMAGES */
+async function loadFolder(folder) {
+    const user = auth.currentUser;
+    const grid = document.getElementById("galleryGrid");
+    const emptyMessage = document.getElementById("emptyMessage");
 
-        if (snap.empty) {
-            grid.innerHTML = "";
-            continue;
+    grid.innerHTML = "";
+    emptyMessage.style.display = "none";
+
+    let path = "";
+
+    if (folder === "all") path = `users/${user.uid}/gallery/`;
+    else path = `users/${user.uid}/gallery/${folder}/`;
+
+    try {
+        const folderRef = ref(storage, path);
+        const result = await listAll(folderRef);
+
+        if (result.items.length === 0) {
+            emptyMessage.style.display = "block";
+            return;
         }
 
-        snap.forEach(doc => {
-            const data = doc.data();
-            totalImages++;
+        result.items.forEach(async (itemRef) => {
+            const url = await getDownloadURL(itemRef);
 
-            const div = document.createElement("div");
-            div.className = "item";
-
-            div.onclick = () => {
-                localStorage.setItem("viewImage", data.url);
-                window.location.href = "gallery-view.html";
+            const img = document.createElement("img");
+            img.src = url;
+            img.onclick = () => {
+                localStorage.setItem("viewImage", url);
+                location.href = "gallery-view.html";
             };
 
-            div.innerHTML = `<img src="${data.url}" alt="">`;
-            grid.appendChild(div);
+            grid.appendChild(img);
         });
-    }
 
-    if (totalImages === 0) {
-        document.getElementById("emptyMessage").style.display = "block";
+    } catch (e) {
+        console.error(e);
+        emptyMessage.style.display = "block";
     }
-});
+}
 </script>
 
 </body>
