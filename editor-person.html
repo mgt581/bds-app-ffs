@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Remove Person · AI Photo Studio</title>
+
+<link rel="stylesheet" href="editor.css">
+
+<style>
+body { margin:0;background:#0b1020;color:white;font-family:Inter,system-ui,sans-serif; }
+.topbar {
+  height:60px;background:#111827;border-bottom:1px solid #1f2937;
+  display:flex;align-items:center;justify-content:space-between;padding:0 20px;
+}
+.topbar h1 { font-size:18px;font-weight:700; }
+.topbar a { color:#60a5fa;text-decoration:none;font-weight:600; }
+
+.tool-header { text-align:center;padding:25px; }
+.tool-header img { width:70px;margin-bottom:10px; }
+
+.upload-box {
+  margin:20px auto;padding:30px;border:2px dashed #1f2937;
+  width:90%;max-width:380px;text-align:center;border-radius:12px;
+}
+.upload-box button {
+  background:#3b82f6;border:none;padding:12px 26px;border-radius:10px;
+  color:white;font-size:15px;font-weight:600;cursor:pointer;
+}
+
+#previewBox { display:none;text-align:center;margin-top:25px; }
+#previewBox img { width:90%;border-radius:10px;margin-bottom:15px; }
+
+.action-btn {
+  display:block;margin:12px auto;background:#3b82f6;
+  border:none;padding:12px 28px;border-radius:10px;font-weight:700;
+  cursor:pointer;color:white;font-size:16px;text-align:center;
+}
+</style>
+
+</head>
+<body>
+
+<div class="topbar">
+  <h1>Remove Person</h1>
+  <a href="index.html">Back</a>
+</div>
+
+<div class="tool-header">
+  <img src="icons/icon-remove-person.png">
+  <h2>Upload your photo</h2>
+  <p>AI will remove selected people automatically</p>
+</div>
+
+<div class="upload-box">
+  <input id="uploadInput" type="file" accept="image/*" style="display:none">
+  <button onclick="uploadInput.click()">Select Image</button>
+</div>
+
+<div id="previewBox">
+  <img id="previewImg" src="">
+  <button class="action-btn" onclick="processPerson()">Remove Person</button>
+  <button class="action-btn" onclick="saveImage()">Save Image</button>
+</div>
+
+<script src="editor-person.js"></script>
+</body>
+</html>
