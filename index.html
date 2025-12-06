@@ -1,234 +1,170 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>AI Photo Studio · Home</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>AI Photo Studio</title>
 
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet"/>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="stylesheet" href="dashboard.css">
 
 <style>
-  body {
-    margin:0;
-    background:#0b0f1c;
-    font-family:Inter, system-ui, sans-serif;
-    color:white;
-  }
-
-  /* TOP NAV */
-  .topbar {
-    height:70px;
-    background:#111827;
-    border-bottom:1px solid #1f2937;
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    padding:0 28px;
-  }
-
-  .logo {
-    font-size:26px;
-    font-weight:800;
-    color:#3fb7ff;
-    text-shadow:0 0 14px #3fb7ff;
-    cursor:pointer;
-  }
-
-  .account-btn {
-    padding:10px 20px;
-    border-radius:10px;
-    background:#1f2937;
-    border:1px solid #334155;
-    color:white;
-    cursor:pointer;
-    font-weight:600;
-    transition:0.2s;
-  }
-  .account-btn:hover {
-    border-color:#3fb7ff;
-    color:#3fb7ff;
-  }
-
-  /* HERO */
-  .hero {
-    text-align:center;
-    padding:70px 20px 40px;
-  }
-
-  .hero h1 {
-    font-size:40px;
-    font-weight:800;
-    margin-bottom:15px;
-    text-shadow:0 0 12px #0ea5e9;
-  }
-
-  .hero p {
-    font-size:18px;
-    opacity:0.8;
-  }
-
-  .plan {
-    margin-top:15px;
-    font-size:15px;
-    opacity:0.7;
-  }
-
-  /* TOOLS GRID */
-  .tools {
-    padding:40px 20px;
-    display:grid;
-    grid-template-columns:repeat(auto-fit, minmax(270px, 1fr));
-    gap:24px;
-    max-width:1150px;
-    margin:auto;
-  }
-
-  .tool-card {
-    background:#111827;
-    border:1px solid #1f2937;
-    border-radius:18px;
-    padding:30px;
-    text-align:center;
-    cursor:pointer;
-    transition:0.25s;
-    position:relative;
-    box-shadow:0 0 0 transparent;
-  }
-
-  .tool-card:hover {
-    transform:translateY(-4px);
-    border-color:#3fb7ff;
-    box-shadow:0 0 20px #0ea5e955;
-  }
-
-  .tool-card img {
-    width:85px;
-    opacity:0.95;
-    filter:drop-shadow(0 0 4px #3fb7ff55);
-  }
-
-  .tool-card h3 {
-    margin-top:18px;
-    font-size:20px;
-    font-weight:700;
-    letter-spacing:0.3px;
-  }
-
-  .soon {
-    opacity:0.45;
-  }
-
-  .soon::after {
-    content:"COMING SOON";
-    position:absolute;
-    top:10px;
-    right:12px;
-    background:#3fb7ff33;
-    padding:5px 10px;
-    border-radius:8px;
-    font-size:11px;
-    letter-spacing:1px;
-  }
-
-  /* FOOTER */
-  footer {
-    text-align:center;
-    opacity:0.5;
-    padding:40px;
-    margin-top:50px;
-    font-size:14px;
-  }
-
-</style>
-
-<!-- FIREBASE -->
-<script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-app.js";
-  import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-auth.js";
-  import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js";
-
-  const firebaseConfig = {
-    apiKey: "AIzaSyCM6r66kW9xkBA5rgVcz4sP57N2v2BMbkg",
-    authDomain: "ai-photo-studio-24354.firebaseapp.com",
-    projectId: "ai-photo-studio-24354",
-    storageBucket: "ai-photo-studio-24354.firebasestorage.app",
-    messagingSenderId: "411346648650",
-    appId: "1:411346648650:web:aefd1b26027ed5e8fab0b3",
-    measurementId: "G-8TXC63YKPD"
-  };
-
-  const app = initializeApp(firebaseConfig);
-  const auth = getAuth(app);
-  const db = getFirestore(app);
-
-  onAuthStateChanged(auth, async (user) => {
-    if (!user) return window.location.href = "/signin.html";
-
-    const ref = doc(db, "users", user.uid);
-    const snap = await getDoc(ref);
-
-    let plan = "Free User";
-
-    if (snap.exists()) {
-      const data = snap.data();
-      if (data.plan === "pro") plan = "Pro Member";
-      if (data.plan === "trial") plan = "Free Trial (7 days)";
-      if (data.plan === "daypass") plan = "Day Pass Active";
+    body {
+        margin: 0;
+        font-family: Inter, sans-serif;
+        background: #0e1525;
+        color: white;
     }
 
-    document.getElementById("plan").innerText = plan;
-  });
-</script>
+    .nav {
+        width: 100%;
+        background: #0b1220;
+        padding: 15px 25px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-bottom: 1px solid rgba(255,255,255,0.05);
+    }
+
+    .logo {
+        font-size: 26px;
+        font-weight: 700;
+        color: #3bb0ff;
+        text-shadow: 0 0 10px rgba(59,176,255,0.8);
+    }
+
+    .account-btn {
+        padding: 8px 18px;
+        border-radius: 10px;
+        background: rgba(255,255,255,0.08);
+        color: #fff;
+        font-weight: 600;
+        font-size: 14px;
+        border: 1px solid rgba(255,255,255,0.15);
+        backdrop-filter: blur(6px);
+    }
+
+    .container {
+        max-width: 1200px;
+        margin: 40px auto;
+        padding: 0 20px;
+        text-align: center;
+    }
+
+    h1 {
+        font-size: 42px;
+        font-weight: 800;
+        margin-bottom: 10px;
+    }
+
+    p.subtitle {
+        color: #b8c2d6;
+        font-size: 18px;
+        margin-bottom: 40px;
+    }
+
+    p.plan {
+        margin-bottom: 40px;
+        font-size: 16px;
+        color: #79a2ff;
+        font-weight: 600;
+    }
+
+    .grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+        gap: 30px;
+        margin-top: 20px;
+    }
+
+    .card {
+        background: #0f1a30;
+        padding: 25px;
+        border-radius: 18px;
+        border: 1px solid rgba(255,255,255,0.06);
+        transition: .2s;
+        cursor: pointer;
+    }
+
+    .card:hover {
+        transform: translateY(-3px);
+        border-color: #3bb0ff;
+        box-shadow: 0 0 20px rgba(59,176,255,0.12);
+    }
+
+    .card img {
+        width: 70px;
+        margin-bottom: 15px;
+    }
+
+    .card-title {
+        font-size: 20px;
+        font-weight: 600;
+        margin-bottom: 8px;
+    }
+
+    .coming {
+        color: #ff6584;
+        font-size: 14px;
+        font-weight: 700;
+    }
+
+    footer {
+        margin-top: 60px;
+        text-align: center;
+        opacity: 0.6;
+        font-size: 14px;
+    }
+</style>
 
 </head>
 <body>
 
-<!-- NAV -->
-<div class="topbar">
-  <div class="logo" onclick="location.href='/index.html'">AI Photo Studio</div>
-  <button class="account-btn" onclick="location.href='/profile.html'">My Account</button>
+<div class="nav">
+    <div class="logo">AI Photo Studio</div>
+    <a class="account-btn" href="profile.html">My Account</a>
 </div>
 
-<!-- HERO -->
-<div class="hero">
-  <h1>Transform Your Photos Instantly</h1>
-  <p>Professional AI tools for creators, businesses, and everyday users.</p>
-  <p class="plan">Your Plan: <strong id="plan">Loading...</strong></p>
-</div>
+<div class="container">
 
-<!-- TOOL CARDS -->
-<div class="tools">
+    <h1>Transform Your Photos Instantly</h1>
+    <p class="subtitle">Professional AI tools for creators, businesses, and everyday users.</p>
+    <p class="plan">Your Plan: <strong>Loading...</strong></p>
 
-  <div class="tool-card" onclick="location.href='/editor-remove.html'">
-    <img src="https://cdn-icons-png.flaticon.com/512/2581/2581125.png">
-    <h3>Remove Background</h3>
-  </div>
+    <div class="grid">
 
-  <div class="tool-card" onclick="location.href='/editor-change.html'">
-    <img src="https://cdn-icons-png.flaticon.com/512/833/833593.png">
-    <h3>Change Background</h3>
-  </div>
+        <a href="remove-background.html" class="card">
+            <img src="icons/remove-bg.png" alt="remove">
+            <div class="card-title">Remove Background</div>
+        </a>
 
-  <div class="tool-card soon">
-    <img src="https://cdn-icons-png.flaticon.com/512/747/747968.png">
-    <h3>AI Face Enhance</h3>
-  </div>
+        <a href="change-background.html" class="card">
+            <img src="icons/change-bg.png" alt="change">
+            <div class="card-title">Change Background</div>
+        </a>
 
-  <div class="tool-card soon">
-    <img src="https://cdn-icons-png.flaticon.com/512/6819/6819290.png">
-    <h3>Remove People / Objects</h3>
-  </div>
+        <div class="card">
+            <img src="icons/face.png" alt="face">
+            <div class="card-title">AI Face Enhance</div>
+            <div class="coming">COMING SOON</div>
+        </div>
 
-  <div class="tool-card soon">
-    <img src="https://cdn-icons-png.flaticon.com/512/1829/1829552.png">
-    <h3>AI Text → Image</h3>
-  </div>
+        <div class="card">
+            <img src="icons/remove-object.png" alt="remove object">
+            <div class="card-title">Remove People / Objects</div>
+            <div class="coming">COMING SOON</div>
+        </div>
+
+    </div>
 
 </div>
 
 <footer>
-  AI Photo Studio © 2025
+    AI Photo Studio © 2025
 </footer>
+
+<script src="premium-check.js"></script>
+<script src="premium-status.js"></script>
 
 </body>
 </html>
