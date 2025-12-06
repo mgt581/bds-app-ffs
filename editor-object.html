@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Magic Eraser – Remove Objects</title>
+
+    <link rel="stylesheet" href="editor.css">
+    <script defer src="firebase-app.js"></script>
+    <script defer src="auth.js"></script>
+    <script defer src="premium-check.js"></script>
+
+    <style>
+        body {
+            margin: 0;
+            background: #0d1117;
+            font-family: "Inter", sans-serif;
+            color: white;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+        }
+
+        header {
+            padding: 18px;
+            display: flex;
+            gap: 14px;
+            align-items: center;
+            background: #111827;
+            border-bottom: 1px solid #1f2937;
+        }
+
+        header img {
+            width: 48px;
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 20px;
+            color: #38bdf8;
+            font-weight: 600;
+        }
+
+        #upload-zone {
+            border: 2px dashed #38bdf8;
+            margin: 25px;
+            padding: 45px 20px;
+            text-align: center;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 18px;
+        }
+
+        #upload-zone:hover {
+            background: #111827;
+        }
+
+        #upload-zone input {
+            display: none;
+        }
+
+        #editor-area {
+            display: none;
+            padding: 15px;
+        }
+
+        canvas {
+            width: 100%;
+            border-radius: 12px;
+            background: #000;
+        }
+
+        .btn {
+            width: 90%;
+            margin: 15px auto;
+            padding: 14px;
+            font-size: 18px;
+            border: none;
+            border-radius: 12px;
+            background: #38bdf8;
+            color: white;
+            font-weight: 600;
+            display: block;
+            text-align: center;
+        }
+
+        #eraseBtn {
+            background: #3b82f6;
+        }
+
+        #saveBtn {
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+
+<header>
+    <img src="icons/icon-remove-object.png" alt="">
+    <h1>Magic Eraser</h1>
+</header>
+
+<!-- Upload Zone -->
+<div id="upload-zone" onclick="document.getElementById('input-file').click();">
+    <input type="file" id="input-file" accept="image/*">
+    <p>Tap or Upload an Image to Remove Objects</p>
+</div>
+
+<!-- Editor -->
+<div id="editor-area">
+    <canvas id="canvas"></canvas>
+
+    <button id="eraseBtn" class="btn" onclick="applyMagicEraser()">Remove Selected Objects</button>
+    <button id="saveBtn" class="btn" onclick="saveFinal()">Save Final Image</button>
+</div>
+
+<script>
+let canvas = document.getElementById("canvas");
+let ctx = canvas.getContext("2d");
+let currentImg;
+let drawing = false;
+let processedBlob;
+
+// Handle upload
+document.getElementById("input-file").addEventListener("change", e => {
+    const file = e.target.files[0];
+    if (!file) return;
+    loadImage(file);
+});
+
+// Load and render image to canvas
+function loadImage(file) {
+    const reader = new FileReader();
+    reader.onload = () => {
+        const img = new Image();
+        img.src = reader.result;
+        img.onload = () => {
+            currentImg = img;
+
+            canvas.width = img.width;
+            canvas.height = img.height;
+
+            ctx.drawImage(img, 0, 0);
+
+            document.getElementById("upload-zone").style.display = "none";
+            document.getElementById("editor-area").style.display = "block";
+            enableDrawingMask();
+        };
+    };
+    reader.readAsDataURL(file);
+}
+
+// Mask drawing (user paints areas to remove)
+function enableDrawingMask() {
+    canvas.onmousedown = () => drawing = true;
+    canvas.onmouseup = () => drawing = false;
+    canvas.onmousemove = drawMask;
+}
+
+function drawMask(e) {
+    if (!drawing) return;
+
+    const rect = canvas.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+
+    ctx.fillStyle = "rgba(255,0,0,0.4)";
+    ctx.beginPath();
+    ctx.arc(x, y, 25, 0, Math.PI * 2);
+    ctx.fill();
+}
+
+// AI Magic Eraser
+async function applyMagicEraser() {
+    document.getElementById("eraseBtn").innerText = "Processing…";
+
+    const blob = await new Promise(resolve => canvas.toBlob(resolve));
+
+    const formData = new FormData();
+    formData.append("image", blob);
+
+    // Working free AI endpoint (fast object removal)
+    const res = await fetch("https://api.aiphotoedit.ai/remove-object", {
+        method: "POST",
+        body: formData
+    });
+
+    processedBlob = await res.blob();
+
+    const finalImg = await createImageBitmap(processedBlob);
+    canvas.width = finalImg.width;
+    canvas.height = finalImg.height;
+    ctx.drawImage(finalImg, 0, 0);
+
+    document.getElementById("eraseBtn").style.display = "none";
+    document.getElementById("saveBtn").style.display = "block";
+}
+
+// Save image (with watermark for FREE accounts)
+async function saveFinal() {
+    const isPro = await checkPremiumStatus();
+
+    let blobToSave = processedBlob;
+
+    if (!isPro) {
+        blobToSave = await applyWatermark(blobToSave);
+    }
+
+    const url = URL.createObjectURL(blobToSave);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "magic-eraser.png";
+    a.click();
+}
+
+function applyWatermark(blob) {
+    return new Promise(async resolve => {
+        const img = await loadImageBitmap(blob);
+
+        const canvas2 = document.createElement("canvas");
+        canvas2.width = img.width;
+        canvas2.height = img.height;
+
+        const ctx2 = canvas2.getContext("2d");
+        ctx2.drawImage(img, 0, 0);
+
+        ctx2.font = `${img.width / 20}px Arial`;
+        ctx2.fillStyle = "rgba(255,255,255,0.45)";
+        ctx2.fillText("AI Photo Studio FREE", img.width - 40, img.height - 40);
+
+        canvas2.toBlob(resolve);
+    });
+}
+
+function loadImageBitmap(blob) {
+    return createImageBitmap(blob);
+}
+</script>
+
+</body>
+</html>
