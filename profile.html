@@ -1,171 +1,197 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>My Account — AI Photo Studio</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>My Account — AI Photo Studio</title>
 
-    <link rel="stylesheet" href="styles.css" />
+<style>
+    body {
+        margin: 0;
+        background: #0b0f19;
+        font-family: Inter, system-ui, sans-serif;
+        color: #ffffff;
+    }
 
-    <style>
-        body {
-            background: #0b0f19;
-            color: #ffffff;
-            font-family: Inter, system-ui, sans-serif;
-            margin: 0;
-            padding: 0;
-        }
+    .topbar {
+        height: 60px;
+        background: #111827;
+        border-bottom: 1px solid #1f2937;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 20px;
+    }
 
-        .topbar {
-            display: flex;
-            justify-content: space-between;
-            padding: 18px 22px;
-            background: #111827;
-            border-bottom: 1px solid #1f2937;
-            font-weight: 600;
-        }
+    .logo {
+        color: #3fb7ff;
+        font-size: 22px;
+        font-weight: 700;
+        text-shadow: 0 0 10px #3fb7ff;
+    }
 
-        .topbar a {
-            color: #60a5fa;
-            text-decoration: none;
-        }
+    .container {
+        padding: 24px;
+        max-width: 560px;
+        margin: auto;
+    }
 
-        .container {
-            padding: 24px;
-            max-width: 500px;
-            margin: auto;
-        }
+    .section {
+        margin-bottom: 32px;
+    }
 
-        h1 {
-            font-size: 28px;
-            margin-bottom: 6px;
-        }
+    .section h2 {
+        font-size: 20px;
+        margin-bottom: 12px;
+        border-bottom: 1px solid #1f2937;
+        padding-bottom: 6px;
+        opacity: 0.9;
+    }
 
-        .card {
-            background: #111827;
-            padding: 20px;
-            border-radius: 14px;
-            margin-top: 22px;
-            border: 1px solid #1f2937;
-        }
+    .box {
+        background: #111827;
+        border: 1px solid #1f2937;
+        padding: 18px;
+        border-radius: 14px;
+        margin-bottom: 14px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        cursor: pointer;
+        transition: 0.2s;
+    }
 
-        .label {
-            opacity: 0.7;
-            margin-bottom: 4px;
-            font-size: 14px;
-        }
+    .box:hover {
+        border-color: #3fb7ff;
+        transform: translateY(-3px);
+    }
 
-        .value {
-            font-size: 17px;
-            margin-bottom: 12px;
-        }
+    .box-title {
+        font-size: 16px;
+        font-weight: 600;
+    }
 
-        .btn {
-            background: #4f46e5;
-            color: #fff;
-            font-weight: 600;
-            padding: 14px;
-            width: 100%;
-            border: none;
-            border-radius: 10px;
-            margin-top: 12px;
-            cursor: pointer;
-            font-size: 16px;
-        }
+    .box-desc {
+        opacity: 0.6;
+        font-size: 14px;
+    }
 
-        .btn-secondary {
-            background: #1f2937;
-        }
+    button.logout {
+        width: 100%;
+        padding: 14px;
+        border-radius: 12px;
+        background: #b91c1c;
+        border: none;
+        color: white;
+        font-size: 16px;
+        font-weight: 700;
+        cursor: pointer;
+        margin-top: 20px;
+    }
 
-        .danger {
-            margin-top: 18px;
-            background: #991b1b;
-        }
+    button.logout:hover {
+        background: #dc2626;
+    }
 
-        .nav-buttons {
-            margin-top: 30px;
-        }
-
-        .nav-buttons a {
-            display: block;
-            padding: 14px;
-            margin-top: 12px;
-            text-align: center;
-            background: #1f2937;
-            border-radius: 10px;
-            text-decoration: none;
-            color: #60a5fa;
-            font-weight: 600;
-        }
-    </style>
+    .plan-tag {
+        padding: 6px 12px;
+        background: #3b82f6;
+        border-radius: 10px;
+        font-size: 13px;
+        font-weight: 600;
+    }
+</style>
 </head>
 
 <body>
 
-    <!-- TOP BAR -->
-    <div class="topbar">
-        <span>My Account</span>
-        <a href="dashboard.html">Dashboard</a>
-    </div>
+<div class="topbar">
+    <div class="logo">AI Photo Studio</div>
+    <div class="plan-tag" id="userPlan">Loading...</div>
+</div>
 
-    <div class="container">
+<div class="container">
 
-        <h1>Your Profile</h1>
+    <!-- Account Information -->
+    <div class="section">
+        <h2>Your Account</h2>
 
-        <!-- ACCOUNT CARD -->
-        <div class="card">
-            <div class="label">Email</div>
-            <div class="value" id="userEmail">Loading…</div>
-
-            <div class="label">Account Type</div>
-            <div class="value" id="accountType">Loading…</div>
-
-            <div class="label">Subscription Status</div>
-            <div class="value" id="subStatus">Checking…</div>
-
-            <button class="btn" id="manageSubscriptionBtn">Manage Subscription</button>
+        <div class="box" onclick="location.href='profile-settings.html'">
+            <div>
+                <div class="box-title">Account Settings</div>
+                <div class="box-desc">Email, password, profile details</div>
+            </div>
         </div>
 
-        <!-- GALLERY / SETTINGS / SIGN OUT -->
-        <div class="nav-buttons">
-            <a href="gallery.html">📸 My Gallery</a>
-            <a href="settings.html">⚙️ Settings</a>
-            <a href="dashboard.html">🏠 Back to Dashboard</a>
+        <div class="box" onclick="location.href='gallery.html'">
+            <div>
+                <div class="box-title">My Gallery</div>
+                <div class="box-desc">Your saved images</div>
+            </div>
         </div>
 
-        <button class="btn danger" id="logoutBtn">Sign Out</button>
-
+        <div class="box" onclick="location.href='subscription.html'">
+            <div>
+                <div class="box-title">Subscription</div>
+                <div class="box-desc">Manage your plan & billing</div>
+            </div>
+        </div>
     </div>
 
-    <script type="module">
-        import { auth, onAuthStateChanged, signOut } from "./firebase-app.js";
 
-        // Load user info
-        onAuthStateChanged(auth, (user) => {
-            if (!user) {
-                window.location.href = "signin.html";
-                return;
-            }
+    <!-- Support -->
+    <div class="section">
+        <h2>Support</h2>
 
-            document.getElementById("userEmail").textContent = user.email || "Anonymous User";
+        <div class="box" onclick="location.href='help.html'">
+            <div>
+                <div class="box-title">Help & FAQs</div>
+                <div class="box-desc">Guides and troubleshooting</div>
+            </div>
+        </div>
 
-            // TEMP — until Stripe connection is activated
-            document.getElementById("accountType").textContent = "Standard Account";
-            document.getElementById("subStatus").textContent = "Checking Subscription…";
-        });
+        <div class="box" onclick="location.href='contact.html'">
+            <div>
+                <div class="box-title">Contact Support</div>
+                <div class="box-desc">Speak to our team</div>
+            </div>
+        </div>
+    </div>
 
-        // Logout button
-        document.getElementById("logoutBtn").onclick = () => {
-            signOut(auth).then(() => {
-                window.location.href = "signin.html";
-            });
-        };
 
-        // Manage sub button
-        document.getElementById("manageSubscriptionBtn").onclick = () => {
-            window.location.href = "subscription.html";
-        };
-    </script>
+    <!-- Logout -->
+    <button class="logout" id="logoutBtn">Sign Out</button>
+
+</div>
+
+
+<!-- Firebase Logic -->
+<script type="module">
+    import { auth, signOut, onAuthStateChanged } from "./firebase-app.js";
+    import { db } from "./db.js";
+    import { doc, getDoc } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js";
+
+    const userPlan = document.getElementById("userPlan");
+
+    onAuthStateChanged(auth, async (user) => {
+        if (!user) return location.href = "signin.html";
+
+        const ref = doc(db, "users", user.uid);
+        const snap = await getDoc(ref);
+
+        let plan = "Free User";
+        if (snap.exists()) {
+            const data = snap.data();
+            if (data.plan === "pro" || data.plan === "yearly") plan = "Pro Member";
+            if (data.plan === "trial") plan = "Trial (7 Days)";
+        }
+        userPlan.innerText = plan;
+    });
+
+    document.getElementById("logoutBtn").onclick = () => {
+        signOut(auth).then(() => location.href = "signin.html");
+    };
+</script>
 
 </body>
 </html>
