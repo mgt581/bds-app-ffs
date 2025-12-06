@@ -2,135 +2,170 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Start Your Free Trial – AI Photo Studio</title>
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Subscription • AI Photo Studio</title>
 
 <style>
     body {
         margin: 0;
         background: #0b0f19;
+        color: #fff;
         font-family: Inter, system-ui, sans-serif;
-        color: white;
     }
 
     .topbar {
+        height: 65px;
         background: #111827;
         border-bottom: 1px solid #1f2937;
-        height: 60px;
         display: flex;
         align-items: center;
-        justify-content: center;
-        font-size: 20px;
+        justify-content: space-between;
+        padding: 0 20px;
+    }
+    .logo {
+        font-size: 22px;
         font-weight: 700;
         color: #3fb7ff;
         text-shadow: 0 0 10px #3fb7ff;
+    }
+    .back {
+        color: #60a5fa;
+        font-size: 15px;
+        text-decoration: none;
     }
 
     .container {
         max-width: 450px;
         margin: auto;
         padding: 25px;
-        text-align: center;
     }
 
     h1 {
-        font-size: 28px;
-        margin-bottom: 10px;
+        font-size: 26px;
+        text-align: center;
+        margin-top: 10px;
+    }
+    p.sub {
+        text-align: center;
+        opacity: .7;
+        margin-bottom: 20px;
     }
 
-    .subtitle {
-        opacity: .8;
-        font-size: 15px;
-        margin-bottom: 30px;
-    }
-
-    .card {
+    .plan {
         background: #111827;
         border: 1px solid #1f2937;
-        border-radius: 16px;
-        padding: 25px;
-        box-shadow: 0 0 25px rgba(0,0,0,0.3);
-        text-align: left;
+        border-radius: 14px;
+        padding: 20px;
+        margin-bottom: 20px;
+        transition: .2s;
     }
-
-    .price {
-        font-size: 34px;
-        margin: 10px 0;
-        color: #3fb7ff;
-        text-shadow: 0 0 10px #3fb7ff;
+    .plan:hover {
+        border-color: #3fb7ff;
     }
-
-    ul {
-        margin: 20px 0;
-        padding-left: 20px;
-        font-size: 15px;
-        line-height: 1.6em;
-    }
-
-    .btn {
-        width: 100%;
-        background: #2563eb;
-        color: white;
-        border: none;
-        padding: 16px;
-        border-radius: 12px;
-        margin-top: 20px;
-        font-size: 18px;
+    .plan-title {
+        font-size: 20px;
         font-weight: 700;
+        margin-bottom: 6px;
+    }
+    .price {
+        font-size: 16px;
+        opacity: .8;
+        margin-bottom: 14px;
+    }
+
+    .plan-btn {
+        width: 100%;
+        padding: 15px;
+        background: #3fb7ff;
+        border: none;
+        border-radius: 10px;
+        font-weight: 700;
+        font-size: 17px;
         cursor: pointer;
+        color: #0b0f19;
+    }
+    .plan-btn:hover {
+        opacity: .9;
     }
 
-    .btn:hover {
-        opacity: .85;
+    .current {
+        border-color: #4ade80;
+        background: #1a2e1a;
+    }
+    .current-label {
+        color: #4ade80;
+        font-weight: bold;
+        margin-bottom: 10px;
+        display: inline-block;
     }
 
-    .small-link {
-        display: block;
-        margin-top: 18px;
-        font-size: 14px;
+    .footer {
         opacity: .7;
-        cursor: pointer;
-        text-decoration: underline;
+        font-size: 14px;
+        margin-top: 30px;
+        text-align: center;
+        line-height: 1.5;
     }
 </style>
 </head>
 
 <body>
 
-<div class="topbar">AI Photo Studio</div>
+<div class="topbar">
+    <div class="logo">AI Photo Studio</div>
+    <a class="back" href="index.html">← Back</a>
+</div>
 
 <div class="container">
 
-    <h1>Start Your 7-Day Free Trial</h1>
-    <p class="subtitle">Unlock full HD editing, no limits, no watermarks.</p>
+    <h1>Choose Your Plan</h1>
+    <p class="sub">Unlock unlimited editing, HD results & no watermark.</p>
 
-    <div class="card">
-        <div class="price">£24.99 / year</div>
+    <!-- YEARLY PLAN (With Free Trial) -->
+    <div class="plan" id="plan-year">
+        <div class="plan-title">Yearly Pro</div>
+        <div class="price">£24.99 / year • 7-day FREE trial</div>
 
-        <ul>
-            <li>✔ Unlimited background removal</li>
-            <li>✔ Change background (upload or presets)</li>
-            <li>✔ Magic Eraser – remove objects & people</li>
-            <li>✔ No watermarks on exports</li>
-            <li>✔ Auto-save to your gallery folders</li>
-            <li>✔ Priority processing speed</li>
-        </ul>
-
-        <!-- PAY BUTTON -->
-        <button class="btn" id="startTrialBtn">
-            Start Free Trial (7 Days)
+        <button class="plan-btn"
+            onclick="startCheckout('year')">
+            Start Free Trial →
         </button>
+    </div>
 
-        <span class="small-link" id="alreadySub">
-            Already subscribed? Continue to app →
-        </span>
+    <!-- MONTHLY PLAN -->
+    <div class="plan" id="plan-month">
+        <div class="plan-title">Monthly Pro</div>
+        <div class="price">£4.99 / month • No trial</div>
+
+        <button class="plan-btn"
+            onclick="startCheckout('month')">
+            Subscribe Monthly →
+        </button>
+    </div>
+
+    <!-- 24-HOUR PASS -->
+    <div class="plan" id="plan-day">
+        <div class="plan-title">24-Hour Pass</div>
+        <div class="price">£0.99 • Full access for 24 hours</div>
+
+        <button class="plan-btn"
+            onclick="startCheckout('day')">
+            Buy 24-Hour Pass →
+        </button>
+    </div>
+
+    <div class="footer">
+        Payments handled securely by Stripe.<br>
+        Cancel anytime in one click.
     </div>
 
 </div>
 
 <script type="module">
 import { auth, onAuthStateChanged } from "./firebase-app.js";
-import { getUserSubscriptionStatus } from "./premium-status.js";
+import { doc, getFirestore, getDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+const db = getFirestore();
 
 onAuthStateChanged(auth, async (user) => {
     if (!user) {
@@ -138,21 +173,45 @@ onAuthStateChanged(auth, async (user) => {
         return;
     }
 
-    const status = await getUserSubscriptionStatus(user.uid);
+    // Check user’s subscription status
+    const ref = doc(db, "users", user.uid);
+    const snap = await getDoc(ref);
 
-    if (status === "active") {
-        window.location.href = "index.html";
+    if (snap.exists()) {
+        const data = snap.data();
+
+        if (data.plan === "year") {
+            markCurrent("plan-year");
+        }
+        if (data.plan === "month") {
+            markCurrent("plan-month");
+        }
+        if (data.plan === "day") {
+            markCurrent("plan-day");
+        }
     }
 });
 
-document.getElementById("alreadySub").addEventListener("click", () => {
-    window.location.href = "index.html";
-});
+function markCurrent(id) {
+    const box = document.getElementById(id);
+    box.classList.add("current");
 
-document.getElementById("startTrialBtn").addEventListener("click", () => {
-    // ⭐ This will open Stripe later once we add your link
-    window.location.href = "payment-start.html"; 
-});
+    const label = document.createElement("div");
+    label.className = "current-label";
+    label.textContent = "Your Current Plan";
+    box.prepend(label);
+}
+
+// Replace with your Stripe checkout URLs
+const CHECKOUT_URLS = {
+    year: "https://YOUR-STRIPE-YEARLY-LINK",
+    month: "https://YOUR-STRIPE-MONTHLY-LINK",
+    day: "https://YOUR-STRIPE-DAYPASS-LINK"
+};
+
+function startCheckout(plan) {
+    window.location.href = CHECKOUT_URLS[plan];
+}
 </script>
 
 </body>
