@@ -1,158 +1,175 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Photo Studio – Subscription</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Subscription · AI Photo Studio</title>
 
-    <link rel="stylesheet" href="/pricing.css">
+<style>
+    body {
+        margin:0;
+        background:#0b0f19;
+        color:white;
+        font-family:Inter,system-ui,sans-serif;
+    }
 
-    <style>
-        body {
-            margin: 0;
-            padding: 0;
-            background: #050b16;
-            font-family: "Inter", sans-serif;
-            color: white;
-            text-align: center;
-        }
+    .topbar {
+        height:60px;
+        background:#111827;
+        border-bottom:1px solid #1f2937;
+        display:flex;
+        align-items:center;
+        justify-content:space-between;
+        padding:0 20px;
+    }
 
-        .container {
-            max-width: 450px;
-            margin: 40px auto;
-            padding: 20px;
-        }
+    .logo {
+        font-size:20px;
+        color:#3fb7ff;
+        font-weight:700;
+        text-shadow:0 0 10px #3fb7ff;
+    }
 
-        h1 {
-            font-size: 28px;
-            margin-bottom: 10px;
-        }
+    .content {
+        max-width:430px;
+        margin:30px auto;
+        padding:20px;
+    }
 
-        .card {
-            background: #0e1624;
-            border-radius: 16px;
-            padding: 25px;
-            margin-top: 20px;
-            border: 1px solid rgba(255,255,255,0.06);
-        }
+    h1 {
+        font-size:26px;
+        margin-bottom:10px;
+        text-align:center;
+    }
 
-        .price {
-            font-size: 40px;
-            font-weight: 700;
-            margin: 10px 0;
-            color: #3ea8ff;
-        }
+    p {
+        opacity:0.8;
+        text-align:center;
+        margin-bottom:20px;
+    }
 
-        .trial {
-            margin-bottom: 15px;
-            font-size: 18px;
-            opacity: 0.9;
-        }
+    .card {
+        background:#111827;
+        border:1px solid #1f2937;
+        padding:20px;
+        border-radius:14px;
+        margin-bottom:25px;
+    }
 
-        .btn {
-            display: block;
-            width: 100%;
-            background: #3ea8ff;
-            border: none;
-            padding: 16px;
-            border-radius: 10px;
-            font-size: 18px;
-            color: black;
-            font-weight: 600;
-            cursor: pointer;
-            transition: 0.25s;
-        }
+    .price {
+        font-size:34px;
+        font-weight:900;
+        text-align:center;
+        margin-bottom:6px;
+        color:#3fb7ff;
+        text-shadow:0 0 12px #3fb7ff;
+    }
 
-        .btn:hover {
-            background: #66c3ff;
-        }
+    .btn {
+        width:100%;
+        padding:16px;
+        border:none;
+        border-radius:12px;
+        cursor:pointer;
+        font-weight:700;
+        font-size:16px;
+        margin-top:10px;
+        color:white;
+        background:#2563eb;
+    }
 
-        .features {
-            margin-top: 20px;
-            text-align: left;
-            padding-left: 30px;
-        }
+    .btn:hover {
+        opacity:.9;
+    }
 
-        .features li {
-            margin: 10px 0;
-            font-size: 16px;
-        }
+    .link {
+        margin-top:12px;
+        display:block;
+        text-align:center;
+        color:#60a5fa;
+        font-size:14px;
+    }
 
-        .footer-note {
-            margin-top: 25px;
-            font-size: 14px;
-            opacity: 0.7;
-        }
+    .feature {
+        padding:8px 0;
+        border-bottom:1px solid #1f2937;
+        opacity:0.85;
+        font-size:15px;
+    }
 
-        .logout {
-            margin-top: 20px;
-            color: #ff7676;
-            cursor: pointer;
-        }
-    </style>
+</style>
 </head>
-
 <body>
 
-<div class="container">
-    <h1>Unlock Premium</h1>
-    <p>Start your free 7-day trial</p>
+<div class="topbar">
+    <div class="logo">AI Photo Studio</div>
+    <div onclick="history.back()" style="color:#60a5fa;cursor:pointer;">← Back</div>
+</div>
+
+<div class="content">
+
+    <h1>Unlock AI Photo Studio Pro</h1>
+    <p>Start your free 7-day trial, cancel anytime. No charge until the trial ends.</p>
 
     <div class="card">
+
         <div class="price">£24.99 / year</div>
-        <div class="trial">7-day free trial • Cancel anytime</div>
 
-        <button class="btn" id="startTrialBtn">Start Free Trial</button>
+        <div class="feature">✔ Unlimited Remove Background</div>
+        <div class="feature">✔ Unlimited Change Background</div>
+        <div class="feature">✔ Unlimited Remove Person</div>
+        <div class="feature">✔ Unlimited Magic Eraser / Object Removal</div>
+        <div class="feature">✔ No Ads</div>
+        <div class="feature">✔ No Watermarks</div>
+        <div class="feature">✔ High-Resolution Exports</div>
+        <div class="feature">✔ Priority Processing Speed</div>
 
-        <ul class="features">
-            <li>✔ Unlimited Remove Background</li>
-            <li>✔ Change Background Tool</li>
-            <li>✔ Magic Eraser / Remove Objects</li>
-            <li>✔ Remove Person from Photos</li>
-            <li>✔ No Watermark</li>
-            <li>✔ Faster Processing</li>
-            <li>✔ Full Gallery Storage</li>
-        </ul>
+        <button class="btn" id="startTrialBtn">Start Free 7-Day Trial</button>
 
-        <div class="footer-note">
-            You will not be charged until the end of your 7-day trial.<br>
-            Cancel anytime in your account page.
-        </div>
+        <a class="link" id="manageSubLink" style="display:none;">Manage Subscription</a>
     </div>
 
-    <div class="logout" id="logoutBtn">Sign Out</div>
 </div>
 
 <script type="module">
-    import { auth, db, logout } from "./firebase-app.js";
-    import { doc, updateDoc } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js";
+    import { auth, onAuthStateChanged } from "./firebase-app.js";
+    import { db } from "./db.js";
+    import { doc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js";
 
-    // ------------------------------------------------------------
-    // START FREE TRIAL → activates premium: true after payment (mock)
-    // ------------------------------------------------------------
-    document.getElementById("startTrialBtn").onclick = async () => {
+    let customerPortalURL = ""; // You will paste your Stripe customer portal link here later
 
-        const user = auth.currentUser;
-        if (!user) {
-            alert("You must be signed in.");
-            return;
+    onAuthStateChanged(auth, async (user) => {
+        if (!user) return location.href = "signin.html";
+
+        const ref = doc(db, "users", user.uid);
+        const snap = await getDoc(ref);
+
+        if (!snap.exists()) return;
+
+        const data = snap.data();
+
+        // Show manage subscription button for paying users
+        if (data.plan === "pro") {
+            document.getElementById("manageSubLink").style.display = "block";
+            document.getElementById("manageSubLink").onclick = () => {
+                if (!customerPortalURL) return alert("Subscription portal not connected yet.");
+                location.href = customerPortalURL;
+            };
         }
+    });
 
-        const userRef = doc(db, "users", user.uid);
+    document.getElementById("startTrialBtn").onclick = async () => {
+        const user = auth.currentUser;
+        if (!user) return location.href = "signin.html";
 
-        await updateDoc(userRef, {
-            premium: true
+        const ref = doc(db, "users", user.uid);
+
+        await updateDoc(ref, {
+            plan: "trial",
+            trialStarted: Date.now()
         });
 
-        window.location.href = "/dashboard.html";
-    };
-
-    // ------------------------------------------------------------
-    // LOGOUT BUTTON
-    // ------------------------------------------------------------
-    document.getElementById("logoutBtn").onclick = async () => {
-        await logout();
-        window.location.href = "/signin.html";
+        location.href = "subscription-success.html";
     };
 </script>
 
