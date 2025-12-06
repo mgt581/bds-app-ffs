@@ -1,1 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Final Image · Change Background</title>
 
+<style>
+/* Same styling as remove-output */
+body { margin:0;background:#0b0f19;color:white;font-family:Inter; padding:20px; }
+h2 { text-align:center;font-size:22px;margin-bottom:15px; }
+.output-box { background:#111827;padding:15px;border-radius:14px;border:1px solid #1f2937;text-align:center; }
+.output-box img { width:100%;border-radius:10px; }
+.actions { margin-top:20px;display:grid;grid-template-columns:repeat(2,1fr);gap:14px; }
+button { padding:14px;border:none;border-radius:12px;background:#2563eb;color:white;font-weight:700; }
+button:hover { opacity:.85; }
+.notice { margin-top:20px;font-size:13px;opacity:.6;text-align:center; }
+</style>
+</head>
+
+<body>
+
+<h2>Your Final Image</h2>
+
+<div class="output-box">
+    <img id="finalImage" src="">
+</div>
+
+<div class="actions">
+    <button onclick="downloadImage()">Download</button>
+    <button onclick="saveToGallery()">Save</button>
+    <button onclick="shareImage()">Share</button>
+    <button onclick="location.href='index.html'">New Edit</button>
+</div>
+
+<p class="notice">Free users will have a watermark.</p>
+
+<script type="module">
+import { auth, onAuthStateChanged } from "./firebase-app.js";
+import { db } from "./db.js";
+import { doc, setDoc } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js";
+
+let finalImg = localStorage.getItem("changeBgResult") || "";
+document.getElementById("finalImage").src = finalImg;
+
+// DOWNLOAD
+function downloadImage() {
+    const a=document.createElement("a");
+    a.href=finalImg;
+    a.download="changed-background.png";
+    a.click();
+}
+
+// SAVE
+async function saveToGallery() {
+    onAuthStateChanged(auth, async user => {
+        if (!user) location.href="signin.html";
+        const ref = doc(db,"users",user.uid,"change-bg",Date.now().toString());
+        await setDoc(ref,{image:finalImg,created:Date.now()});
+        alert("Saved to Change Background folder!");
+    });
+}
+
+// SHARE
+function shareImage() {
+    if (navigator.share) navigator.share({ title:"AI Photo Studio" });
+}
+</script>
+
+</body>
+</html>
