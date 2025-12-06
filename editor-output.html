@@ -1,214 +1,200 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Finished Edit · AI Photo Studio</title>
-
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-
-<!-- PWA -->
-<link rel="manifest" href="/bds-app/public/manifest.webmanifest">
-<link rel="apple-touch-icon" href="/bds-app/public/logo192.png">
-<meta name="theme-color" content="#0f172a">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Final Result — AI Photo Studio</title>
 
 <style>
     body {
         margin: 0;
-        padding: 0;
-        background: #0f172a;
-        font-family: "Inter", sans-serif;
-        color: white;
-        text-align: center;
+        background: #0b0f19;
+        color: #ffffff;
+        font-family: Inter, system-ui, sans-serif;
+        display: flex;
+        flex-direction: column;
+        height: 100vh;
     }
 
-    header {
-        background: #1e293b;
-        padding: 16px 24px;
-        border-bottom: 1px solid #334155;
+    /* Top Bar */
+    .topbar {
+        height: 60px;
+        background: #111827;
+        border-bottom: 1px solid #1f2937;
         display: flex;
         justify-content: space-between;
         align-items: center;
+        padding: 0 20px;
     }
 
-    header h1 {
-        margin: 0;
+    .logo {
         font-size: 20px;
         font-weight: 700;
+        color: #3fb7ff;
+        text-shadow: 0 0 10px #3fb7ff;
     }
 
-    header a {
-        color: #60a5fa;
-        text-decoration: none;
-        font-size: 15px;
-    }
-
-    .container {
-        max-width: 650px;
-        margin: 30px auto;
-        padding: 10px;
-    }
-
-    .card {
-        background: #1e293b;
+    .btn-account {
+        padding: 8px 14px;
+        border-radius: 10px;
+        background: #1f2937;
         border: 1px solid #334155;
-        border-radius: 14px;
+        color: white;
+        cursor: pointer;
+        font-size: 14px;
+    }
+
+    /* Main Content */
+    .container {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
         padding: 20px;
-        margin-bottom: 26px;
-        box-shadow: 0 0 24px rgba(0,0,0,0.35);
     }
 
-    img {
+    #finalImage {
         max-width: 100%;
-        border-radius: 12px;
-        background: #000;
+        border-radius: 14px;
+        border: 1px solid #1f2937;
+        margin-bottom: 20px;
     }
 
-    h2 {
-        margin-bottom: 16px;
-        font-size: 22px;
-        font-weight: 600;
+    /* Button Row */
+    .actions {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        max-width: 380px;
+        gap: 14px;
     }
 
     .btn {
-        width: 100%;
         padding: 14px;
-        margin-top: 14px;
+        border-radius: 12px;
         border: none;
-        border-radius: 8px;
+        font-weight: 700;
+        font-size: 16px;
         cursor: pointer;
-        font-size: 17px;
-        font-weight: 600;
     }
 
-    .btn-primary { background:#3b82f6;color:#fff; }
-    .btn-secondary { background:#334155;color:#fff; }
-    .btn-secondary:hover { background:#475569; }
-    .btn-success { background:#10b981;color:#fff; }
-</style>
+    .btn-primary {
+        background: #3b82f6;
+        color: white;
+    }
 
+    .btn-secondary {
+        background: #374151;
+        color: white;
+    }
+
+    .btn-upgrade {
+        background: #4f46e5;
+        color: white;
+        border: 1px solid #6366f1;
+    }
+
+    /* Watermark message */
+    #upgradeMessage {
+        text-align: center;
+        opacity: 0.7;
+        font-size: 14px;
+        margin-top: 12px;
+    }
+</style>
 </head>
 
 <body>
 
-<header>
-    <h1>Finished Edit</h1>
-    <a href="editor.html">Back</a>
-</header>
-
-<div class="container">
-
-    <div class="card">
-        <h2>Before</h2>
-        <img id="beforeImg" alt="Before Image">
-    </div>
-
-    <div class="card">
-        <h2>After</h2>
-        <img id="afterImg" alt="After Image">
-    </div>
-
-    <button class="btn btn-primary" id="downloadBtn">Download Image</button>
-    <button class="btn btn-success" id="saveGalleryBtn">Save to My Gallery</button>
-    <button class="btn btn-secondary" id="shareBtn">Share Photo</button>
-
-    <button class="btn btn-secondary" onclick="location.href='editor.html'">Back to Editor</button>
-
+<!-- Top Bar -->
+<div class="topbar">
+    <div class="logo">AI Photo Studio</div>
+    <button class="btn-account" onclick="location.href='profile.html'">My Account</button>
 </div>
 
+<!-- Main -->
+<div class="container">
+    <img id="finalImage" src="" alt="Final Result">
+
+    <div class="actions">
+        <button class="btn btn-primary" id="downloadBtn">Download Image</button>
+        <button class="btn btn-secondary" id="shareBtn">Share</button>
+        <button class="btn btn-secondary" onclick="location.href='index.html'">Back to Tools</button>
+        <button class="btn btn-upgrade" id="upgradeBtn" style="display:none;">Unlock HD + No Watermark</button>
+    </div>
+
+    <div id="upgradeMessage"></div>
+</div>
+
+
+<!-- JS -->
 <script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { 
-    getFirestore, 
-    collection, 
-    addDoc, 
-    serverTimestamp 
-} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+    import { auth, onAuthStateChanged } from "./firebase-app.js";
+    import { db } from "./db.js";
+    import { doc, getDoc } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js";
 
-import {
-    getAuth,
-    onAuthStateChanged
-} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+    const finalImage = document.getElementById("finalImage");
+    const downloadBtn = document.getElementById("downloadBtn");
+    const shareBtn = document.getElementById("shareBtn");
+    const upgradeBtn = document.getElementById("upgradeBtn");
+    const upgradeMessage = document.getElementById("upgradeMessage");
 
-// FIREBASE CONFIG
-const firebaseConfig = {
-    apiKey: "AIzaSyCM6r66kW9xkBA5rgVcz4sP57N2v2BMbkg",
-    authDomain: "ai-photo-studio-24354.firebaseapp.com",
-    projectId: "ai-photo-studio-24354",
-    storageBucket: "ai-photo-studio-24354.firebasestorage.app",
-    messagingSenderId: "411346648650",
-    appId: "1:411346648650:web:aefd1b26027ed5e8fab0b3"
-};
+    // Load final image from localStorage
+    const result = localStorage.getItem("finalImage");
+    if (result) finalImage.src = result;
 
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
-const auth = getAuth(app);
-
-// LOAD IMAGES FROM LOCALSTORAGE
-const beforeImg = document.getElementById("beforeImg");
-const afterImg = document.getElementById("afterImg");
-
-const before = localStorage.getItem("beforeImage");
-const after = localStorage.getItem("afterImage");
-
-if (!before || !after) {
-    alert("No images found.");
-    window.location.href = "editor.html";
-}
-
-beforeImg.src = before;
-afterImg.src = after;
-
-// DOWNLOAD BUTTON
-document.getElementById("downloadBtn").onclick = () => {
-    const a = document.createElement("a");
-    a.href = after;
-    a.download = "AI-Photo-Studio.png";
-    a.click();
-};
-
-// SHARE BUTTON
-document.getElementById("shareBtn").onclick = async () => {
-    if (navigator.share) {
-        await navigator.share({
-            title: "AI Photo Studio",
-            text: "Check out my AI-edited photo!",
-            url: after
-        });
-    } else {
-        alert("Sharing not supported on this device.");
-    }
-};
-
-// SAVE TO GALLERY
-document.getElementById("saveGalleryBtn").onclick = () => {
+    // User plan check (free users get watermark)
     onAuthStateChanged(auth, async (user) => {
-        if (!user) return alert("You must be signed in.");
+        if (!user) return location.href = "signin.html";
 
-        await addDoc(
-            collection(db, "users", user.uid, "gallery"),
-            {
-                before,
-                after,
-                createdAt: serverTimestamp()
+        const ref = doc(db, "users", user.uid);
+        const snap = await getDoc(ref);
+
+        let isPro = false;
+        if (snap.exists()) {
+            const data = snap.data();
+            if (data.plan === "pro" || data.plan === "yearly" || data.plan === "trial") {
+                isPro = true;
             }
-        );
+        }
 
-        alert("Saved to your gallery!");
-        window.location.href = "gallery.html";
+        if (!isPro) {
+            upgradeBtn.style.display = "block";
+            upgradeMessage.innerHTML = "Watermark added — Upgrade for HD quality.";
+        }
     });
-};
-</script>
 
-<!-- PREMIUM CHECK -->
-<script type="module" src="premium-check.js"></script>
+    // Download image
+    downloadBtn.onclick = () => {
+        const link = document.createElement("a");
+        link.href = finalImage.src;
+        link.download = "ai-photo.png";
+        link.click();
+    };
 
-<!-- SERVICE WORKER -->
-<script>
-if ("serviceWorker" in navigator) {
-    navigator.serviceWorker.register("/bds-app/public/sw.js")
-      .catch(err => console.log("SW failed:", err));
-}
+    // Web Share
+    shareBtn.onclick = async () => {
+        try {
+            const blob = await (await fetch(finalImage.src)).blob();
+            const file = new File([blob], "ai-photo.png", { type: "image/png" });
+
+            if (navigator.share) {
+                await navigator.share({
+                    title: "My AI Photo",
+                    files: [file]
+                });
+            } else {
+                alert("Sharing not supported on this device.");
+            }
+        } catch (err) {
+            alert("Unable to share this image.");
+        }
+    };
+
+    upgradeBtn.onclick = () => {
+        location.href = "subscription.html";
+    };
 </script>
 
 </body>
