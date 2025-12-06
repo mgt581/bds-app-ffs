@@ -1,199 +1,76 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Remove Background – AI Photo Studio</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Remove Background · AI Photo Studio</title>
 
-    <link rel="stylesheet" href="editor.css" />
-    <script defer src="firebase-app.js"></script>
-    <script defer src="auth.js"></script>
-    <script defer src="premium-check.js"></script>
-    <script defer src="photosudio.js"></script>
+<link rel="stylesheet" href="editor.css">
 
-    <style>
-        body {
-            margin: 0;
-            background: #0d1117;
-            font-family: "Inter", sans-serif;
-            color: white;
-            display: flex;
-            flex-direction: column;
-            height: 100vh;
-        }
+<style>
+body {
+  margin:0;background:#0b1020;color:white;font-family:Inter,system-ui,sans-serif;
+}
 
-        header {
-            padding: 18px;
-            display: flex;
-            align-items: center;
-            gap: 16px;
-            background: #111827;
-            border-bottom: 1px solid #1f2937;
-        }
+.topbar {
+  height:60px;background:#111827;border-bottom:1px solid #1f2937;
+  display:flex;align-items:center;justify-content:space-between;padding:0 20px;
+}
 
-        header img {
-            width: 45px;
-        }
+.topbar h1 { font-size:18px;font-weight:700; }
+.topbar a { color:#60a5fa;text-decoration:none;font-weight:600; }
 
-        header h1 {
-            margin: 0;
-            font-size: 20px;
-            font-weight: 600;
-            color: #3b82f6;
-        }
+.tool-header {
+  text-align:center;padding:25px;
+}
+.tool-header img {
+  width:70px;margin-bottom:10px;
+}
 
-        #upload-zone {
-            border: 2px dashed #3b82f6;
-            margin: 20px;
-            padding: 40px 20px;
-            text-align: center;
-            border-radius: 14px;
-            cursor: pointer;
-            transition: 0.2s;
-        }
+.upload-box {
+  margin:20px auto;padding:30px;border:2px dashed #1f2937;
+  width:90%;max-width:380px;text-align:center;border-radius:12px;
+}
+.upload-box button {
+  background:#3b82f6;border:none;padding:12px 26px;border-radius:10px;
+  color:white;font-size:15px;font-weight:600;cursor:pointer;
+}
 
-        #upload-zone:hover {
-            background: #111827;
-        }
+#previewBox { display:none;text-align:center;margin-top:25px; }
+#previewBox img { width:90%;border-radius:10px;margin-bottom:15px; }
 
-        #upload-zone input {
-            display: none;
-        }
+.action-btn {
+  display:block;margin:12px auto;background:#3b82f6;
+  border:none;padding:12px 28px;border-radius:10px;font-weight:700;
+  cursor:pointer;color:white;font-size:16px;text-align:center;
+}
+</style>
 
-        #editor-output {
-            flex: 1;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
-        }
-
-        #result-image {
-            max-width: 90%;
-            max-height: 70vh;
-            border-radius: 12px;
-            display: none;
-        }
-
-        #saveBtn {
-            margin: 20px auto;
-            padding: 14px 24px;
-            background: #3b82f6;
-            color: white;
-            border: none;
-            border-radius: 10px;
-            font-size: 18px;
-            font-weight: 600;
-            cursor: pointer;
-            display: none;
-        }
-    </style>
 </head>
-
 <body>
 
-<header>
-    <img src="icons/icon-remove-background.png" alt="" />
-    <h1>Remove Background</h1>
-</header>
-
-<div id="upload-zone" onclick="document.getElementById('upload-input').click();">
-    <input type="file" id="upload-input" accept="image/*" />
-    <p>Tap or Drag an Image to Upload</p>
+<div class="topbar">
+  <h1>Remove Background</h1>
+  <a href="index.html">Back</a>
 </div>
 
-<div id="editor-output">
-    <img id="result-image" />
+<div class="tool-header">
+  <img src="icons/icon-remove-background.png">
+  <h2>Upload your photo</h2>
+  <p>AI will remove the background instantly</p>
 </div>
 
-<button id="saveBtn" onclick="saveImage()">Save Image</button>
+<div class="upload-box">
+  <input id="uploadInput" type="file" accept="image/*" style="display:none">
+  <button onclick="uploadInput.click()">Select Image</button>
+</div>
 
-<script>
-let originalFile;
-let processedBlob;
+<div id="previewBox">
+  <img id="previewImg" src="">
+  <button class="action-btn" onclick="processImage()">Remove Background</button>
+  <button class="action-btn" onclick="saveImage()">Save Image</button>
+</div>
 
-// Trigger upload
-document.getElementById("upload-input").addEventListener("change", function (e) {
-    if (e.target.files.length === 0) return;
-    originalFile = e.target.files[0];
-    processRemoveBackground(originalFile);
-});
-
-// Call API
-async function processRemoveBackground(file) {
-    document.getElementById("upload-zone").innerHTML = "<p>Processing…</p>";
-
-    const formData = new FormData();
-    formData.append("image", file);
-
-    try {
-        // --- YOUR FREE API HERE (fast + watermark compatible) ---
-        const res = await fetch(
-            "https://api.aiphotoedit.ai/remove-bg", 
-            { method: "POST", body: formData }
-        );
-
-        const blob = await res.blob();
-        processedBlob = blob;
-
-        const imgURL = URL.createObjectURL(blob);
-
-        const img = document.getElementById("result-image");
-        img.src = imgURL;
-        img.style.display = "block";
-
-        document.getElementById("saveBtn").style.display = "block";
-        document.getElementById("upload-zone").style.display = "none";
-    }
-    catch (err) {
-        alert("Error removing background.");
-        console.log(err);
-    }
-}
-
-// Save or force watermark
-async function saveImage() {
-    const isPro = await checkPremiumStatus();
-
-    let finalBlob = processedBlob;
-
-    // Apply watermark for FREE users
-    if (!isPro) {
-        finalBlob = await applyWatermark(processedBlob);
-    }
-
-    const url = URL.createObjectURL(finalBlob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = "edited.png";
-    a.click();
-}
-
-// Basic watermark
-function applyWatermark(blob) {
-    return new Promise(async (resolve) => {
-        const img = new Image();
-        img.src = URL.createObjectURL(blob);
-
-        img.onload = () => {
-            const canvas = document.createElement("canvas");
-            canvas.width = img.width;
-            canvas.height = img.height;
-
-            const ctx = canvas.getContext("2d");
-            ctx.drawImage(img, 0, 0);
-
-            ctx.font = `${img.width / 20}px Arial`;
-            ctx.fillStyle = "rgba(255,255,255,0.35)";
-            ctx.textAlign = "right";
-
-            ctx.fillText("AI Photo Studio FREE", img.width - 30, img.height - 30);
-
-            canvas.toBlob((wmBlob) => resolve(wmBlob));
-        };
-    });
-}
-</script>
-
+<script src="editor-remove.js"></script>
 </body>
 </html>
