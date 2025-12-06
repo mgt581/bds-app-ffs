@@ -1,278 +1,198 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>Remove Background · AI Photo Studio</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Remove Background – AI Photo Studio</title>
 
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet"/>
+    <link rel="stylesheet" href="editor.css" />
+    <script defer src="firebase-app.js"></script>
+    <script defer src="auth.js"></script>
+    <script defer src="premium-check.js"></script>
+    <script defer src="photosudio.js"></script>
 
-<style>
-  body {
-    margin:0;
-    font-family:Inter, system-ui, sans-serif;
-    background:#0b0f1c;
-    color:white;
-    display:flex;
-    height:100vh;
-    overflow:hidden;
-  }
+    <style>
+        body {
+            margin: 0;
+            background: #0d1117;
+            font-family: "Inter", sans-serif;
+            color: white;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+        }
 
-  /* Sidebar */
-  .sidebar {
-    width:260px;
-    background:#111827;
-    border-right:1px solid #1f2937;
-    padding:20px;
-    display:flex;
-    flex-direction:column;
-  }
+        header {
+            padding: 18px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            background: #111827;
+            border-bottom: 1px solid #1f2937;
+        }
 
-  .logo {
-    font-size:22px;
-    font-weight:700;
-    margin-bottom:25px;
-    color:#3fb7ff;
-    text-shadow:0 0 12px #3fb7ff;
-  }
+        header img {
+            width: 45px;
+        }
 
-  .tool-link {
-    padding:12px;
-    background:#1a2336;
-    border-radius:10px;
-    margin-bottom:10px;
-    cursor:pointer;
-    transition:0.15s;
-  }
-  .tool-link:hover { background:#223148; }
+        header h1 {
+            margin: 0;
+            font-size: 20px;
+            font-weight: 600;
+            color: #3b82f6;
+        }
 
-  .active {
-    background:#3fb7ff;
-    color:black;
-    font-weight:700;
-  }
+        #upload-zone {
+            border: 2px dashed #3b82f6;
+            margin: 20px;
+            padding: 40px 20px;
+            text-align: center;
+            border-radius: 14px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
 
-  /* Topbar */
-  .topbar {
-    height:60px;
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    padding:0 20px;
-    background:#111827;
-    border-bottom:1px solid #1f2937;
-  }
+        #upload-zone:hover {
+            background: #111827;
+        }
 
-  .upgrade-btn {
-    background:linear-gradient(135deg,#1f8bff,#3fb7ff);
-    padding:10px 18px;
-    border-radius:10px;
-    color:white;
-    font-weight:700;
-    cursor:pointer;
-    box-shadow:0 0 18px #1f8bff;
-  }
+        #upload-zone input {
+            display: none;
+        }
 
-  .main {
-    flex:1;
-    display:flex;
-    flex-direction:column;
-  }
+        #editor-output {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
 
-  .content {
-    padding:30px;
-    overflow-y:auto;
-    text-align:center;
-  }
+        #result-image {
+            max-width: 90%;
+            max-height: 70vh;
+            border-radius: 12px;
+            display: none;
+        }
 
-  /* Upload Area */
-  .upload-box {
-    border:2px dashed #3fb7ff50;
-    border-radius:18px;
-    padding:40px;
-    text-align:center;
-    cursor:pointer;
-    transition:0.2s;
-  }
-
-  .upload-box:hover {
-    border-color:#3fb7ff;
-    background:#112033;
-  }
-
-  #editorCanvas {
-    max-width:90%;
-    max-height:70vh;
-    margin-top:20px;
-    border-radius:12px;
-    background:#000;
-  }
-
-  .action-btn {
-    margin-top:20px;
-    background:#3fb7ff;
-    border:none;
-    padding:14px 22px;
-    border-radius:10px;
-    font-weight:700;
-    cursor:pointer;
-    color:black;
-    font-size:16px;
-  }
-</style>
-
-<!-- ONNX -->
-<script src="https://cdn.jsdelivr.net/npm/onnxruntime-web/dist/ort.js"></script>
-
-<!-- Firebase -->
-<script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-app.js";
-  import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-auth.js";
-  import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js";
-
-  const firebaseConfig = {
-    apiKey: "AIzaSyCM6r66kW9xkBA5rgVcz4sP57N2v2BMbkg",
-    authDomain: "ai-photo-studio-24354.firebaseapp.com",
-    projectId: "ai-photo-studio-24354",
-    storageBucket: "ai-photo-studio-24354.firebasestorage.app",
-    messagingSenderId: "411346648650",
-    appId: "1:411346648650:web:aefd1b26027ed5e8fab0b3",
-    measurementId: "G-8TXC63YKPD"
-  };
-
-  const app = initializeApp(firebaseConfig);
-  const auth = getAuth(app);
-  const db = getFirestore(app);
-
-  window.userPlan = "free";
-
-  onAuthStateChanged(auth, async (user) => {
-    if (!user) return window.location.href = "/signin.html";
-
-    const ref = doc(db, "users", user.uid);
-    const snap = await getDoc(ref);
-
-    if (snap.exists()) {
-      const data = snap.data();
-      window.userPlan = data.plan;
-    }
-  });
-</script>
-
+        #saveBtn {
+            margin: 20px auto;
+            padding: 14px 24px;
+            background: #3b82f6;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            display: none;
+        }
+    </style>
 </head>
+
 <body>
 
-<!-- SIDEBAR -->
-<div class="sidebar">
-  <div class="logo">AI Photo Studio</div>
+<header>
+    <img src="icons/icon-remove-background.png" alt="" />
+    <h1>Remove Background</h1>
+</header>
 
-  <div class="tool-link active">Remove Background</div>
-  <div class="tool-link" onclick="location.href='/editor-change.html'">Change Background</div>
-  <div class="tool-link" onclick="location.href='/index.html'">← Back to Dashboard</div>
+<div id="upload-zone" onclick="document.getElementById('upload-input').click();">
+    <input type="file" id="upload-input" accept="image/*" />
+    <p>Tap or Drag an Image to Upload</p>
 </div>
 
-<!-- MAIN -->
-<div class="main">
-
-  <div class="topbar">
-    <div style="font-size:18px;font-weight:600;">Remove Background</div>
-    <div class="upgrade-btn" onclick="location.href='/upgrade.html'">Upgrade to Pro ✨</div>
-  </div>
-
-  <div class="content">
-    
-    <!-- Upload Box -->
-    <div class="upload-box" onclick="document.getElementById('fileInput').click()">
-      <h3>Click to upload an image</h3>
-      <p>Supports PNG / JPG</p>
-    </div>
-    <input id="fileInput" type="file" accept="image/*" style="display:none" onchange="loadImage(event)">
-
-    <!-- Canvas -->
-    <canvas id="editorCanvas"></canvas>
-
-    <!-- Buttons -->
-    <button class="action-btn" onclick="removeBG()">Remove Background</button>
-    <button class="action-btn" onclick="downloadImage()">Download</button>
-
-  </div>
-
+<div id="editor-output">
+    <img id="result-image" />
 </div>
+
+<button id="saveBtn" onclick="saveImage()">Save Image</button>
 
 <script>
-  let model = null;
-  const canvas = document.getElementById("editorCanvas");
-  const ctx = canvas.getContext("2d");
-  let img = new Image();
+let originalFile;
+let processedBlob;
 
-  async function loadU2() {
-    if (!model) model = await ort.InferenceSession.create("/models/u2net.onnx");
-    return model;
-  }
+// Trigger upload
+document.getElementById("upload-input").addEventListener("change", function (e) {
+    if (e.target.files.length === 0) return;
+    originalFile = e.target.files[0];
+    processRemoveBackground(originalFile);
+});
 
-  function loadImage(e) {
-    const file = e.target.files[0];
-    if (!file) return;
+// Call API
+async function processRemoveBackground(file) {
+    document.getElementById("upload-zone").innerHTML = "<p>Processing…</p>";
 
-    const r = new FileReader();
-    r.onload = () => {
-      img.onload = () => {
-        canvas.width = img.width;
-        canvas.height = img.height;
-        ctx.drawImage(img,0,0);
-      };
-      img.src = r.result;
-    };
-    r.readAsDataURL(file);
-  }
+    const formData = new FormData();
+    formData.append("image", file);
 
-  async function removeBG() {
-    if (!img.src) return alert("Upload an image first.");
+    try {
+        // --- YOUR FREE API HERE (fast + watermark compatible) ---
+        const res = await fetch(
+            "https://api.aiphotoedit.ai/remove-bg", 
+            { method: "POST", body: formData }
+        );
 
-    await loadU2();
+        const blob = await res.blob();
+        processedBlob = blob;
 
-    const data = ctx.getImageData(0,0,canvas.width,canvas.height);
-    const input = preprocess(data);
+        const imgURL = URL.createObjectURL(blob);
 
-    const out = await model.run({ input });
-    const mask = out.output.data;
+        const img = document.getElementById("result-image");
+        img.src = imgURL;
+        img.style.display = "block";
 
-    const rgba = data.data;
-    for (let i=0;i<mask.length;i++){
-      rgba[i*4+3] = mask[i]*255;
+        document.getElementById("saveBtn").style.display = "block";
+        document.getElementById("upload-zone").style.display = "none";
     }
-    ctx.putImageData(data,0,0);
-
-    applyWatermarkIfNeeded();
-  }
-
-  function preprocess(d){
-    const {data,width,height}=d;
-    const f=new Float32Array(width*height*3);
-    for(let i=0;i<width*height;i++){
-      f[i]              = data[i*4]/255;
-      f[i+width*height] = data[i*4+1]/255;
-      f[i+2*width*height]=data[i*4+2]/255;
+    catch (err) {
+        alert("Error removing background.");
+        console.log(err);
     }
-    return new ort.Tensor("float32",f,[1,3,height,width]);
-  }
+}
 
-  function applyWatermarkIfNeeded(){
-    if (window.userPlan === "pro" || window.userPlan === "trial") return;
+// Save or force watermark
+async function saveImage() {
+    const isPro = await checkPremiumStatus();
 
-    ctx.font="48px Inter";
-    ctx.fillStyle="rgba(255,255,255,0.4)";
-    ctx.textAlign="center";
-    ctx.fillText("AI PHOTO STUDIO", canvas.width/2, canvas.height/2);
-  }
+    let finalBlob = processedBlob;
 
-  function downloadImage(){
-    const a=document.createElement("a");
-    a.download="edited.png";
-    a.href=canvas.toDataURL("image/png");
+    // Apply watermark for FREE users
+    if (!isPro) {
+        finalBlob = await applyWatermark(processedBlob);
+    }
+
+    const url = URL.createObjectURL(finalBlob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "edited.png";
     a.click();
-  }
+}
 
+// Basic watermark
+function applyWatermark(blob) {
+    return new Promise(async (resolve) => {
+        const img = new Image();
+        img.src = URL.createObjectURL(blob);
+
+        img.onload = () => {
+            const canvas = document.createElement("canvas");
+            canvas.width = img.width;
+            canvas.height = img.height;
+
+            const ctx = canvas.getContext("2d");
+            ctx.drawImage(img, 0, 0);
+
+            ctx.font = `${img.width / 20}px Arial`;
+            ctx.fillStyle = "rgba(255,255,255,0.35)";
+            ctx.textAlign = "right";
+
+            ctx.fillText("AI Photo Studio FREE", img.width - 30, img.height - 30);
+
+            canvas.toBlob((wmBlob) => resolve(wmBlob));
+        };
+    });
+}
 </script>
 
 </body>
