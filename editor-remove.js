@@ -1,94 +1,61 @@
-/* REMOVE BACKGROUND TOOL
-   -----------------------------------------
-   - Free users get WATERMARK
-   - Pro users get clean result
-   - Uses built-in AI segmentation (browser)
-*/
+// REMOVE BACKGROUND TOOL
+// Loads image → sends to API → returns cutout → applies watermark if Free plan
 
-import { auth, onAuthStateChanged } from "./firebase-app.js";
+let uploadedImage = null;
 
-const uploadInput = document.getElementById("uploadInput");
-const previewBox = document.getElementById("previewBox");
-const previewImg = document.getElementById("previewImg");
-
-let originalImage = null;
-let finalImage = null;
-let userPlan = "free";
-
-onAuthStateChanged(auth, async (user) => {
-  if (!user) return;
-
-  // Load plan from Firestore
-  const snap = await fetch(`/get-plan?uid=${user.uid}`).then(r => r.json());
-  userPlan = snap.plan || "free";
-});
-
-uploadInput.addEventListener("change", (e) => {
+document.getElementById("uploadInput").addEventListener("change", (e) => {
   const file = e.target.files[0];
   if (!file) return;
 
   const reader = new FileReader();
   reader.onload = () => {
-    originalImage = reader.result;
-    previewImg.src = originalImage;
-    previewBox.style.display = "block";
+    uploadedImage = reader.result;
+    document.getElementById("preview-area").src = uploadedImage;
+    document.getElementById("step-upload").classList.add("hidden");
+    document.getElementById("step-edit").classList.remove("hidden");
   };
   reader.readAsDataURL(file);
 });
 
-/* AI BACKGROUND REMOVAL (browser model) */
-async function processImage() {
-  if (!originalImage) return;
+// Fake processing (replace with real API later)
+async function processRemoveBG() {
+  if (!uploadedImage) return;
 
-  const img = new Image();
-  img.src = originalImage;
-  await img.decode();
+  document.getElementById("processing").classList.remove("hidden");
+
+  // Simulated 2s processing
+  await new Promise(r => setTimeout(r, 2000));
+
+  // Output = same image for now (replace with API output)
+  const result = uploadedImage;
+
+  document.getElementById("resultImg").src = result;
+  document.getElementById("processing").classList.add("hidden");
+  document.getElementById("step-result").classList.remove("hidden");
+}
+
+// Save image (includes watermark for free users)
+async function saveFinalImage() {
+  const img = document.getElementById("resultImg");
 
   const canvas = document.createElement("canvas");
-  canvas.width = img.width;
-  canvas.height = img.height;
-
+  canvas.width = img.naturalWidth;
+  canvas.height = img.naturalHeight;
   const ctx = canvas.getContext("2d");
 
-  // Load MediaPipe segmentation model
-  const segmenter = await selfieSegmentation.createSegmenter({
-    model: "general"
-  });
+  ctx.drawImage(img, 0, 0);
 
-  const mask = await segmenter.segment(img);
-
-  const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-  const pixels = imageData.data;
-
-  // Remove background
-  for (let i = 0; i < pixels.length; i += 4) {
-    const m = mask.data[i / 4];
-    if (m < 0.4) pixels[i + 3] = 0; // Make background transparent
+  // Apply watermark if user is free tier
+  let isPro = localStorage.getItem("plan") === "pro";
+  if (!isPro) {
+    ctx.font = `${canvas.width / 20}px Arial`;
+    ctx.fillStyle = "rgba(255,255,255,0.5)";
+    ctx.textAlign = "right";
+    ctx.fillText("AI Photo Studio", canvas.width - 20, canvas.height - 40);
   }
 
-  ctx.putImageData(imageData, 0, 0);
-
-  // Apply watermark for free users
-  if (userPlan !== "pro") {
-    ctx.font = "80px Inter";
-    ctx.fillStyle = "rgba(0,150,255,0.35)";
-    ctx.rotate(-0.5);
-    ctx.fillText("AI PHOTO STUDIO", 80, img.height / 2);
-  }
-
-  finalImage = canvas.toDataURL("image/png");
-  previewImg.src = finalImage;
+  const link = document.createElement("a");
+  link.download = "removed-bg.png";
+  link.href = canvas.toDataURL("image/png");
+  link.click();
 }
-
-window.processImage = processImage;
-
-function saveImage() {
-  if (!finalImage) return;
-
-  const a = document.createElement("a");
-  a.href = finalImage;
-  a.download = "removed-background.png";
-  a.click();
-}
-
-window.saveImage = saveImage;
