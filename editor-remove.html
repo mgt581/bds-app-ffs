@@ -5,72 +5,132 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Remove Background · AI Photo Studio</title>
 
-<link rel="stylesheet" href="editor.css">
-
-<style>
-body {
-  margin:0;background:#0b1020;color:white;font-family:Inter,system-ui,sans-serif;
-}
-
-.topbar {
-  height:60px;background:#111827;border-bottom:1px solid #1f2937;
-  display:flex;align-items:center;justify-content:space-between;padding:0 20px;
-}
-
-.topbar h1 { font-size:18px;font-weight:700; }
-.topbar a { color:#60a5fa;text-decoration:none;font-weight:600; }
-
-.tool-header {
-  text-align:center;padding:25px;
-}
-.tool-header img {
-  width:70px;margin-bottom:10px;
-}
-
-.upload-box {
-  margin:20px auto;padding:30px;border:2px dashed #1f2937;
-  width:90%;max-width:380px;text-align:center;border-radius:12px;
-}
-.upload-box button {
-  background:#3b82f6;border:none;padding:12px 26px;border-radius:10px;
-  color:white;font-size:15px;font-weight:600;cursor:pointer;
-}
-
-#previewBox { display:none;text-align:center;margin-top:25px; }
-#previewBox img { width:90%;border-radius:10px;margin-bottom:15px; }
-
-.action-btn {
-  display:block;margin:12px auto;background:#3b82f6;
-  border:none;padding:12px 28px;border-radius:10px;font-weight:700;
-  cursor:pointer;color:white;font-size:16px;text-align:center;
-}
-</style>
+<link href="editor.css" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet"/>
 
 </head>
 <body>
 
+<!-- Top Bar -->
 <div class="topbar">
-  <h1>Remove Background</h1>
-  <a href="index.html">Back</a>
+  <div class="logo">AI Photo Studio</div>
+
+  <div>
+    <a href="gallery.html" class="account-btn">My Gallery</a>
+    <a href="profile.html" class="account-btn">Account</a>
+  </div>
 </div>
 
-<div class="tool-header">
-  <img src="icons/icon-remove-background.png">
-  <h2>Upload your photo</h2>
-  <p>AI will remove the background instantly</p>
+<!-- Upload Section -->
+<div class="upload-box" id="uploadSection">
+  <img src="icons/icon-remove-background.png" width="85" style="opacity:0.9; margin-bottom:12px;">
+  <h2>Remove Background</h2>
+  <p>Upload a photo and our AI will instantly remove the background for you.</p>
+
+  <button class="upload-btn" onclick="document.getElementById('uploadInput').click()">Upload Image</button>
+  <input type="file" id="uploadInput" accept="image/*" style="display:none;">
 </div>
 
-<div class="upload-box">
-  <input id="uploadInput" type="file" accept="image/*" style="display:none">
-  <button onclick="uploadInput.click()">Select Image</button>
+<!-- Preview Section -->
+<div class="preview-container" id="previewContainer">
+
+  <div class="preview-box">
+    <img id="previewImage" src="" alt="Preview">
+  </div>
+
+  <div class="action-buttons">
+    <button class="action-btn blue" onclick="removeBackground()">Remove Background</button>
+    <button class="action-btn" onclick="resetEditor()">Reset</button>
+    <button class="action-btn" onclick="saveFinalImage()">Save</button>
+  </div>
 </div>
 
-<div id="previewBox">
-  <img id="previewImg" src="">
-  <button class="action-btn" onclick="processImage()">Remove Background</button>
-  <button class="action-btn" onclick="saveImage()">Save Image</button>
-</div>
+<footer>AI Photo Studio © 2025</footer>
 
-<script src="editor-remove.js"></script>
+<script type="module">
+/* FIREBASE AUTH CHECK — ONLY LOGGED IN USERS ACCESS TOOLS */
+import { auth, onAuthStateChanged } from "./firebase-app.js";
+
+onAuthStateChanged(auth, (user) => {
+  if (!user) window.location.href = "signin.html";
+});
+</script>
+
+<!-- Tool Logic -->
+<script>
+let originalImage = null;
+
+/* When user selects an image */
+document.getElementById("uploadInput").addEventListener("change", (e) => {
+  const file = e.target.files[0];
+  if (!file) return;
+
+  const reader = new FileReader();
+  reader.onload = () => {
+    originalImage = reader.result;
+
+    document.getElementById("previewImage").src = originalImage;
+    document.getElementById("uploadSection").style.display = "none";
+    document.getElementById("previewContainer").style.display = "block";
+  };
+  reader.readAsDataURL(file);
+});
+
+/* Simple Client-Side Remove BG (no API, free & fast) */
+async function removeBackground() {
+  const img = document.getElementById("previewImage");
+
+  // Create canvas
+  const canvas = document.createElement("canvas");
+  const ctx = canvas.getContext("2d");
+
+  canvas.width = img.naturalWidth;
+  canvas.height = img.naturalHeight;
+
+  ctx.drawImage(img, 0, 0);
+
+  // Very lightweight pseudo remove-bg (keeps subject, removes bright bg)
+  const pixels = ctx.getImageData(0, 0, canvas.width, canvas.height);
+  const data = pixels.data;
+
+  for (let i = 0; i < data.length; i += 4) {
+    const r = data[i], g = data[i+1], b = data[i+2];
+
+    // Detect nearly-white backgrounds
+    if (r > 220 && g > 220 && b > 220) {
+      data[i+3] = 0; // Transparent
+    }
+  }
+
+  ctx.putImageData(pixels, 0, 0);
+
+  // ADD WATERMARK FOR FREE USERS
+  const wm = "AI Photo Studio Free User";
+  ctx.font = "48px Inter";
+  ctx.fillStyle = "rgba(255,255,255,0.35)";
+  ctx.rotate(-0.3);
+  ctx.fillText(wm, canvas.width / 10, canvas.height / 2);
+  ctx.rotate(0.3);
+
+  const result = canvas.toDataURL("image/png");
+  document.getElementById("previewImage").src = result;
+}
+
+/* Reset tool */
+function resetEditor() {
+  document.getElementById("uploadSection").style.display = "block";
+  document.getElementById("previewContainer").style.display = "none";
+  document.getElementById("uploadInput").value = "";
+}
+
+/* Save Output */
+function saveFinalImage() {
+  const link = document.createElement("a");
+  link.download = "removed-background.png";
+  link.href = document.getElementById("previewImage").src;
+  link.click();
+}
+</script>
+
 </body>
 </html>
