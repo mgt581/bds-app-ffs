@@ -1,105 +1,89 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>AI Photo Studio – Editor</title>
-
-    <link rel="stylesheet" href="editor.css" />
-
-    <!-- Firebase -->
-    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-storage.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js"></script>
-
-    <!-- Your Firebase config (safe to commit) -->
-    <script src="firebase-config.js"></script>
-
-    <!-- Your AI keys (NOT committed → safe) -->
-    <script src="/config/aiKeys.js"></script>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>AI Photo Studio – Editor</title>
+<link rel="stylesheet" href="editor.css" />
+<script src="editor.js" defer></script>
+<script src="firebase-app.js" defer></script>
+<script src="db.js" defer></script>
 </head>
 
 <body>
 
+<div class="app-container">
+
     <!-- SIDEBAR -->
     <div class="sidebar">
-        <h1 class="logo">AI Photo Studio</h1>
+        <h2 class="logo">AI Photo Studio</h2>
 
-        <button class="nav-btn" onclick="goTo('upload')">📁 Upload</button>
-        <button class="nav-btn" onclick="runBackgroundRemoval()">🫧 Remove Background</button>
-        <button class="nav-btn" onclick="showBackgroundTools()">🌄 Change Background</button>
-        <button class="nav-btn" onclick="applyEnhance()">✨ Enhance</button>
-        <button class="nav-btn" onclick="applyBlur()">💨 Blur</button>
-        <button class="nav-btn" onclick="enableMagicErase()">🪄 Magic Erase</button>
+        <button class="side-btn" onclick="window.location.href='editor.html'">Upload</button>
+        <button class="side-btn" onclick="window.location.href='editor-remove.html'">Remove Background</button>
+        <button class="side-btn" onclick="window.location.href='editor-change.html'">Change Background</button>
+        <button class="side-btn" onclick="window.location.href='editor-enhance.html'">Enhance</button>
+        <button class="side-btn" onclick="window.location.href='editor-blur.html'">Blur</button>
+        <button class="side-btn" onclick="window.location.href='editor-erase.html'">Magic Erase</button>
+        <button class="side-btn" onclick="window.location.href='gallery.html'">Gallery</button>
 
-        <button class="nav-btn" onclick="goTo('gallery')">🖼 Gallery</button>
-
-        <button class="nav-btn upgrade-btn" onclick="goTo('pricing')">✨ Upgrade to Pro</button>
-
-        <button class="sign-out" onclick="logout()">Sign Out</button>
+        <button class="side-btn upgrade" onclick="window.location.href='upgrade.html'">
+            Upgrade to Pro ✨
+        </button>
     </div>
 
-    <!-- MAIN AREA -->
+    <!-- MAIN WORK AREA -->
     <div class="main-area">
 
-        <!-- TOP BAR -->
         <div class="top-bar">
-            <div class="dropdown">All Photos ▾</div>
-            <button class="save-btn" onclick="saveFinalImage()">Save</button>
+            <h1>All Photos</h1>
+            <button class="save-btn">Save</button>
         </div>
 
-        <div class="editor-wrapper">
+        <div class="editor-layout">
 
-            <!-- CANVAS PANEL -->
-            <div class="canvas-panel" id="canvasPanel">
-
-                <div id="dropZone" class="drop-zone">
+            <!-- UPLOAD BOX -->
+            <div class="panel upload-panel">
+                <div class="upload-box">
                     <p>Tap or Drag an Image to Upload</p>
-                    <input type="file" id="fileInput" accept="image/*" hidden />
                 </div>
-
-                <canvas id="canvas"></canvas>
             </div>
 
-            <!-- TOOLS PANEL -->
-            <div class="tool-panel">
+            <!-- EDIT OPTIONS -->
+            <div class="panel options-panel">
 
-                <h2 class="tool-title">Background Options</h2>
+                <h3>Background Options</h3>
 
-                <input type="file" id="bgInput" accept="image/*" hidden />
-                <button class="tool-btn" onclick="document.getElementById('bgInput').click()">
-                    📁 Upload Background
-                </button>
+                <button class="upload-bg">Upload Background</button>
 
-                <div class="bg-gallery">
-                    <img src="backgrounds/bg1.jpg" onclick="selectPresetBackground(this.src)" />
-                    <img src="backgrounds/bg2.jpg" onclick="selectPresetBackground(this.src)" />
-                    <img src="backgrounds/bg3.jpg" onclick="selectPresetBackground(this.src)" />
+                <div class="bg-preview-row">
+                    <div class="bg-preview"></div>
+                    <div class="bg-preview"></div>
+                    <div class="bg-preview"></div>
                 </div>
 
-                <h3 class="tool-subtitle">Solid Backgrounds</h3>
-
-                <div class="color-selector">
-                    <div class="color-swatch" style="background:#ffffff" onclick="selectColorBackground('#ffffff')"></div>
-                    <div class="color-swatch" style="background:#000000" onclick="selectColorBackground('#000000')"></div>
-                    <div class="color-swatch" style="background:#50a7f4" onclick="selectColorBackground('#50a7f4')"></div>
-                    <div class="color-swatch" style="background:#e64343" onclick="selectColorBackground('#e64343')"></div>
-                    <div class="color-swatch" style="background:#1dd15c" onclick="selectColorBackground('#1dd15c')"></div>
+                <h3>Solid Backgrounds</h3>
+                <div class="color-grid">
+                    <div class="color white"></div>
+                    <div class="color blue"></div>
+                    <div class="color navy"></div>
+                    <div class="color red"></div>
+                    <div class="color green"></div>
                 </div>
 
-                <button class="tool-btn" onclick="applyBackgroundChange()">Apply Background</button>
+                <button class="apply-btn">Apply Background</button>
 
-                <h2 class="tool-title">Magic Erase</h2>
-                <button class="tool-btn" onclick="enableMagicErase()">Start Erasing</button>
-                <button class="tool-btn" onclick="runMagicErase()">Apply Magic Erase</button>
+                <h3>Magic Erase</h3>
+
+                <button class="erase-btn">Start Erasing</button>
+                <button class="apply-erase">Apply Magic Erase</button>
 
             </div>
+
         </div>
 
     </div>
 
-    <script src="editor.js"></script>
+</div>
 
 </body>
 </html>
