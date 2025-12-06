@@ -1,157 +1,175 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>AI Photo Studio — Home</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>AI Photo Studio</title>
 
-    <link rel="manifest" href="manifest.webmanifest">
-    <link rel="stylesheet" href="dashboard.css">
+<style>
+    body {
+        margin: 0;
+        background: #0b0f19;
+        color: white;
+        font-family: Inter, system-ui, sans-serif;
+    }
 
-    <style>
-        body {
-            margin: 0;
-            background: #0d1117;
-            font-family: 'Inter', sans-serif;
-            color: #fff;
-            display: flex;
-            flex-direction: column;
-            height: 100vh;
-        }
+    /* TOP BAR */
+    .topbar {
+        background: #111827;
+        border-bottom: 1px solid #1f2937;
+        height: 60px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 20px;
+        position: sticky;
+        top: 0;
+    }
+    .logo {
+        font-size: 20px;
+        font-weight: 700;
+        color: #3fb7ff;
+        text-shadow: 0 0 10px #3fb7ff;
+    }
+    .account-btn {
+        color: #60a5fa;
+        font-size: 14px;
+        cursor: pointer;
+        text-decoration: none;
+    }
 
-        header {
-            padding: 18px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background: #111827;
-            border-bottom: 1px solid #1f2937;
-        }
+    /* MAIN SECTION */
+    .container {
+        max-width: 430px;
+        margin: auto;
+        padding: 20px;
+    }
+    h1 {
+        text-align: center;
+        font-size: 26px;
+        margin-top: 10px;
+    }
+    p.subtitle {
+        text-align: center;
+        opacity: .75;
+        font-size: 14px;
+        margin-top: 5px;
+        margin-bottom: 20px;
+    }
 
-        header h1 {
-            margin: 0;
-            font-size: 22px;
-            font-weight: 700;
-            color: #3b82f6;
-        }
+    /* GRID OF TOOLS */
+    .tool-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 16px;
+        margin-top: 20px;
+    }
+    .tool-card {
+        background: #111827;
+        padding: 18px;
+        border: 1px solid #1f2937;
+        border-radius: 14px;
+        text-align: center;
+        cursor: pointer;
+        transition: .2s;
+    }
+    .tool-card:hover {
+        border-color: #3fb7ff;
+        transform: translateY(-3px);
+    }
+    .tool-card img {
+        width: 70px;
+        height: 70px;
+        margin-bottom: 10px;
+    }
+    .tool-card span {
+        display: block;
+        font-weight: 600;
+        font-size: 15px;
+    }
 
-        .tools {
-            padding: 15px;
-            display: grid;
-            gap: 20px;
-        }
+    /* BUTTONS */
+    .btn {
+        width: 100%;
+        padding: 15px;
+        border-radius: 12px;
+        border: none;
+        background: #2563eb;
+        color: white;
+        font-weight: 700;
+        font-size: 16px;
+        margin-top: 22px;
+        cursor: pointer;
+    }
+    .btn:hover {
+        opacity: .85;
+    }
 
-        .tool-btn {
-            background: #111827;
-            border: 1px solid #1f2937;
-            border-radius: 12px;
-            padding: 18px;
-            display: flex;
-            align-items: center;
-            gap: 14px;
-            cursor: pointer;
-            transition: 0.2s;
-        }
-
-        .tool-btn:hover {
-            background: #1a2234;
-        }
-
-        .tool-btn img {
-            width: 56px;
-            height: 56px;
-            object-fit: contain;
-        }
-
-        .tool-btn span {
-            font-size: 18px;
-            font-weight: 600;
-        }
-
-        footer {
-            margin-top: auto;
-            padding: 12px;
-            display: flex;
-            justify-content: space-around;
-            background: #111827;
-            border-top: 1px solid #1f2937;
-        }
-
-        footer button {
-            background: none;
-            border: none;
-            color: #3b82f6;
-            font-size: 16px;
-            cursor: pointer;
-        }
-    </style>
-
-    <script defer src="firebase-app.js"></script>
-    <script defer src="auth.js"></script>
-    <script defer src="premium-check.js"></script>
+    /* WATERMARK NOTICE */
+    .notice {
+        margin-top: 20px;
+        opacity: .65;
+        font-size: 13px;
+        text-align: center;
+    }
+</style>
 </head>
 
 <body>
 
-<header>
-    <h1>AI Photo Studio</h1>
-    <button onclick="goToAccount()" style="color:#3b82f6; background:none; border:none; font-size:16px;">
-        My Account
-    </button>
-</header>
+<div class="topbar">
+    <div class="logo">AI Photo Studio</div>
+    <a class="account-btn" href="profile.html">My Account →</a>
+</div>
 
-<div class="tools">
+<div class="container">
 
-    <!-- REMOVE BACKGROUND -->
-    <div class="tool-btn" onclick="openTool('editor-remove.html')">
-        <img src="icons/icon-remove-background.png" alt="Remove Background">
-        <span>Remove Background</span>
+    <h1>Welcome Back 👋</h1>
+    <p class="subtitle">Choose a tool below to start editing your photo</p>
+
+    <!-- TOOL GRID -->
+    <div class="tool-grid">
+
+        <div class="tool-card" onclick="location.href='editor-remove.html'">
+            <img src="icons/icon-remove-background.png" alt="">
+            <span>Remove Background</span>
+        </div>
+
+        <div class="tool-card" onclick="location.href='editor-change.html'">
+            <img src="icons/icon-change-background.png" alt="">
+            <span>Change Background</span>
+        </div>
+
+        <div class="tool-card" onclick="location.href='editor-person.html'">
+            <img src="icons/icon-remove-person.png" alt="">
+            <span>Remove Person</span>
+        </div>
+
+        <div class="tool-card" onclick="location.href='editor-object.html'">
+            <img src="icons/icon-remove-object.png" alt="">
+            <span>Magic Eraser</span>
+        </div>
     </div>
 
-    <!-- CHANGE BACKGROUND -->
-    <div class="tool-btn" onclick="openTool('editor-change.html')">
-        <img src="icons/icon-change-background.png" alt="Change Background">
-        <span>Change Background</span>
-    </div>
+    <!-- ACTION BUTTONS -->
+    <button class="btn" onclick="location.href='gallery.html'">My Gallery</button>
+    <button class="btn" onclick="location.href='subscription.html'">Manage Subscription</button>
 
-    <!-- REMOVE PERSON -->
-    <div class="tool-btn" onclick="openTool('editor-person.html')">
-        <img src="icons/icon-remove-person.png" alt="Remove Person">
-        <span>Remove Person</span>
-    </div>
-
-    <!-- MAGIC / OBJECT REMOVE -->
-    <div class="tool-btn" onclick="openTool('editor-object.html')">
-        <img src="icons/icon-remove-object.png" alt="Magic Eraser">
-        <span>Magic Eraser (Object Remove)</span>
-    </div>
+    <p class="notice">
+        Free users will have a small watermark added.<br>
+        Upgrade to Pro to remove all limits.
+    </p>
 
 </div>
 
-<footer>
-    <button onclick="goToGallery()">Gallery</button>
-    <button onclick="signOut()">Sign Out</button>
-</footer>
+<script type="module">
+import { auth, onAuthStateChanged } from "./firebase-app.js";
 
-<script>
-function openTool(page) {
-    // Premium check is done inside premium-check.js
-    window.location.href = page;
-}
-
-function goToGallery() {
-    window.location.href = "gallery.html";
-}
-
-function goToAccount() {
-    window.location.href = "account.html";
-}
-
-function signOut() {
-    firebase.auth().signOut().then(() => {
+onAuthStateChanged(auth, user => {
+    if (!user) {
         window.location.href = "signin.html";
-    });
-}
+    }
+});
 </script>
 
 </body>
