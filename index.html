@@ -2,8 +2,8 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>AI Photo Studio</title>
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>AI Photo Studio · Home</title>
 
 <style>
     body {
@@ -15,45 +15,33 @@
 
     /* TOP BAR */
     .topbar {
+        height: 60px;
         background: #111827;
         border-bottom: 1px solid #1f2937;
-        height: 60px;
         display: flex;
         align-items: center;
         justify-content: space-between;
         padding: 0 20px;
     }
-
     .logo {
         font-size: 20px;
         font-weight: 700;
         color: #3fb7ff;
         text-shadow: 0 0 10px #3fb7ff;
     }
-
-    .top-buttons {
-        display: flex;
-        gap: 18px;
-    }
-
-    .top-btn {
+    .menu-btn {
         color: #60a5fa;
         font-size: 14px;
         cursor: pointer;
         text-decoration: none;
-        transition: 0.2s;
-    }
-    .top-btn:hover {
-        color: #93c5fd;
     }
 
-    /* MAIN CONTAINER */
+    /* MAIN */
     .container {
         max-width: 430px;
         margin: auto;
         padding: 20px;
     }
-
     h1 {
         text-align: center;
         font-size: 26px;
@@ -64,7 +52,28 @@
         opacity: .75;
         font-size: 14px;
         margin-top: 5px;
-        margin-bottom: 20px;
+    }
+
+    /* BUTTON ROW */
+    .top-buttons {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 12px;
+        margin: 20px 0;
+    }
+    .small-btn {
+        background: #111827;
+        border: 1px solid #1f2937;
+        padding: 12px;
+        border-radius: 12px;
+        text-align: center;
+        font-size: 13px;
+        color: #60a5fa;
+        cursor: pointer;
+        font-weight: 600;
+    }
+    .small-btn:hover {
+        background: #1f2937;
     }
 
     /* TOOL GRID */
@@ -74,7 +83,6 @@
         gap: 16px;
         margin-top: 20px;
     }
-
     .tool-card {
         background: #111827;
         padding: 18px;
@@ -88,37 +96,16 @@
         border-color: #3fb7ff;
         transform: translateY(-3px);
     }
-
     .tool-card img {
         width: 70px;
-        height: 70px;
         margin-bottom: 10px;
     }
-
     .tool-card span {
-        display: block;
         font-weight: 600;
         font-size: 15px;
     }
 
-    /* BIG BUTTONS */
-    .btn {
-        width: 100%;
-        padding: 15px;
-        border-radius: 12px;
-        border: none;
-        background: #2563eb;
-        color: white;
-        font-weight: 700;
-        font-size: 16px;
-        margin-top: 22px;
-        cursor: pointer;
-    }
-    .btn:hover {
-        opacity: .85;
-    }
-
-    /* NOTICE */
+    /* WATERMARK */
     .notice {
         margin-top: 20px;
         opacity: .65;
@@ -130,70 +117,83 @@
 
 <body>
 
-<!-- TOP NAVIGATION -->
+<!-- TOP BAR -->
 <div class="topbar">
     <div class="logo">AI Photo Studio</div>
-
-    <div class="top-buttons">
-        <a class="top-btn" href="profile.html">My Account</a>
-        <a class="top-btn" href="settings.html">Settings</a>
-        <a class="top-btn" href="#" id="logoutBtn">Sign Out</a>
-    </div>
+    <a class="menu-btn" href="settings.html">⚙ Settings</a>
 </div>
 
-<!-- MAIN SECTION -->
 <div class="container">
-    <h1>Welcome Back 👋</h1>
+
+    <h1>Welcome 👋</h1>
     <p class="subtitle">Choose a tool below to start editing your photo</p>
 
-    <!-- TOOLS -->
+    <!-- TOP BUTTONS -->
+    <div class="top-buttons">
+        <div class="small-btn" onclick="location.href='gallery.html'">Gallery</div>
+        <div class="small-btn" onclick="location.href='profile.html'">My Account</div>
+        <div class="small-btn" onclick="location.href='subscription.html'">Free Trial</div>
+    </div>
+
+    <!-- TOOL ICON GRID -->
     <div class="tool-grid">
 
         <div class="tool-card" onclick="location.href='editor-remove.html'">
-            <img src="icons/icon-remove-bg.PNG" alt="">
+            <img src="icons/icon-remove-background.png">
             <span>Remove Background</span>
         </div>
 
         <div class="tool-card" onclick="location.href='editor-change.html'">
-            <img src="icons/icon-change-bg.PNG" alt="">
+            <img src="icons/icon-change-background.png">
             <span>Change Background</span>
         </div>
 
         <div class="tool-card" onclick="location.href='editor-person.html'">
-            <img src="icons/icon-remove-person.PNG" alt="">
+            <img src="icons/icon-remove-person.png">
             <span>Remove Person</span>
         </div>
 
         <div class="tool-card" onclick="location.href='editor-object.html'">
-            <img src="icons/icon-remove-object.PNG" alt="">
+            <img src="icons/icon-remove-object.png">
             <span>Magic Eraser</span>
         </div>
     </div>
 
-    <!-- BUTTONS -->
-    <button class="btn" onclick="location.href='gallery.html'">My Gallery</button>
-    <button class="btn" onclick="location.href='subscription.html'">Manage Subscription</button>
-
     <p class="notice">
-        Free users will have a small watermark added.<br>
-        Upgrade to Pro to remove all limits.
+        Free users have a small watermark added.<br>
+        Upgrade to Pro for unlimited edits & no watermark.
     </p>
+
 </div>
 
-<!-- SCRIPT -->
 <script type="module">
-import { auth, onAuthStateChanged, signOut } from "./firebase-app.js";
+import { auth, onAuthStateChanged } from "./firebase-app.js";
+import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js";
 
-onAuthStateChanged(auth, user => {
-    if (!user) {
-        window.location.href = "signin.html";
+const db = getFirestore();
+
+/*
+    REDIRECT LOGIC:
+    • First time user → signup page
+    • Logged in but no subscription plan → subscription page
+    • Otherwise → stay on index (home)
+*/
+onAuthStateChanged(auth, async user => {
+    if (!user) return window.location.href = "signin.html";
+
+    const ref = doc(db, "users", user.uid);
+    const snap = await getDoc(ref);
+
+    if (!snap.exists()) {
+        // brand new user → go set up account/subscription
+        return window.location.href = "subscription.html";
     }
-});
 
-document.getElementById("logoutBtn").addEventListener("click", () => {
-    signOut(auth).then(() => {
-        window.location.href = "signin.html";
-    });
+    const data = snap.data();
+
+    if (!data.plan || data.plan === "free") {
+        return window.location.href = "subscription.html";
+    }
 });
 </script>
 
