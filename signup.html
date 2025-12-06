@@ -2,145 +2,42 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Sign Up · AI Photo Studio</title>
-
-<style>
-    body {
-        margin: 0;
-        background: #0b0f19;
-        color: white;
-        font-family: Inter, system-ui, sans-serif;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        height: 100vh;
-        padding: 20px;
-        text-align: center;
-    }
-
-    .box {
-        background: #111827;
-        padding: 28px;
-        border-radius: 14px;
-        width: 100%;
-        max-width: 380px;
-        border: 1px solid #1f2937;
-    }
-
-    h1 {
-        font-size: 26px;
-        margin-bottom: 20px;
-    }
-
-    input {
-        width: 100%;
-        padding: 14px;
-        margin-top: 12px;
-        border-radius: 10px;
-        border: 1px solid #1f2937;
-        background: #0b0f19;
-        color: white;
-        font-size: 15px;
-    }
-
-    button {
-        width: 100%;
-        padding: 14px;
-        margin-top: 16px;
-        border: none;
-        border-radius: 10px;
-        background: #2563eb;
-        color: white;
-        font-size: 16px;
-        font-weight: 700;
-        cursor: pointer;
-    }
-
-    button:hover {
-        opacity: .85;
-    }
-
-    .link {
-        color: #60a5fa;
-        font-size: 14px;
-        margin-top: 10px;
-        display: block;
-        text-decoration: none;
-    }
-
-    .google-btn {
-        background: #db4437;
-    }
-
-    .anon-btn {
-        background: #6b7280;
-    }
-</style>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Create Account – AI Photo Studio</title>
+<link rel="stylesheet" href="auth.css">
 </head>
-
 <body>
 
-<div class="box">
-
+<div class="auth-container">
     <h1>Create Account</h1>
 
     <input id="email" type="email" placeholder="Email" />
-    <input id="password" type="password" placeholder="Password (min 6 chars)" />
+    <input id="password" type="password" placeholder="Password" />
 
-    <button id="signupBtn">Sign Up</button>
+    <button id="signupBtn">Create Account</button>
 
-    <button class="google-btn" id="googleBtn">Sign Up with Google</button>
-
-    <button class="anon-btn" id="anonBtn">Continue as Guest</button>
-
-    <a class="link" href="signin.html">Already have an account? Sign In</a>
-
+    <p class="link">Already have an account?  
+        <a href="signin.html">Sign In</a>
+    </p>
 </div>
 
 <script type="module">
-import { auth, createUserWithEmailAndPassword, signInWithPopup, GoogleAuthProvider, signInAnonymously } from "./firebase-app.js";
-import { db } from "./db.js";
-import { doc, setDoc } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js";
+import { auth, createUserWithEmailAndPassword } from "./firebase-app.js";
 
-async function createUserData(uid) {
-    await setDoc(doc(db, "users", uid), {
-        plan: "trial",
-        trialStart: Date.now(),
-        created: Date.now()
-    });
-}
-
-document.getElementById("signupBtn").onclick = () => {
+document.getElementById("signupBtn").addEventListener("click", async () => {
     const email = document.getElementById("email").value.trim();
     const password = document.getElementById("password").value.trim();
 
-    createUserWithEmailAndPassword(auth, email, password)
-        .then(async (cred) => {
-            await createUserData(cred.user.uid);
-            window.location.href = "subscription.html";
-        })
-        .catch(err => alert(err.message));
-};
+    try {
+        const userCred = await createUserWithEmailAndPassword(auth, email, password);
 
-document.getElementById("googleBtn").onclick = () => {
-    const provider = new GoogleAuthProvider();
-    signInWithPopup(auth, provider)
-        .then(async (cred) => {
-            await createUserData(cred.user.uid);
-            window.location.href = "subscription.html";
-        })
-        .catch(err => alert(err.message));
-};
+        // ⭐ NEW USERS ALWAYS GO TO SUBSCRIPTION PAGE FIRST
+        window.location.href = "subscription.html";
 
-document.getElementById("anonBtn").onclick = () => {
-    signInAnonymously(auth)
-        .then(async (cred) => {
-            await createUserData(cred.user.uid);
-            window.location.href = "subscription.html";
-        })
-        .catch(err => alert(err.message));
-};
+    } catch (err) {
+        alert(err.message);
+    }
+});
 </script>
 
 </body>
