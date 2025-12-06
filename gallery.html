@@ -1,177 +1,152 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Your Gallery · AI Photo Studio</title>
-
-<link rel="stylesheet" href="gallery.css">
-
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet"/>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>My Gallery – AI Photo Studio</title>
 
 <style>
-body {
-    margin:0;
-    background:#0b0f1c;
-    color:white;
-    font-family:Inter, sans-serif;
-}
+    body {
+        margin: 0;
+        background: #0b0f19;
+        color: white;
+        font-family: Inter, system-ui, sans-serif;
+    }
 
-.topbar {
-    height:70px;
-    background:#111827;
-    border-bottom:1px solid #1f2937;
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    padding:0 24px;
-    position:sticky;
-    top:0;
-    z-index:99;
-}
+    /* TOP BAR */
+    .topbar {
+        height: 60px;
+        background: #111827;
+        border-bottom: 1px solid #1f2937;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        font-size: 20px;
+        color: #3fb7ff;
+        text-shadow: 0 0 10px #3fb7ff;
+    }
 
-.logo {
-    font-size:22px;
-    font-weight:700;
-    color:#3fb7ff;
-    text-shadow:0 0 10px #3fb7ff;
-}
+    .container {
+        max-width: 460px;
+        margin: auto;
+        padding: 20px;
+    }
 
-.nav-btn {
-    padding:10px 18px;
-    border-radius:10px;
-    background:#1f2937;
-    border:1px solid #334155;
-    color:white;
-    cursor:pointer;
-    margin-left:10px;
-}
+    h2 {
+        margin-top: 20px;
+        font-size: 18px;
+        opacity: 0.85;
+    }
 
-.page {
-    padding:20px;
-    max-width:1100px;
-    margin:auto;
-}
+    /* GALLERY GRID */
+    .grid {
+        margin-top: 14px;
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 14px;
+    }
 
-h1 {
-    font-size:26px;
-    font-weight:700;
-    margin-bottom:20px;
-}
+    .item {
+        background: #111827;
+        border: 1px solid #1f2937;
+        border-radius: 14px;
+        overflow: hidden;
+        cursor: pointer;
+        transition: .2s;
+    }
 
-.gallery-grid {
-    display:grid;
-    grid-template-columns:repeat(auto-fill, minmax(140px, 1fr));
-    gap:18px;
-}
+    .item:hover {
+        transform: scale(1.03);
+        border-color: #3fb7ff;
+    }
 
-.item {
-    position:relative;
-    background:#111827;
-    border:1px solid #1f2937;
-    border-radius:12px;
-    overflow:hidden;
-    cursor:pointer;
-    transition:0.2s;
-}
+    .item img {
+        width: 100%;
+        height: 150px;
+        object-fit: cover;
+    }
 
-.item:hover {
-    transform:scale(1.03);
-    border-color:#3fb7ff;
-}
+    .none {
+        margin-top: 40px;
+        opacity: .6;
+        text-align: center;
+        font-size: 14px;
+    }
 
-.item img {
-    width:100%;
-    height:100%;
-    object-fit:cover;
-}
-
-.empty {
-    text-align:center;
-    margin-top:60px;
-    opacity:0.6;
-    font-size:18px;
-}
 </style>
 </head>
 
 <body>
 
-<div class="topbar">
-    <div class="logo">My Gallery</div>
-    <div>
-        <button class="nav-btn" onclick="location.href='index.html'">Editor</button>
-        <button class="nav-btn" onclick="location.href='profile.html'">My Account</button>
-        <button class="nav-btn" onclick="signOutUser()">Sign Out</button>
-    </div>
-</div>
+<div class="topbar">My Gallery</div>
 
-<div class="page">
-    <h1>Your Saved Photos</h1>
+<div class="container">
 
-    <div id="gallery" class="gallery-grid"></div>
+    <h2>Removed Background</h2>
+    <div class="grid" id="gallery-remove"></div>
 
-    <p id="empty" class="empty" style="display:none;">
-        Your edited photos will appear here.
+    <h2>Changed Background</h2>
+    <div class="grid" id="gallery-change"></div>
+
+    <h2>Remove Person</h2>
+    <div class="grid" id="gallery-person"></div>
+
+    <h2>Remove Object</h2>
+    <div class="grid" id="gallery-object"></div>
+
+    <p id="emptyMessage" class="none" style="display:none;">
+        Your gallery is empty. Start editing a photo!
     </p>
+
 </div>
 
 <script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-app.js";
-import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-auth.js";
-import { getStorage, ref, listAll, getDownloadURL } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-storage.js";
+import { auth, onAuthStateChanged } from "./firebase-app.js";
+import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js";
 
-const firebaseConfig = {
-    apiKey: "AIzaSyCM6r66kW9xkBA5rgVcz4sP57N2v2BMbkg",
-    authDomain: "ai-photo-studio-24354.firebaseapp.com",
-    projectId: "ai-photo-studio-24354",
-    storageBucket: "ai-photo-studio-24354.appspot.com",
-    messagingSenderId: "411346648650",
-    appId: "1:411346648650:web:aefd1b26027ed5e8fab0b3"
-};
-
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const storage = getStorage(app);
+const db = getFirestore();
 
 onAuthStateChanged(auth, async (user) => {
-    if (!user) return (location.href = "signin.html");
+    if (!user) return (window.location.href = "signin.html");
 
-    loadUserGallery(user.uid);
+    const uid = user.uid;
+    const folders = ["remove", "change", "person", "object"];
+
+    let totalImages = 0;
+
+    for (const folder of folders) {
+        const colRef = collection(db, "users", uid, folder);
+        const snap = await getDocs(colRef);
+
+        const grid = document.getElementById(`gallery-${folder}`);
+
+        if (snap.empty) {
+            grid.innerHTML = "";
+            continue;
+        }
+
+        snap.forEach(doc => {
+            const data = doc.data();
+            totalImages++;
+
+            const div = document.createElement("div");
+            div.className = "item";
+
+            div.onclick = () => {
+                localStorage.setItem("viewImage", data.url);
+                window.location.href = "gallery-view.html";
+            };
+
+            div.innerHTML = `<img src="${data.url}" alt="">`;
+            grid.appendChild(div);
+        });
+    }
+
+    if (totalImages === 0) {
+        document.getElementById("emptyMessage").style.display = "block";
+    }
 });
-
-async function loadUserGallery(uid) {
-    const container = document.getElementById("gallery");
-    const empty = document.getElementById("empty");
-
-    const folder = ref(storage, `users/${uid}/images`);
-    const list = await listAll(folder);
-
-    if (list.items.length === 0) {
-        empty.style.display = "block";
-        return;
-    }
-
-    for (const item of list.items) {
-        const url = await getDownloadURL(item);
-
-        const div = document.createElement("div");
-        div.classList.add("item");
-        div.onclick = () => openImage(url);
-
-        div.innerHTML = `<img src="${url}">`;
-        container.appendChild(div);
-    }
-}
-
-function openImage(url) {
-    localStorage.setItem("selectedImage", url);
-    location.href = "gallery-view.html";
-}
-
-function signOutUser() {
-    signOut(auth).then(() => (location.href = "signin.html"));
-}
 </script>
 
 </body>
