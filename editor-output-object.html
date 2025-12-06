@@ -1,1 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head> … SAME STYLES … </head>
 
+<body>
+
+<h2>Object Removed ✔</h2>
+
+<div class="output-box">
+    <img id="finalImage" src="">
+</div>
+
+<div class="actions">
+    <button onclick="downloadImage()">Download</button>
+    <button onclick="saveToGallery()">Save</button>
+    <button onclick="shareImage()">Share</button>
+    <button onclick="location.href='index.html'">New Edit</button>
+</div>
+
+<script type="module">
+import { auth, onAuthStateChanged } from "./firebase-app.js";
+import { db } from "./db.js";
+import { doc, setDoc } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js";
+
+let result = localStorage.getItem("removeObjectResult") || "";
+document.getElementById("finalImage").src = result;
+
+function downloadImage() {
+    const a=document.createElement("a");
+    a.href=result;
+    a.download="magic-eraser.png";
+    a.click();
+}
+
+async function saveToGallery() {
+    onAuthStateChanged(auth, async user => {
+        if (!user) return location.href="signin.html";
+        const ref=doc(db,"users",user.uid,"remove-object",Date.now().toString());
+        await setDoc(ref,{image:result,created:Date.now()});
+        alert("Saved to Remove Object folder!");
+    });
+}
+
+function shareImage(){ if(navigator.share) navigator.share({ title:"AI Photo Studio" }); }
+</script>
+
+</body>
+</html>
