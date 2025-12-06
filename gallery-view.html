@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>View Image – AI Photo Studio</title>
+<title>View Image · AI Photo Studio</title>
 
 <style>
     body {
@@ -11,6 +11,10 @@
         background: #0b0f19;
         color: white;
         font-family: Inter, system-ui, sans-serif;
+        display: flex;
+        flex-direction: column;
+        height: 100vh;
+        overflow: hidden;
     }
 
     /* TOP BAR */
@@ -21,136 +25,134 @@
         display: flex;
         align-items: center;
         justify-content: space-between;
-        padding: 0 18px;
-        position: sticky;
-        top: 0;
-        z-index: 10;
+        padding: 0 16px;
+        flex-shrink: 0;
     }
-
-    .topbar span {
-        font-size: 16px;
-        font-weight: 600;
-        color: #3fb7ff;
-        text-shadow: 0 0 10px #3fb7ff;
-    }
-
-    .btn-text {
+    .back {
         color: #60a5fa;
+        font-size: 15px;
         cursor: pointer;
-        font-size: 14px;
+    }
+    .title {
+        font-size: 18px;
+        font-weight: 700;
     }
 
-    /* MAIN IMAGE */
-    .wrapper {
-        padding: 20px;
+    /* IMAGE AREA */
+    .viewer {
+        flex-grow: 1;
         display: flex;
+        align-items: center;
         justify-content: center;
+        overflow: hidden;
+        padding: 10px;
     }
-
-    img {
+    #photo {
         max-width: 100%;
+        max-height: 100%;
         border-radius: 12px;
         border: 1px solid #1f2937;
+        box-shadow: 0 0 20px rgba(0,0,0,0.4);
     }
 
-    /* ACTION BUTTONS */
-    .actions {
-        margin-top: 20px;
+    /* ACTION BAR */
+    .action-bar {
+        background: #111827;
+        border-top: 1px solid #1f2937;
+        padding: 12px;
         display: flex;
-        gap: 14px;
-        padding: 0 20px;
+        justify-content: space-around;
+        flex-shrink: 0;
     }
-
     .btn {
-        flex: 1;
-        padding: 14px;
-        border: none;
-        border-radius: 10px;
         background: #2563eb;
+        border: none;
+        padding: 12px 18px;
+        border-radius: 10px;
         color: white;
-        font-weight: 700;
+        font-size: 14px;
+        font-weight: 600;
         cursor: pointer;
-        font-size: 15px;
     }
-
     .btn.delete {
-        background: #9b1c1c;
-    }
-
-    .btn:hover {
-        opacity: .85;
+        background: #dc2626;
     }
 </style>
 </head>
 
 <body>
 
+<!-- TOP BAR -->
 <div class="topbar">
-    <div class="btn-text" onclick="location.href='gallery.html'">← Back</div>
-    <span>View Image</span>
+    <div class="back" onclick="location.href='gallery.html'">← Back</div>
+    <div class="title">Image Preview</div>
     <div></div>
 </div>
 
-<div class="wrapper">
-    <img id="imageView" src="" alt="Your Image">
+<!-- IMAGE VIEWER -->
+<div class="viewer">
+    <img id="photo" src="" alt="Image">
 </div>
 
-<div class="actions">
-    <button class="btn" id="downloadBtn">Download</button>
-    <button class="btn delete" id="deleteBtn">Delete</button>
+<!-- ACTION BUTTONS -->
+<div class="action-bar">
+    <button class="btn" onclick="downloadImage()">Download</button>
+    <button class="btn" onclick="shareImage()">Share</button>
+    <button class="btn delete" onclick="deleteImage()">Delete</button>
 </div>
 
 <script type="module">
 import { auth, onAuthStateChanged } from "./firebase-app.js";
-import { getFirestore, doc, deleteDoc } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js";
-import { getStorage, ref, deleteObject } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-storage.js";
+import { storage, ref, deleteObject } from "./firebase-app.js";
 
-const db = getFirestore();
-const storage = getStorage();
+let selectedURL = localStorage.getItem("viewImage");
+let selectedPath = localStorage.getItem("viewImagePath"); // we store this when saving images
 
-onAuthStateChanged(auth, async (user) => {
-    if (!user) return window.location.href = "signin.html";
+document.getElementById("photo").src = selectedURL;
 
-    const url = localStorage.getItem("viewImage");
-    const folder = localStorage.getItem("viewFolder");
-    const docId = localStorage.getItem("viewDocId");
-
-    if (!url) {
-        alert("No image selected.");
-        return window.location.href = "gallery.html";
-    }
-
-    document.getElementById("imageView").src = url;
-
-    // DOWNLOAD function
-    document.getElementById("downloadBtn").onclick = () => {
-        const a = document.createElement("a");
-        a.href = url;
-        a.download = "image.png";
-        a.click();
-    };
-
-    // DELETE function
-    document.getElementById("deleteBtn").onclick = async () => {
-        if (!confirm("Delete this image?")) return;
-
-        try {
-            // Delete from Firestore
-            await deleteDoc(doc(db, "users", user.uid, folder, docId));
-
-            // Delete from Storage
-            const storageRef = ref(storage, `users/${user.uid}/${folder}/${docId}.png`);
-            await deleteObject(storageRef);
-
-            alert("Image deleted.");
-            window.location.href = "gallery.html";
-
-        } catch (e) {
-            console.error(e);
-            alert("Error deleting image.");
-        }
-    };
+/* CHECK SIGN-IN */
+onAuthStateChanged(auth, user => {
+    if (!user) return location.href = "signin.html";
 });
+
+/* DOWNLOAD IMAGE */
+function downloadImage() {
+    const a = document.createElement("a");
+    a.href = selectedURL;
+    a.download = "photo.jpg";
+    a.click();
+}
+
+/* SHARE IMAGE */
+function shareImage() {
+    if (navigator.share) {
+        navigator.share({
+            title: "My Edited Photo",
+            url: selectedURL
+        }).catch(() => {});
+    } else {
+        alert("Sharing is not supported on this device.");
+    }
+}
+
+/* DELETE IMAGE */
+async function deleteImage() {
+    if (!confirm("Delete this image? This cannot be undone.")) return;
+
+    try {
+        const user = auth.currentUser;
+        const imgRef = ref(storage, selectedPath);
+
+        await deleteObject(imgRef);
+
+        alert("Image deleted.");
+        location.href = "gallery.html";
+
+    } catch (err) {
+        console.error(err);
+        alert("Error deleting image.");
+    }
+}
 </script>
 
 </body>
