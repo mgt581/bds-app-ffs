@@ -1,16 +1,16 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>My Account — AI Photo Studio</title>
 
 <style>
     body {
         margin: 0;
         background: #0b0f19;
+        color: white;
         font-family: Inter, system-ui, sans-serif;
-        color: #ffffff;
     }
 
     .topbar {
@@ -25,80 +25,76 @@
 
     .logo {
         color: #3fb7ff;
-        font-size: 22px;
+        font-size: 20px;
         font-weight: 700;
         text-shadow: 0 0 10px #3fb7ff;
     }
 
-    .container {
-        padding: 24px;
-        max-width: 560px;
-        margin: auto;
+    .content {
+        max-width: 450px;
+        margin: 40px auto;
+        padding: 20px;
     }
 
-    .section {
-        margin-bottom: 32px;
+    h2 {
+        font-size: 22px;
+        margin-bottom: 10px;
     }
 
-    .section h2 {
-        font-size: 20px;
+    .card {
+        background: #111827;
+        border: 1px solid #1f2937;
+        border-radius: 14px;
+        padding: 20px;
+        margin-bottom: 20px;
+    }
+
+    .label {
+        opacity: 0.7;
+        font-size: 14px;
+        margin-bottom: 6px;
+    }
+
+    .value {
+        font-size: 16px;
+        font-weight: 600;
         margin-bottom: 12px;
-        border-bottom: 1px solid #1f2937;
-        padding-bottom: 6px;
+    }
+
+    .btn {
+        width: 100%;
+        padding: 14px;
+        border-radius: 10px;
+        border: none;
+        font-weight: 700;
+        cursor: pointer;
+        font-size: 15px;
+    }
+
+    .btn-blue {
+        background: #2563eb;
+        color: white;
+    }
+
+    .btn-dark {
+        background: #1f2937;
+        color: white;
+    }
+
+    .btn-red {
+        background: #b91c1c;
+        color: white;
+    }
+
+    .btn:hover {
         opacity: 0.9;
     }
 
-    .box {
-        background: #111827;
-        border: 1px solid #1f2937;
-        padding: 18px;
-        border-radius: 14px;
-        margin-bottom: 14px;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        cursor: pointer;
-        transition: 0.2s;
-    }
-
-    .box:hover {
-        border-color: #3fb7ff;
-        transform: translateY(-3px);
-    }
-
-    .box-title {
-        font-size: 16px;
-        font-weight: 600;
-    }
-
-    .box-desc {
-        opacity: 0.6;
-        font-size: 14px;
-    }
-
-    button.logout {
-        width: 100%;
-        padding: 14px;
-        border-radius: 12px;
-        background: #b91c1c;
-        border: none;
-        color: white;
-        font-size: 16px;
-        font-weight: 700;
-        cursor: pointer;
-        margin-top: 20px;
-    }
-
-    button.logout:hover {
-        background: #dc2626;
-    }
-
-    .plan-tag {
-        padding: 6px 12px;
-        background: #3b82f6;
-        border-radius: 10px;
-        font-size: 13px;
-        font-weight: 600;
+    .link {
+        color: #60a5fa;
+        text-align: center;
+        display: block;
+        margin-top: 12px;
     }
 </style>
 </head>
@@ -107,89 +103,124 @@
 
 <div class="topbar">
     <div class="logo">AI Photo Studio</div>
-    <div class="plan-tag" id="userPlan">Loading...</div>
+    <div class="btn-back" onclick="location.href='dashboard.html'" style="cursor:pointer;color:#60a5fa;">← Dashboard</div>
 </div>
 
-<div class="container">
+<div class="content">
 
-    <!-- Account Information -->
-    <div class="section">
+    <div class="card">
         <h2>Your Account</h2>
 
-        <div class="box" onclick="location.href='profile-settings.html'">
-            <div>
-                <div class="box-title">Account Settings</div>
-                <div class="box-desc">Email, password, profile details</div>
-            </div>
-        </div>
+        <div class="label">Email</div>
+        <div class="value" id="userEmail">Loading...</div>
 
-        <div class="box" onclick="location.href='gallery.html'">
-            <div>
-                <div class="box-title">My Gallery</div>
-                <div class="box-desc">Your saved images</div>
-            </div>
-        </div>
+        <div class="label">Subscription</div>
+        <div class="value" id="userPlan">Checking...</div>
 
-        <div class="box" onclick="location.href='subscription.html'">
-            <div>
-                <div class="box-title">Subscription</div>
-                <div class="box-desc">Manage your plan & billing</div>
-            </div>
-        </div>
+        <button class="btn btn-blue" id="upgradeBtn">Upgrade / Manage Subscription</button>
     </div>
 
+    <div class="card">
+        <h2>Security</h2>
 
-    <!-- Support -->
-    <div class="section">
-        <h2>Support</h2>
-
-        <div class="box" onclick="location.href='help.html'">
-            <div>
-                <div class="box-title">Help & FAQs</div>
-                <div class="box-desc">Guides and troubleshooting</div>
-            </div>
-        </div>
-
-        <div class="box" onclick="location.href='contact.html'">
-            <div>
-                <div class="box-title">Contact Support</div>
-                <div class="box-desc">Speak to our team</div>
-            </div>
-        </div>
+        <button class="btn btn-dark" id="changeEmailBtn">Change Email</button>
+        <button class="btn btn-dark" id="changePassBtn">Change Password</button>
     </div>
 
+    <div class="card">
+        <h2>Danger Zone</h2>
 
-    <!-- Logout -->
-    <button class="logout" id="logoutBtn">Sign Out</button>
+        <button class="btn btn-red" id="deleteBtn">Delete Account</button>
+    </div>
 
+    <button class="btn btn-dark" id="logoutBtn">Sign Out</button>
 </div>
 
 
-<!-- Firebase Logic -->
+<!-- FIREBASE LOGIC -->
 <script type="module">
-    import { auth, signOut, onAuthStateChanged } from "./firebase-app.js";
+    import { 
+        auth, 
+        onAuthStateChanged, 
+        signOut, 
+        updateEmail,
+        updatePassword,
+        deleteUser 
+    } from "./firebase-app.js";
+
     import { db } from "./db.js";
     import { doc, getDoc } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js";
 
-    const userPlan = document.getElementById("userPlan");
+    let currentUser;
 
     onAuthStateChanged(auth, async (user) => {
         if (!user) return location.href = "signin.html";
+
+        currentUser = user;
+
+        document.getElementById("userEmail").innerText = user.email || "Anonymous Account";
 
         const ref = doc(db, "users", user.uid);
         const snap = await getDoc(ref);
 
         let plan = "Free User";
+
         if (snap.exists()) {
             const data = snap.data();
-            if (data.plan === "pro" || data.plan === "yearly") plan = "Pro Member";
-            if (data.plan === "trial") plan = "Trial (7 Days)";
+            if (data.plan === "pro") plan = "Pro Member";
+            if (data.plan === "trial") plan = "Free Trial (7 Days)";
+            if (data.plan === "daypass") plan = "Day Pass Active";
         }
-        userPlan.innerText = plan;
+
+        document.getElementById("userPlan").innerText = plan;
     });
 
-    document.getElementById("logoutBtn").onclick = () => {
-        signOut(auth).then(() => location.href = "signin.html");
+    // Upgrade button
+    document.getElementById("upgradeBtn").onclick = () => {
+        location.href = "subscription.html";
+    };
+
+    // Change email
+    document.getElementById("changeEmailBtn").onclick = async () => {
+        const newEmail = prompt("Enter new email:");
+        if (!newEmail) return;
+        try {
+            await updateEmail(currentUser, newEmail);
+            alert("Email updated!");
+            location.reload();
+        } catch (err) {
+            alert("Error: " + err.message);
+        }
+    };
+
+    // Change password
+    document.getElementById("changePassBtn").onclick = async () => {
+        const newPass = prompt("Enter new password:");
+        if (!newPass) return;
+        try {
+            await updatePassword(currentUser, newPass);
+            alert("Password updated!");
+        } catch (err) {
+            alert("Error: " + err.message);
+        }
+    };
+
+    // Delete account
+    document.getElementById("deleteBtn").onclick = async () => {
+        if (!confirm("This will permanently delete your account. Continue?")) return;
+        try {
+            await deleteUser(currentUser);
+            alert("Account deleted.");
+            location.href = "signin.html";
+        } catch (err) {
+            alert("Error: " + err.message);
+        }
+    };
+
+    // Sign out
+    document.getElementById("logoutBtn").onclick = async () => {
+        await signOut(auth);
+        location.href = "signin.html";
     };
 </script>
 
