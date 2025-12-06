@@ -1,262 +1,204 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Change Background – AI Photo Studio</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Change Background • AI Photo Studio</title>
 
-    <link rel="stylesheet" href="editor.css" />
-    <script defer src="firebase-app.js"></script>
-    <script defer src="auth.js"></script>
-    <script defer src="premium-check.js"></script>
+<link href="styles.css" rel="stylesheet">
 
-    <style>
-        body {
-            margin: 0;
-            background: #0d1117;
-            font-family: "Inter", sans-serif;
-            color: white;
-            height: 100vh;
-            display: flex;
-            flex-direction: column;
-        }
-
-        header {
-            padding: 18px;
-            display: flex;
-            align-items: center;
-            gap: 14px;
-            background: #111827;
-            border-bottom: 1px solid #1f2937;
-        }
-
-        header img {
-            width: 48px;
-        }
-
-        header h1 {
-            margin: 0;
-            font-size: 20px;
-            color: #3b82f6;
-            font-weight: 600;
-        }
-
-        #upload-zone {
-            border: 2px dashed #3b82f6;
-            margin: 20px;
-            padding: 40px 20px;
-            text-align: center;
-            border-radius: 12px;
-            cursor: pointer;
-        }
-
-        #upload-zone:hover {
-            background: #111827;
-        }
-
-        #upload-zone input {
-            display: none;
-        }
-
-        #editor-area {
-            flex: 1;
-            display: none;
-            padding: 15px;
-        }
-
-        #result-image, #preview-image {
-            max-width: 100%;
-            border-radius: 12px;
-            margin: 10px 0;
-        }
-
-        #backgrounds {
-            margin-top: 15px;
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 10px;
-        }
-
-        #backgrounds img {
-            width: 100%;
-            border-radius: 10px;
-            cursor: pointer;
-            border: 2px solid transparent;
-            transition: 0.2s;
-        }
-
-        #backgrounds img:hover {
-            border-color: #3b82f6;
-        }
-
-        .btn {
-            width: 90%;
-            margin: 15px auto;
-            padding: 14px;
-            font-size: 18px;
-            border: none;
-            border-radius: 12px;
-            background: #3b82f6;
-            color: white;
-            font-weight: 600;
-            display: block;
-            text-align: center;
-        }
-    </style>
-</head>
-
-<body>
-
-<header>
-    <img src="icons/icon-change-background.png" alt="">
-    <h1>Change Background</h1>
-</header>
-
-<div id="upload-zone" onclick="document.getElementById('upload-input').click();">
-    <input type="file" id="upload-input" accept="image/*">
-    <p>Tap or Drag an Image to Upload</p>
-</div>
-
-<div id="editor-area">
-    <h3>Select a New Background</h3>
-
-    <img id="preview-image">
-
-    <div id="backgrounds">
-        <img src="backgrounds/bg1.jpg" onclick="applyBg(this.src)">
-        <img src="backgrounds/bg2.jpg" onclick="applyBg(this.src)">
-        <img src="backgrounds/bg3.jpg" onclick="applyBg(this.src)">
-        <img src="backgrounds/bg4.jpg" onclick="applyBg(this.src)">
-        <img src="backgrounds/bg5.jpg" onclick="applyBg(this.src)">
-        <img src="backgrounds/bg6.jpg" onclick="applyBg(this.src)">
-    </div>
-
-    <button class="btn" onclick="document.getElementById('custom-bg').click()">Upload Your Own Background</button>
-    <input type="file" id="custom-bg" accept="image/*" style="display:none" onchange="customBackground(event)">
-
-    <button id="saveBtn" class="btn" onclick="saveFinal()" style="display:none">Save Final Image</button>
-</div>
-
-<script>
-let cutoutBlob;
-let finalCanvas;
-let userImg;
-
-// First upload
-document.getElementById("upload-input").addEventListener("change", (e) => {
-    if (!e.target.files.length) return;
-    startRemoveBg(e.target.files[0]);
-});
-
-// Background removal
-async function startRemoveBg(file) {
-    document.getElementById("upload-zone").innerHTML = "<p>Processing…</p>";
-
-    const formData = new FormData();
-    formData.append("image", file);
-
-    const res = await fetch("https://api.aiphotoedit.ai/remove-bg", {
-        method: "POST",
-        body: formData
-    });
-
-    cutoutBlob = await res.blob();
-    userImg = await loadImageFromBlob(cutoutBlob);
-
-    document.getElementById("preview-image").src = URL.createObjectURL(cutoutBlob);
-
-    document.getElementById("upload-zone").style.display = "none";
-    document.getElementById("editor-area").style.display = "block";
-}
-
-// Load image utility
-function loadImageFromBlob(blob) {
-    return new Promise(resolve => {
-        const img = new Image();
-        img.src = URL.createObjectURL(blob);
-        img.onload = () => resolve(img);
-    });
-}
-
-// Apply built-in background
-async function applyBg(src) {
-    const bgImg = await loadImage(src);
-    mergeImages(bgImg);
-}
-
-// Upload custom background
-async function customBackground(event) {
-    const file = event.target.files[0];
-    const bgImg = await loadImage(URL.createObjectURL(file));
-    mergeImages(bgImg);
-}
-
-// Load image utility
-function loadImage(src) {
-    return new Promise(resolve => {
-        const img = new Image();
-        img.src = src;
-        img.onload = () => resolve(img);
-    });
-}
-
-// Merge user + background
-function mergeImages(bg) {
-    finalCanvas = document.createElement("canvas");
-    finalCanvas.width = bg.width;
-    finalCanvas.height = bg.height;
-
-    const ctx = finalCanvas.getContext("2d");
-
-    ctx.drawImage(bg, 0, 0, bg.width, bg.height);
-
-    const scale = Math.min(bg.width / userImg.width, bg.height / userImg.height);
-    const newW = userImg.width * scale;
-    const newH = userImg.height * scale;
-
-    ctx.drawImage(userImg, (bg.width - newW) / 2, (bg.height - newH) / 2, newW, newH);
-
-    document.getElementById("preview-image").src = finalCanvas.toDataURL();
-    document.getElementById("saveBtn").style.display = "block";
-}
-
-// Save image with premium check + watermark
-async function saveFinal() {
-    const isPro = await checkPremiumStatus();
-
-    let resultBlob = await new Promise(resolve => finalCanvas.toBlob(resolve));
-
-    if (!isPro) {
-        resultBlob = await applyWatermark(resultBlob);
+<style>
+    body {
+        margin:0;
+        background:#0b0f1c;
+        font-family:Inter, system-ui, sans-serif;
+        color:white;
     }
 
-    const url = URL.createObjectURL(resultBlob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = "changed-background.png";
-    a.click();
+    .topbar {
+        height:70px;
+        background:#111827;
+        border-bottom:1px solid #1f2937;
+        display:flex;
+        align-items:center;
+        padding:0 20px;
+        gap:15px;
+    }
+
+    .topbar img {
+        width:34px;
+        height:34px;
+    }
+
+    .topbar h2 {
+        font-size:20px;
+        font-weight:700;
+        margin:0;
+        color:#3fb7ff;
+    }
+
+    .container {
+        padding:20px;
+        max-width:900px;
+        margin:auto;
+    }
+
+    .section-title {
+        font-size:22px;
+        margin:20px 0 10px;
+        font-weight:700;
+    }
+
+    .upload-box {
+        border:2px dashed #3fb7ff44;
+        border-radius:16px;
+        padding:40px;
+        text-align:center;
+        cursor:pointer;
+        margin-bottom:30px;
+        background:#111827;
+    }
+
+    .upload-box:hover {
+        background:#1b2538;
+    }
+
+    .upload-box p {
+        opacity:0.8;
+    }
+
+    #mainImagePreview {
+        width:100%;
+        border-radius:12px;
+        margin-bottom:25px;
+        display:none;
+    }
+
+    .bg-grid {
+        display:grid;
+        grid-template-columns:repeat(auto-fit, minmax(120px, 1fr));
+        gap:15px;
+    }
+
+    .bg-item {
+        height:90px;
+        border-radius:12px;
+        background-size:cover;
+        background-position:center;
+        cursor:pointer;
+        border:2px solid #1f2937;
+        transition:0.15s;
+    }
+
+    .bg-item:hover {
+        border-color:#3fb7ff;
+        transform:scale(1.03);
+    }
+
+    .apply-btn {
+        width:100%;
+        background:#3fb7ff;
+        padding:14px;
+        border:none;
+        border-radius:12px;
+        font-size:18px;
+        font-weight:700;
+        cursor:pointer;
+        margin-top:25px;
+    }
+</style>
+
+<script>
+let selectedMainImage = null;
+let selectedBackground = null;
+
+// Upload main photo
+function uploadMain() {
+    document.getElementById("mainUpload").click();
 }
 
-// Watermark for free users
-function applyWatermark(blob) {
-    return new Promise(async resolve => {
-        const img = await loadImage(URL.createObjectURL(blob));
+document.getElementById("mainUpload")?.addEventListener("change", (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
 
-        const canvas = document.createElement("canvas");
-        canvas.width = img.width;
-        canvas.height = img.height;
+    const reader = new FileReader();
+    reader.onload = () => {
+        selectedMainImage = reader.result;
+        const preview = document.getElementById("mainImagePreview");
+        preview.src = selectedMainImage;
+        preview.style.display = "block";
+    };
+    reader.readAsDataURL(file);
+});
 
-        const ctx = canvas.getContext("2d");
-        ctx.drawImage(img, 0, 0);
+// Upload custom background
+function uploadBG() {
+    document.getElementById("bgUpload").click();
+}
 
-        ctx.font = `${img.width / 20}px Arial`;
-        ctx.fillStyle = "rgba(255,255,255,0.45)";
-        ctx.fillText("AI Photo Studio FREE", img.width - 30, img.height - 30);
+document.getElementById("bgUpload")?.addEventListener("change", (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
 
-        canvas.toBlob(resolve);
-    });
+    const reader = new FileReader();
+    reader.onload = () => {
+        selectedBackground = reader.result;
+        applyBackground(selectedBackground);
+    };
+    reader.readAsDataURL(file);
+});
+
+// Choose preset background
+function choosePreset(url) {
+    selectedBackground = url;
+    applyBackground(url);
+}
+
+// Save for final editor
+function applyBackground(bg) {
+    if (!selectedMainImage) return alert("Upload your main photo first!");
+    localStorage.setItem("selectedMainImage", selectedMainImage);
+    localStorage.setItem("selectedBackground", bg);
+    window.location.href = "/editor-output.html";
 }
 </script>
+
+</head>
+<body>
+
+<div class="topbar">
+    <img src="/icons/icon-change-background.png">
+    <h2>Change Background</h2>
+</div>
+
+<div class="container">
+
+    <h3 class="section-title">1. Upload Your Photo</h3>
+
+    <div class="upload-box" onclick="uploadMain()">
+        <p>Click to upload your main image</p>
+        <input type="file" id="mainUpload" accept="image/*" hidden>
+    </div>
+
+    <img id="mainImagePreview">
+
+    <h3 class="section-title">2. Choose a New Background</h3>
+
+    <div class="upload-box" onclick="uploadBG()">
+        <p>Upload Your Own Background</p>
+        <input type="file" id="bgUpload" accept="image/*" hidden>
+    </div>
+
+    <h3 class="section-title">Or Pick a Preset</h3>
+
+    <div class="bg-grid">
+        <div class="bg-item" style="background-image:url('/stock/bg1.jpg')" onclick="choosePreset('/stock/bg1.jpg')"></div>
+        <div class="bg-item" style="background-image:url('/stock/bg2.jpg')" onclick="choosePreset('/stock/bg2.jpg')"></div>
+        <div class="bg-item" style="background-image:url('/stock/bg3.jpg')" onclick="choosePreset('/stock/bg3.jpg')"></div>
+        <div class="bg-item" style="background-image:url('/stock/bg4.jpg')" onclick="choosePreset('/stock/bg4.jpg')"></div>
+    </div>
+
+</div>
 
 </body>
 </html>
