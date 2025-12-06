@@ -1,78 +1,95 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>Payment Successful · AI Photo Studio</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Subscription Activated – AI Photo Studio</title>
 
-<style>
-  body {
-    margin:0;
-    background:#0b1020;
-    font-family:system-ui;
-    color:white;
-  }
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: #050b16;
+            color: white;
+            font-family: "Inter", sans-serif;
+            text-align: center;
+        }
 
-  .box {
-    max-width:420px;
-    margin:80px auto;
-    background:#111827;
-    padding:35px;
-    border-radius:14px;
-    border:1px solid #1f2937;
-    text-align:center;
-  }
+        .container {
+            max-width: 480px;
+            margin: 80px auto;
+            padding: 20px;
+        }
 
-  h2 {
-    margin-top:0;
-    font-size:26px;
-    font-weight:800;
-    color:#4ade80; /* green success */
-  }
+        h1 {
+            font-size: 30px;
+            margin-bottom: 10px;
+            color: #3ea8ff;
+        }
 
-  p {
-    font-size:15px;
-    color:#d1d5db;
-    margin-bottom:22px;
-  }
+        .card {
+            background: #0e1624;
+            border-radius: 16px;
+            padding: 30px;
+            border: 1px solid rgba(255,255,255,0.07);
+        }
 
-  button {
-    width:100%;
-    padding:14px;
-    font-size:16px;
-    font-weight:700;
-    border-radius:10px;
-    border:0;
-    cursor:pointer;
-    background:#4f46e5;
-    color:white;
-  }
-  button:hover {
-    background:#4338ca;
-  }
+        p {
+            font-size: 17px;
+            opacity: 0.85;
+            margin-bottom: 20px;
+        }
 
-  .icon {
-    font-size:48px;
-    margin-bottom:10px;
-    color:#4ade80;
-  }
-</style>
+        .btn {
+            width: 100%;
+            background: #3ea8ff;
+            border: none;
+            padding: 16px;
+            border-radius: 12px;
+            font-size: 18px;
+            color: #000;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.25s;
+        }
 
+        .btn:hover {
+            background: #63c4ff;
+        }
+
+        .small {
+            margin-top: 15px;
+            font-size: 14px;
+            opacity: 0.6;
+        }
+    </style>
 </head>
+
 <body>
 
-<div class="box">
-  <div class="icon">✔</div>
+<div class="container">
 
-  <h2>Payment Successful</h2>
+    <h1>Subscription Activated</h1>
 
-  <p>Your AI Photo Studio Premium plan is now active.<br>
-     You can now use ALL premium tools with no limits.</p>
+    <div class="card">
+        <p>Your premium access is now active!  
+        You can now use all tools without limits or watermarks.</p>
 
-  <button onclick="window.location.href='/profile.html'">
-    Continue to Account
-  </button>
+        <button class="btn" id="goHome">Continue to App</button>
+
+        <p class="small">Thank you for supporting AI Photo Studio.</p>
+    </div>
+
 </div>
+
+<script type="module">
+    import { auth } from "./firebase-app.js";
+
+    // After subscription, send user home
+    document.getElementById("goHome").onclick = () => {
+        window.location.href = "/index.html";
+    };
+</script>
 
 </body>
 </html>
