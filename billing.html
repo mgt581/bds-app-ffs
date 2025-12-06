@@ -1,100 +1,114 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Billing & Subscription</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Manage Subscription · AI Photo Studio</title>
 
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<style>
+    body {
+        margin: 0;
+        background: #0b0f1c;
+        font-family: Inter, system-ui, sans-serif;
+        color: white;
+        padding: 25px;
+    }
 
-    <style>
-        body {
-            margin: 0;
-            font-family: "Inter", sans-serif;
-            background: radial-gradient(circle at center, #0a0f33, #000);
-            color: #fff;
-            display: flex;
-            height: 100vh;
-            justify-content: center;
-            align-items: center;
-        }
+    h1 {
+        font-size: 32px;
+        color: #3fb7ff;
+        text-shadow: 0 0 8px #3fb7ff;
+        text-align: center;
+        margin-top: 20px;
+    }
 
-        .container {
-            background: rgba(20, 20, 40, 0.65);
-            padding: 40px;
-            border-radius: 16px;
-            width: 90%;
-            max-width: 480px;
-            text-align: center;
-            box-shadow: 0 0 35px rgba(0, 136, 255, 0.3);
-            backdrop-filter: blur(12px);
-        }
+    .card {
+        background: #111827;
+        border: 1px solid #1f2937;
+        padding: 25px;
+        border-radius: 18px;
+        max-width: 500px;
+        margin: 40px auto;
+        text-align: center;
+    }
 
-        h1 {
-            margin: 0 0 10px;
-            font-size: 26px;
-            font-weight: 700;
-        }
+    .item {
+        margin: 12px 0;
+        font-size: 17px;
+        opacity: 0.9;
+    }
 
-        p {
-            opacity: 0.75;
-            font-size: 15px;
-            margin-bottom: 25px;
-            line-height: 1.5;
-        }
+    .button {
+        display: block;
+        margin: 25px auto 0;
+        background: #3fb7ff;
+        padding: 14px 28px;
+        border-radius: 12px;
+        color: #000;
+        font-weight: 700;
+        text-decoration: none;
+        font-size: 18px;
+        box-shadow: 0 0 12px #3fb7ff;
+        transition: 0.2s;
+        width: fit-content;
+    }
 
-        .btn {
-            width: 100%;
-            padding: 14px;
-            margin-bottom: 15px;
-            border: none;
-            border-radius: 10px;
-            font-size: 16px;
-            cursor: pointer;
-            font-weight: 600;
-            transition: 0.25s ease;
-        }
+    .button:hover {
+        transform: scale(1.05);
+    }
 
-        .primary {
-            background: linear-gradient(90deg, #4f46e5, #3b82f6);
-            color: #fff;
-            box-shadow: 0 0 20px rgba(59, 130, 246, 0.35);
-        }
+</style>
 
-        .primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 0 30px rgba(59, 130, 246, 0.55);
-        }
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-app.js";
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-auth.js";
+import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js";
 
-        .secondary {
-            background: rgba(255, 255, 255, 0.12);
-            color: #fff;
-        }
+const firebaseConfig = {
+    apiKey: "AIzaSyCM6r66kW9xkBA5rgVcz4sP57N2v2BMbkg",
+    authDomain: "ai-photo-studio-24354.firebaseapp.com",
+    projectId: "ai-photo-studio-24354",
+    storageBucket: "ai-photo-studio-24354.firebasestorage.app",
+    messagingSenderId: "411346648650",
+    appId: "1:411346648650:web:aefd1b26027ed5e8fab0b3",
+    measurementId: "G-8TXC63YKPD"
+};
 
-        .secondary:hover {
-            background: rgba(255, 255, 255, 0.18);
-        }
-    </style>
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+
+onAuthStateChanged(auth, async (user) => {
+    if (!user) return (window.location.href = "signin.html");
+
+    const ref = doc(db, "users", user.uid);
+    const snap = await getDoc(ref);
+
+    if (!snap.exists()) return;
+
+    const data = snap.data();
+
+    document.getElementById("planName").innerText = data.plan ?? "Unknown";
+    document.getElementById("renewDate").innerText =
+        data.renewDate ? new Date(data.renewDate).toDateString() : "No renewal date";
+
+    document.getElementById("openPortal").onclick = () => {
+        window.location.href = data.portalURL; // Stripe portal URL stored in Firestore
+    };
+});
+</script>
+
 </head>
-
 <body>
-    <div class="container">
-        <h1>Billing & Subscription</h1>
-        <p>Manage your AI Photo Studio Premium subscription, view invoices, update payment details, and change your plan settings.</p>
 
-        <button class="btn primary" onclick="openPortal()">
-            Open Billing Portal
-        </button>
+<h1>Manage Subscription</h1>
 
-        <button class="btn secondary" onclick="window.location='/account.html'">
-            Back to Account
-        </button>
-    </div>
+<div class="card">
+    <div class="item">Plan: <strong id="planName">Loading…</strong></div>
+    <div class="item">Renews On: <strong id="renewDate">Loading…</strong></div>
 
-    <script>
-        function openPortal() {
-            window.location.href = "/billing-portal"; 
-        }
-    </script>
+    <a id="openPortal" class="button">Open Billing Portal</a>
+</div>
+
 </body>
 </html>
